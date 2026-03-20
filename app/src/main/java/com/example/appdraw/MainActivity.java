@@ -9,6 +9,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
             updateUI(2);
         });
         navProfile.setOnClickListener(v -> {
-            // Có thể chuyển sang ProfileFragment hoặc Activity
             updateUI(3);
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
@@ -74,10 +74,27 @@ public class MainActivity extends AppCompatActivity {
 
         if (fabDraw != null) {
             fabDraw.setOnClickListener(v -> {
-                Intent intent = new Intent(this, DrawingActivity.class);
-                startActivity(intent);
+                showCreatePostOptions();
             });
         }
+    }
+
+    private void showCreatePostOptions() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_options, null);
+        bottomSheetDialog.setContentView(dialogView);
+
+        dialogView.findViewById(R.id.ll_option_draw).setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            startActivity(new Intent(this, DrawingActivity.class));
+        });
+
+        dialogView.findViewById(R.id.ll_option_post).setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            startActivity(new Intent(this, CreatePostActivity.class));
+        });
+
+        bottomSheetDialog.show();
     }
 
     private void loadFragment(Fragment fragment) {
@@ -88,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(int index) {
-        // Reset all to gray
         ivHome.setColorFilter(textGray);
         tvHome.setTextColor(textGray);
         ivExplore.setColorFilter(textGray);
@@ -98,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         ivProfile.setColorFilter(textGray);
         tvProfile.setTextColor(textGray);
 
-        // Highlight selected
         switch (index) {
             case 0:
                 ivHome.setColorFilter(primaryBlue);
