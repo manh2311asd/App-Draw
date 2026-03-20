@@ -25,17 +25,13 @@ public class ProfileActivity extends AppCompatActivity {
         setupTabs();
         setupSettings();
 
-        // Check if viewing other user profile (from previous logic)
+        // Check if viewing other user profile
         if (getIntent().getBooleanExtra("IS_OTHER_USER", false)) {
             String otherName = getIntent().getStringExtra("USER_NAME");
             TextView tvName = findViewById(R.id.tv_profile_name);
             if (tvName != null && otherName != null) {
                 tvName.setText(otherName);
             }
-            // Hide settings if it's not the current user's profile
-            View settingsCard = findViewById(R.id.ll_setting_account).getParent().getParent() instanceof View ? 
-                               (View) findViewById(R.id.ll_setting_account).getParent().getParent() : null;
-            // Simplified: for demo, we can just show/hide or change logic
         }
     }
 
@@ -63,20 +59,37 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupTabs() {
-        View.OnClickListener tabClick = v -> {
+        tabArtwork.setOnClickListener(v -> {
             resetTabs();
-            TextView clickedTab = (TextView) v;
-            clickedTab.setTextColor(getResources().getColor(R.color.primary_blue));
-            clickedTab.setTypeface(null, android.graphics.Typeface.BOLD);
-            
-            String tabName = clickedTab.getText().toString();
-            Toast.makeText(this, "Đang xem: " + tabName, Toast.LENGTH_SHORT).show();
-        };
+            tabArtwork.setTextColor(getResources().getColor(R.color.primary_blue));
+            tabArtwork.setTypeface(null, android.graphics.Typeface.BOLD);
+            findViewById(R.id.gl_artworks).setVisibility(View.VISIBLE);
+        });
 
-        tabArtwork.setOnClickListener(tabClick);
-        tabPost.setOnClickListener(tabClick);
-        tabProject.setOnClickListener(tabClick);
-        tabSaved.setOnClickListener(tabClick);
+        tabPost.setOnClickListener(v -> {
+            resetTabs();
+            tabPost.setTextColor(getResources().getColor(R.color.primary_blue));
+            tabPost.setTypeface(null, android.graphics.Typeface.BOLD);
+            findViewById(R.id.gl_artworks).setVisibility(View.GONE);
+        });
+
+        tabProject.setOnClickListener(v -> {
+            resetTabs();
+            tabProject.setTextColor(getResources().getColor(R.color.primary_blue));
+            tabProject.setTypeface(null, android.graphics.Typeface.BOLD);
+            findViewById(R.id.gl_artworks).setVisibility(View.GONE);
+            
+            // Chuyển sang trang danh sách dự án
+            Intent intent = new Intent(ProfileActivity.this, ProjectListActivity.class);
+            startActivity(intent);
+        });
+
+        tabSaved.setOnClickListener(v -> {
+            resetTabs();
+            tabSaved.setTextColor(getResources().getColor(R.color.primary_blue));
+            tabSaved.setTypeface(null, android.graphics.Typeface.BOLD);
+            findViewById(R.id.gl_artworks).setVisibility(View.GONE);
+        });
     }
 
     private void resetTabs() {
