@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_bg_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="12dp">
+        <ImageView
+            android:id="@+id/btnBackExport"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:padding="4dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xuất ảnh"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp"
+            android:textColor="#202124"/>
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Định dạng"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:textColor="#5F6368"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_bg_gray"
+        android:padding="4dp">
+        <Button
+            android:id="@+id/btnPNG"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:text="PNG"
+            android:backgroundTint="#1A73E8"
+            android:textColor="#FFFFFF"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="14sp"
+            android:textAllCaps="false"/>
+        <Button
+            android:id="@+id/btnJPG"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:text="JPG"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#5F6368"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kích thước"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:textColor="#5F6368"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounded_bg_white_border"
+        android:padding="12dp">
+        <RadioButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="720p (1280 x 720)" android:checked="true" android:textSize="15sp" android:padding="8dp"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE"/>
+        <RadioButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="1080p (1920 x 1080)" android:textSize="15sp" android:padding="8dp"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE"/>
+        <RadioButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="4K (3840 x 2160)" android:textSize="15sp" android:padding="8dp"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE"/>
+        <RadioButton android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Kích thước hiện tại (1668 x 2388)" android:textSize="15sp" android:padding="8dp"/>
+    </RadioGroup>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xuất nền trong suốt (chỉ PNG)"
+        android:checked="true"
+        android:layout_marginTop="16dp"
+        android:textSize="14sp"
+        android:textColor="#202124"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp">
+        <Button
+            android:id="@+id/btnExportToDevice"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Lưu về máy"
+            android:backgroundTint="#1A73E8"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:layout_marginBottom="12dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnShareImg"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Chia sẻ tác phẩm"
+            android:backgroundTint="#FFFFFF"
+            android:textColor="#1A73E8"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#1A73E8"
+            app:strokeWidth="2dp"/>
+    </LinearLayout>
+</LinearLayout>

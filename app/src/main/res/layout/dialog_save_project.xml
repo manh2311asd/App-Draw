@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_bg_white">
+
+    <TextView
+        android:id="@+id/txtTitleSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lưu dự án"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp"
+        android:textColor="#202124"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên dự án"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#5F6368"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/etProjectName"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:hint="Nhập tên dự án..."
+        android:background="@drawable/rounded_bg_white_border"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mô tả mục tiêu"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#5F6368"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/etProjectDesc"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:hint="Nhập mục tiêu dự án..."
+        android:gravity="top"
+        android:padding="12dp"
+        android:background="@drawable/rounded_bg_white_border"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/btnFinalSave"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Lưu dự án"
+        android:backgroundTint="#1A73E8"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:layout_marginTop="32dp"/>
+</LinearLayout>

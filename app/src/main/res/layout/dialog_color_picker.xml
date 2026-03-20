@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chọn màu"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="12dp"/>
+
+        <com.example.appdraw.ColorWheelView
+            android:id="@+id/colorWheel"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center" />
+
+        <!-- Gần đây -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gần đây"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:paddingTop="12dp"/>
+
+        <LinearLayout
+            android:id="@+id/recentColorsGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#4A90E2" android:layout_marginEnd="8dp" android:clickable="true"/>
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#2ecc71" android:layout_marginEnd="8dp" android:clickable="true"/>
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#f1c40f" android:layout_marginEnd="8dp" android:clickable="true"/>
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#E0E0E0" android:layout_marginEnd="8dp" android:clickable="true"/>
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#000000" android:layout_marginEnd="8dp" android:clickable="true"/>
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#e74c3c" android:layout_marginEnd="8dp" android:clickable="true"/>
+            <View android:layout_width="32dp" android:layout_height="32dp" android:background="#0b5394" android:layout_marginEnd="8dp" android:clickable="true"/>
+        </LinearLayout>
+
+        <!-- Màu cơ bản -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Màu cơ bản"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:paddingTop="16dp"/>
+
+        <GridLayout
+            android:id="@+id/baseColorsGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="9"
+            android:paddingTop="8dp">
+            <!-- Row 1 -->
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFFFFF" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFF9C4" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFE082" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFCCBC" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#F8BBD0" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#E1BEE7" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#D1C4E9" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#C5CAE9" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#BBDEFB" android:layout_margin="4dp" android:clickable="true"/>
+            <!-- Row 2 -->
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#81D4FA" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#80CBC4" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#B2DFDB" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#C8E6C9" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#DCEDC8" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#F0F4C3" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#A1887F" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#757575" android:layout_margin="4dp" android:clickable="true"/>
+            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#BDBDBD" android:layout_margin="4dp" android:clickable="true"/>
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Độ mờ"
+            android:paddingTop="16dp"/>
+        <SeekBar
+            android:id="@+id/dialogOpacity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="100"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="16dp">
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="X"
+                android:backgroundTint="#EEEEEE"
+                android:textColor="#333333"
+                android:layout_marginEnd="8dp"/>
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lưu"
+                android:backgroundTint="#4A90E2"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

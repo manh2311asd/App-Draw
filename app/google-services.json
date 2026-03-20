@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "653973398375",
+    "project_id": "appdraw-395b2",
+    "storage_bucket": "appdraw-395b2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653973398375:android:7e4b080c361059d34145c2",
+        "android_client_info": {
+          "package_name": "com.example.appdraw"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH8P2EIKnpEYZ7N7GWCGS8iv_ZiRb_dFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
