@@ -31,6 +31,30 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             });
         }
+
+        View btnNotifications = view.findViewById(R.id.btn_notifications);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), NotificationsActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        View btnSearch = view.findViewById(R.id.btn_search);
+        if (btnSearch != null) {
+            btnSearch.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        View btnViewCalendar = view.findViewById(R.id.tv_view_calendar);
+        if (btnViewCalendar != null) {
+            btnViewCalendar.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), CalendarActivity.class);
+                startActivity(intent);
+            });
+        }
         
         return view;
     }

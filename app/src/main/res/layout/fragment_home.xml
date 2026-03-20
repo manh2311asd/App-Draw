@@ -45,6 +45,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/btn_notifications"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_notifications"
@@ -56,6 +57,7 @@
             android:focusable="true"/>
 
         <ImageView
+            android:id="@+id/btn_search"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_search"
@@ -166,7 +168,17 @@
                     android:drawablePadding="10dp"
                     app:drawableStartCompat="@android:drawable/ic_menu_today"
                     app:drawableTint="@color/primary_blue"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Xem lịch >" android:textSize="13sp" android:textColor="@color/primary_blue" android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tv_view_calendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem lịch >"
+                    android:textSize="13sp"
+                    android:textColor="@color/primary_blue"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView

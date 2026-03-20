@@ -66,11 +66,11 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Add Media Section -->
+                    <!-- Media Preview Area -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_add_media"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
+                        android:layout_height="200dp"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="0dp"
                         app:strokeColor="#DDDDDD"
@@ -78,24 +78,37 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:backgroundTint="#F8F9FF">
-                        <LinearLayout
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:id="@+id/ll_add_media_placeholder"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:orientation="vertical">
+                                <ImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:src="@android:drawable/ic_input_add"
+                                    app:tint="#666666"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Thêm ảnh / video"
+                                    android:textColor="#666666"
+                                    android:textSize="14sp"/>
+                            </LinearLayout>
+
                             <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:src="@android:drawable/ic_input_add"
-                                app:tint="#666666"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="Thêm ảnh /video"
-                                android:textColor="#666666"
-                                android:textSize="14sp"/>
-                        </LinearLayout>
+                                android:id="@+id/iv_media_preview"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone" />
+                        </FrameLayout>
                     </com.google.android.material.card.MaterialCardView>
 
                     <!-- Caption Input -->
@@ -280,6 +293,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
                 <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_share_community"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true" />
@@ -306,6 +320,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
                 <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_allow_comments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true" />
