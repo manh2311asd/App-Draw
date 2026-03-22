@@ -83,7 +83,7 @@
                 android:alignmentMode="alignMargins"
                 android:columnOrderPreserved="false">
 
-                <!-- Project Item 1 -->
+                <!-- Project Item 1: Tranh núi sơn dầu (Completed) -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_project_rose"
                     android:layout_width="0dp"
@@ -125,7 +125,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:progress="40"
+                                android:progress="100"
                                 app:indicatorColor="#4272D0"
                                 app:trackColor="#EEEEEE"
                                 app:trackThickness="4dp"
@@ -134,8 +134,9 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Project Item 2 -->
+                <!-- Project Item 2: Tranh cây cảnh -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_project_tree"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
@@ -276,6 +277,106 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:progress="85"
+                                app:indicatorColor="#4272D0"
+                                app:trackColor="#EEEEEE"
+                                app:trackThickness="4dp"
+                                app:trackCornerRadius="2dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Project Item 5 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/banner_watercolor" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Màu nước trừu tượng"
+                                android:textColor="#1A1A1A"
+                                android:textStyle="bold"
+                                android:textSize="14sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Progress"
+                                android:textColor="#888888"
+                                android:textSize="11sp" />
+                            <com.google.android.material.progressindicator.LinearProgressIndicator
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:progress="45"
+                                app:indicatorColor="#4272D0"
+                                app:trackColor="#EEEEEE"
+                                app:trackThickness="4dp"
+                                app:trackCornerRadius="2dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Project Item 6 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img_challenge_tree" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mầm cây"
+                                android:textColor="#1A1A1A"
+                                android:textStyle="bold"
+                                android:textSize="14sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Progress"
+                                android:textColor="#888888"
+                                android:textSize="11sp" />
+                            <com.google.android.material.progressindicator.LinearProgressIndicator
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:progress="20"
                                 app:indicatorColor="#4272D0"
                                 app:trackColor="#EEEEEE"
                                 app:trackThickness="4dp"

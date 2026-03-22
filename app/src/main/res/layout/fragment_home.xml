@@ -80,7 +80,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Banner Vẽ Ngay (Glassmorphism Style) -->
+            <!-- Banner Vẽ Ngay Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="170dp"
@@ -330,9 +330,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <include layout="@layout/item_lesson_preview"/>
-                    <include layout="@layout/item_lesson_preview"/>
-                    <include layout="@layout/item_lesson_preview"/>
+                    <include android:id="@+id/suggested_lesson_1" layout="@layout/item_lesson_preview"/>
+                    <include android:id="@+id/suggested_lesson_2" layout="@layout/item_lesson_preview"/>
+                    <include android:id="@+id/suggested_lesson_3" layout="@layout/item_lesson_preview"/>
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -344,6 +344,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Thử Thách Tuần" android:textStyle="bold" android:textSize="16sp" android:textColor="@color/text_dark"/>
+
                 <TextView
                     android:id="@+id/tv_view_all_challenges"
                     android:layout_width="wrap_content"
@@ -357,46 +358,88 @@
                     android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
+            <!-- Image 1: Earth Day Challenge (Match request image) -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_challenge_new"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp">
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
+                    android:background="#F5F3FF"
                     android:gravity="center_vertical"
-                    android:background="#F0F4FF">
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
                     <com.google.android.material.imageview.ShapeableImageView
                         android:layout_width="120dp"
                         android:layout_height="100dp"
                         android:src="@drawable/img_challenge_tree"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"/>
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thử thách:" android:textSize="12sp" android:textColor="@color/text_gray"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vẽ cây đại thụ rực rỡ" android:textStyle="bold" android:textSize="15sp" android:textColor="@color/text_dark"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⭐ 256 đã tham gia" android:textSize="12sp" android:textColor="@color/primary_blue" android:layout_marginTop="6dp"/>
+                        android:layout_marginStart="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thử thách:"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_gray"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Vẽ cây ngày trái đất"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:textColor="#1A1A1A"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="6dp">
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@android:drawable/btn_star_big_on"
+                                app:tint="#FFD700"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="256 đã tham gia"
+                                android:textSize="13sp"
+                                android:textColor="#888888"
+                                android:layout_marginStart="4dp"/>
+                        </LinearLayout>
                     </LinearLayout>
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnJoinChallenge"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="32dp"
                         android:text="Tham gia"
-                        android:textColor="#FFFFFF"
-                        app:backgroundTint="@color/primary_blue"
+                        android:textAllCaps="false"
                         android:textSize="11sp"
-                        app:cornerRadius="20dp"
-                        android:textAllCaps="false"/>
+                        android:textColor="#FFFFFF"
+                        app:backgroundTint="#5C6BC0"
+                        app:cornerRadius="16dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:paddingHorizontal="12dp"
+                        android:layout_gravity="bottom"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -433,8 +476,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <include layout="@layout/item_event_preview"/>
-                    <include layout="@layout/item_event_preview"/>
-                    <include layout="@layout/item_event_preview"/>
+                    <include layout="@layout/item_event_preview" />
+                    <include layout="@layout/item_event_preview" />
                 </LinearLayout>
             </HorizontalScrollView>
 

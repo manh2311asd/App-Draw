@@ -13,10 +13,10 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Delay for 2 seconds then go to Login Options
+        // Luôn chuyển đến màn hình lựa chọn đăng nhập/đăng ký để người dùng thấy giao diện
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, LoginOptionsActivity.class));
             finish();
-        }, 2000);
+        }, 1500);
     }
 }

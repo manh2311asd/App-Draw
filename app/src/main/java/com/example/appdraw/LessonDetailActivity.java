@@ -2,6 +2,7 @@ package com.example.appdraw;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -20,7 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 public class LessonDetailActivity extends AppCompatActivity {
 
     private int currentStep = 0; // 0: Overview, 1-4: Steps
-    private boolean isFinishedSteps = false;
+    private String lessonStatus = "NOT_STARTED";
 
     private LinearLayout llStepProgress;
     private LinearLayout llStepActions;
@@ -38,6 +39,11 @@ public class LessonDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson_detail);
+
+        // Lấy trạng thái từ Intent
+        lessonStatus = getIntent().getStringExtra("LESSON_STATUS");
+        if (lessonStatus == null) lessonStatus = "NOT_STARTED";
+        String lessonTitle = getIntent().getStringExtra("LESSON_TITLE");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,10 +72,16 @@ public class LessonDetailActivity extends AppCompatActivity {
         stepTexts[2] = findViewById(R.id.tv_step3_text);
         stepTexts[3] = findViewById(R.id.tv_step4_text);
 
+        if (lessonTitle != null) {
+            tvToolbarTitle.setText(lessonTitle);
+            ((TextView) findViewById(R.id.tv_lesson_detail_title)).setText(lessonTitle);
+        }
+
         setupMaterials();
 
         btnMainAction.setOnClickListener(v -> {
-            if (isFinishedSteps || btnMainAction.getText().toString().equals("Làm bài tập")) {
+            if ("COMPLETED".equals(lessonStatus)) {
+                // Nếu đã hoàn thành, nút này có thể dùng để xem lại hoặc làm lại bài tập
                 openHomework();
             } else if (currentStep < 4) {
                 currentStep++;
@@ -79,11 +91,16 @@ public class LessonDetailActivity extends AppCompatActivity {
             }
         });
         
-        showOverview();
+        if ("COMPLETED".equals(lessonStatus)) {
+            showCompletedState();
+        } else {
+            showOverview();
+        }
     }
 
     private void setupMaterials() {
         if (llMaterialsContainer == null) return;
+        llMaterialsContainer.removeAllViews();
         String[] names = {"Màu nước", "Giấy vẽ", "Cọ vẽ", "Cốc nước"};
         int[] drawables = {R.drawable.mau_nuoc, R.drawable.giay_ve, R.drawable.co_ve, R.drawable.coc_nuoc};
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -97,12 +114,29 @@ public class LessonDetailActivity extends AppCompatActivity {
 
     private void showOverview() {
         currentStep = 0;
-        tvToolbarTitle.setText("Vẽ hoa màu nước");
         llStepProgress.setVisibility(View.GONE);
         llStepActions.setVisibility(View.GONE);
         llMaterialsSection.setVisibility(View.VISIBLE);
         btnMainAction.setText("Bắt đầu học");
-        btnMainAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF4272D0));
+        btnMainAction.setBackgroundTintList(ColorStateList.valueOf(0xFF4272D0));
+    }
+
+    private void showCompletedState() {
+        currentStep = 4;
+        llStepProgress.setVisibility(View.GONE);
+        llStepActions.setVisibility(View.GONE);
+        llMaterialsSection.setVisibility(View.VISIBLE);
+        
+        btnMainAction.setText("Đã hoàn thành");
+        btnMainAction.setBackgroundTintList(ColorStateList.valueOf(0xFF2ECC71)); // Màu xanh lá
+        
+        // Đánh dấu tất cả các bước đã hoàn thành (tích xanh)
+        for (int i = 0; i < 4; i++) {
+            stepChecks[i].setImageResource(R.drawable.circle_red_live);
+            stepChecks[i].setColorFilter(0xFF2ECC71); // Xanh lá
+            stepTexts[i].setTextColor(0xFF333333);
+            stepTexts[i].setTypeface(null, Typeface.NORMAL);
+        }
     }
 
     private void updateStepUI() {
@@ -124,13 +158,18 @@ public class LessonDetailActivity extends AppCompatActivity {
             int stepNum = i + 1;
             if (stepNum < currentStep) {
                 stepChecks[i].setImageResource(R.drawable.circle_red_live);
-                stepChecks[i].setColorFilter(0xFF4CAF50);
+                stepChecks[i].setColorFilter(0xFF2ECC71);
                 stepTexts[i].setTextColor(0xFF888888);
             } else if (stepNum == currentStep) {
                 stepChecks[i].setImageResource(R.drawable.circle_red_live);
                 stepChecks[i].setColorFilter(0xFF4272D0);
                 stepTexts[i].setTypeface(null, Typeface.BOLD);
                 stepTexts[i].setTextColor(0xFF1A237E);
+            } else {
+                stepChecks[i].setImageResource(R.drawable.circle_color);
+                stepChecks[i].clearColorFilter();
+                stepTexts[i].setTypeface(null, Typeface.NORMAL);
+                stepTexts[i].setTextColor(0xFF333333);
             }
         }
     }
@@ -148,7 +187,8 @@ public class LessonDetailActivity extends AppCompatActivity {
 
         dialog.findViewById(R.id.btn_later).setOnClickListener(v -> {
             dialog.dismiss();
-            setFinishedState();
+            lessonStatus = "COMPLETED";
+            showCompletedState();
         });
         dialog.show();
     }
@@ -156,21 +196,7 @@ public class LessonDetailActivity extends AppCompatActivity {
     private void openHomework() {
         Intent intent = new Intent(this, HomeworkActivity.class);
         startActivity(intent);
-        setFinishedState();
-    }
-
-    private void setFinishedState() {
-        isFinishedSteps = true;
-        currentStep = 4;
-        showOverview(); // Quay về giao diện tổng quan
-        btnMainAction.setText("Làm bài tập");
-        btnMainAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFF0B259));
-        
-        // Giữ các bước đã tích xanh
-        for (int i = 0; i < 4; i++) {
-            stepChecks[i].setImageResource(R.drawable.circle_red_live);
-            stepChecks[i].setColorFilter(0xFF4CAF50);
-            stepTexts[i].setTextColor(0xFF333333);
-        }
+        lessonStatus = "COMPLETED";
+        showCompletedState();
     }
 }

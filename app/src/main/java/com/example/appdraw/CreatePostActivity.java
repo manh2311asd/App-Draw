@@ -11,12 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CreatePostActivity extends AppCompatActivity {
 
@@ -25,16 +19,11 @@ public class CreatePostActivity extends AppCompatActivity {
     private View llPlaceholder;
     private EditText etCaption;
     private Uri selectedMediaUri;
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
-
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         ivMediaPreview = findViewById(R.id.iv_media_preview);
         llPlaceholder = findViewById(R.id.ll_add_media_placeholder);
@@ -81,43 +70,19 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private void uploadPost() {
         String caption = etCaption.getText().toString().trim();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        if (user == null) {
-            Toast.makeText(this, "Vui lòng đăng nhập để đăng bài", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         if (selectedMediaUri == null && caption.isEmpty()) {
             Toast.makeText(this, "Vui lòng thêm nội dung hoặc hình ảnh", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Show loading
+        // Tạm thời giả lập việc đăng bài không cần Firebase Auth/Database
         findViewById(R.id.btn_post).setEnabled(false);
-        Toast.makeText(this, "Đang tải bài viết lên cộng đồng...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Đang tải bài viết lên cộng đồng (Chế độ test)...", Toast.LENGTH_SHORT).show();
 
-        // Tạo dữ liệu bài viết
-        String postId = mDatabase.child("posts").push().getKey();
-        Map<String, Object> postData = new HashMap<>();
-        postData.put("postId", postId);
-        postData.put("userId", user.getUid());
-        postData.put("userName", user.getDisplayName() != null ? user.getDisplayName() : "Người dùng mới");
-        postData.put("caption", caption);
-        postData.put("timestamp", System.currentTimeMillis());
-        
-        // Lưu vào Firebase Database
-        if (postId != null) {
-            mDatabase.child("posts").child(postId).setValue(postData)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(CreatePostActivity.this, "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            findViewById(R.id.btn_post).setEnabled(true);
-                            Toast.makeText(CreatePostActivity.this, "Lỗi khi đăng bài", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
+        new android.os.Handler().postDelayed(() -> {
+            Toast.makeText(CreatePostActivity.this, "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+            finish();
+        }, 1500);
     }
 }

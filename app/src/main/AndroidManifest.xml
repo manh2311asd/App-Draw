@@ -78,6 +78,24 @@
         <activity
             android:name=".OtherUserProfileActivity"
             android:exported="false" />
+        <activity
+            android:name=".EventListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateProjectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateChallengeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChallengeGradingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChallengeEntryListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateEventActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FE">
+    android:background="#F0F4FF">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vẽ tranh ngày Trái Đất"
+                android:text="Nặn đất sét sáng tạo"
                 android:textColor="#1A1A1A"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -39,315 +39,355 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="80dp"
+        android:paddingBottom="100dp"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
-            <ImageView
+            <!-- Banner Image -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_challenge_banner"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ve_thien_nhien" />
+                android:layout_margin="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/banner_watercolor" />
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Joined Status Banner -->
+            <!-- Status Section (Ảnh 1 style) -->
             <LinearLayout
-                android:id="@+id/ll_joined_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#E8F5E9"
-                android:gravity="center_vertical"
-                android:padding="12dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/iv_status_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_explore"
-                    app:tint="#4CAF50" />
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="#E8F0FE"
+                android:layout_marginBottom="8dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_community"
+                        app:tint="#1A1A1A" />
                     <TextView
-                        android:id="@+id/tv_joined_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Trạng thái: Đã tham gia"
-                        android:textColor="#2E7D32"
-                        android:textStyle="bold" />
-
+                        android:layout_marginStart="8dp"
+                        android:text="Trạng thái: "
+                        android:textColor="#1A1A1A"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
                     <TextView
-                        android:id="@+id/tv_submission_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bài của bạn: Chưa nộp"
+                        android:text="Đã tham gia"
+                        android:textColor="#4CAF50"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="4dp"
+                        android:src="@android:drawable/checkbox_on_background"
+                        app:tint="#4CAF50" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_video"
+                        app:tint="#1A1A1A" />
+                    <TextView
+                        android:id="@+id/tv_submission_status_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Bài của bạn : Đã nộp . Đang chờ kết quả"
                         android:textColor="#666666"
                         android:textSize="12sp" />
                 </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/iv_status_check"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/checkbox_on_background"
-                    android:background="@drawable/circle_color"
-                    android:backgroundTint="#4CAF50"
-                    app:tint="#FFFFFF" />
             </LinearLayout>
 
-            <!-- Deadline -->
+            <!-- Deadline Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="#FFFFFF"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@android:drawable/ic_menu_myplaces"
-                    app:tint="#333333" />
-
-                <LinearLayout
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="#F8F9FE">
+                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
-
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@android:drawable/ic_menu_today"
+                        app:tint="#1A1A1A" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:text="Deadline"
                         android:textColor="#1A1A1A"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Kết thúc trong 3 ngày nữa"
-                        android:textColor="#666666" />
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
                 </LinearLayout>
-            </LinearLayout>
-
-            <!-- Rules -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:background="#FFFFFF"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_community"
-                        app:tint="#333333" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Luật chơi"
-                        android:textColor="#1A1A1A"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:lineSpacingExtra="4dp"
-                    android:text="• Vẽ 1 bức tranh về cây xanh hoặc rừng\n• Sử dụng kĩ thuật màu nước để hoàn thành tác phẩm\n• Tác phẩm phải tự tay sáng tạo, không được sao chép mẫu"
-                    android:textColor="#444444" />
-            </LinearLayout>
-
-            <!-- Prizes -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:background="#FFFFFF"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_home"
-                        app:tint="#333333" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Giải thưởng"
-                        android:textColor="#1A1A1A"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:cardCornerRadius="12dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#EEEEEE"
-                        app:cardElevation="0dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥇 Giải Nhất" android:textStyle="bold" android:textSize="12sp"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Huy hiệu vàng\n1 set màu nước" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#EEEEEE"
-                        app:cardElevation="0dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥈 Giải Nhì" android:textStyle="bold" android:textSize="12sp"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Huy hiệu bạc\nThưởng +30XP" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#EEEEEE"
-                        app:cardElevation="0dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥉 Giải Ba" android:textStyle="bold" android:textSize="12sp"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Huy hiệu Đồng\nThưởng +10XP" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Submissions -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:background="#FFFFFF"
-                android:orientation="vertical"
-                android:padding="16dp">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bài dự thi"
-                    android:textColor="#1A1A1A"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="26dp"
+                    android:text="Kết thúc trong 15 giờ tới"
+                    android:textColor="#666666"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" />
+
+            <!-- Rules Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        app:tint="#1A1A1A" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Luật chơi"
+                        android:textColor="#1A1A1A"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+                </LinearLayout>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="26dp" android:layout_marginTop="4dp" android:text="● Tác phẩm phải được làm từ đất sét" android:textSize="12sp" android:textColor="#333333" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="26dp" android:layout_marginTop="2dp" android:text="● Có thể dùng màu nước / sơn phủ" android:textSize="12sp" android:textColor="#333333" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="26dp" android:layout_marginTop="2dp" android:text="● Tác phẩm phải do bạn tự thực hiện" android:textSize="12sp" android:textColor="#333333" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" />
+
+            <!-- Rewards Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@android:drawable/btn_star_big_on"
+                        app:tint="#1A1A1A" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Giải thưởng"
+                        android:textColor="#1A1A1A"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
                     android:scrollbars="none">
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-
+                        <!-- Reward 1 -->
                         <com.google.android.material.card.MaterialCardView
-                            android:layout_width="160dp"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
                             app:cardCornerRadius="12dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="#EEEEEE">
-                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-                                <ImageView android:layout_width="match_parent" android:layout_height="100dp" android:scaleType="centerCrop" android:src="@drawable/ve_hoa_mau_nuoc"/>
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:text="Ngọc Mai" android:textSize="12sp" android:textStyle="bold"/>
+                            app:cardElevation="0dp"
+                            app:strokeColor="#FFD700"
+                            app:strokeWidth="1dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="8dp"
+                                android:gravity="center">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥇 Giải Nhất" android:textSize="10sp" android:textStyle="bold" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thưởng: +50 XP" android:textSize="9sp" android:layout_marginTop="4dp" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
-
+                        <!-- Reward 2 -->
                         <com.google.android.material.card.MaterialCardView
-                            android:layout_width="160dp"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="8dp"
                             app:cardCornerRadius="12dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="#EEEEEE">
-                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-                                <ImageView android:layout_width="match_parent" android:layout_height="100dp" android:scaleType="centerCrop" android:src="@drawable/tp_trending_1"/>
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:text="Long Vũ" android:textSize="12sp" android:textStyle="bold"/>
+                            app:cardElevation="0dp"
+                            app:strokeColor="#C0C0C0"
+                            app:strokeWidth="1dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="8dp"
+                                android:gravity="center">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥈 Giải Nhì" android:textSize="10sp" android:textStyle="bold" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thưởng: +30 XP" android:textSize="9sp" android:layout_marginTop="4dp" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
                 </HorizontalScrollView>
+            </LinearLayout>
 
-                <TextView
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" />
+
+            <!-- Entry Submission List -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_video"
+                        app:tint="#1A1A1A" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Bài dự thi"
+                        android:textColor="#1A1A1A"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Entry 1 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="12dp"
+                        app:strokeColor="#4272D0"
+                        app:strokeWidth="1dp">
+                        <include layout="@layout/item_challenge_entry_simple" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Entry 2 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:strokeColor="#DDDDDD"
+                        app:strokeWidth="1dp">
+                        <include layout="@layout/item_challenge_entry_simple" android:id="@+id/entry_2_preview" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_more_entries"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/rounded_bg_gray"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="6dp"
                     android:text="Xem thêm bài dự thi"
-                    android:textColor="#4272D0"
-                    android:textSize="12sp" />
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:background="@drawable/rounded_blue_gradient"
+                    android:paddingHorizontal="24dp"
+                    app:backgroundTint="@null" />
+
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_joined_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_submission_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Bài của bạn : Chưa nộp"
+            android:textColor="#1A1A1A"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit_challenge"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="NỘP BÀI"
+            app:cornerRadius="28dp"
+            app:backgroundTint="#4272D0" />
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_join_challenge"
@@ -356,24 +396,8 @@
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
         android:text="THAM GIA THỬ THÁCH"
-        android:textAllCaps="true"
-        android:backgroundTint="#006064"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        app:cornerRadius="28dp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_submit_challenge"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:text="NỘP BÀI"
-        android:textAllCaps="true"
-        android:backgroundTint="#4CAF50"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
         android:visibility="gone"
-        app:cornerRadius="28dp" />
+        app:cornerRadius="28dp"
+        app:backgroundTint="#4272D0" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

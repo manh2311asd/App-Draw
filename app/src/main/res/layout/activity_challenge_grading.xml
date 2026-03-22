@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FE">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_grading"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        app:navigationIcon="@drawable/ic_back">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thử thách"
+            android:textColor="#1A1A1A"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/btn_add_challenge_grading"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:src="@android:drawable/ic_input_add"
+            app:tint="#333333" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_grading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:tabIndicatorColor="#4272D0"
+        app:tabSelectedTextColor="#4272D0"
+        app:tabTextColor="#888888"
+        app:tabMode="scrollable">
+        <com.google.android.material.tabs.TabItem android:text="Tuần này" />
+        <com.google.android.material.tabs.TabItem android:text="Tháng này" />
+        <com.google.android.material.tabs.TabItem android:text="Đã kết thúc" />
+        <com.google.android.material.tabs.TabItem android:text="Chấm điểm" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:scrollbars="none"
+        android:background="#FFFFFF">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/rounded_bg_gray" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:text="Kỹ thuật ▾" android:textColor="#333333" android:textSize="12sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:background="@drawable/rounded_bg_gray" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:text="Vật liệu ▾" android:textColor="#333333" android:textSize="12sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:background="@drawable/rounded_bg_gray" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:text="Level ▾" android:textColor="#333333" android:textSize="12sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:background="@drawable/rounded_bg_gray" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:text="🔍 Lọc" android:textColor="#4272D0" android:textSize="12sp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+            <!-- Item 1: Vẽ tranh ngày Trái Đất -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_grading_earth_day"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="12dp">
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="120dp" android:layout_height="100dp" android:scaleType="centerCrop" android:src="@drawable/img_challenge_tree" app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"/>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vẽ tranh ngày Trái Đất" android:textColor="#1A1A1A" android:textStyle="bold" android:textSize="15sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Kết thúc trong 3 ngày tới" android:textColor="#888888" android:textSize="11sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="👥 1000 người đã tham gia" android:textColor="#888888" android:textSize="11sp" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_grade_earth_day"
+                            android:layout_width="wrap_content" android:layout_height="32dp" android:layout_gravity="end" android:layout_marginTop="4dp" android:text="Chấm điểm" android:textAllCaps="false" android:textSize="10sp" app:cornerRadius="16dp" android:insetTop="0dp" android:insetBottom="0dp" app:backgroundTint="#4272D0" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Item 2: Vẽ vật thể cái cốc -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_grading_cup"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" app:cardCornerRadius="16dp" app:cardElevation="2dp" app:strokeWidth="0dp"
+                android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="12dp">
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="120dp" android:layout_height="100dp" android:scaleType="centerCrop" android:src="@drawable/coc_nuoc" app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"/>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vẽ vật thể: cái cốc" android:textColor="#1A1A1A" android:textStyle="bold" android:textSize="15sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Kết thúc trong 3 ngày tới" android:textColor="#888888" android:textSize="11sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="👥 258 người đã tham gia" android:textColor="#888888" android:textSize="11sp" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_grade_cup"
+                            android:layout_width="wrap_content" android:layout_height="32dp" android:layout_gravity="end" android:layout_marginTop="4dp" android:text="Chấm điểm" android:textAllCaps="false" android:textSize="10sp" app:cornerRadius="16dp" android:insetTop="0dp" android:insetBottom="0dp" app:backgroundTint="#4272D0" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -33,6 +32,15 @@ public class ProfileActivity extends AppCompatActivity {
             if (tvName != null && otherName != null) {
                 tvName.setText(otherName);
             }
+        }
+
+        // Xử lý nút Trực tiếp
+        View llLiveStatus = findViewById(R.id.ll_live_status);
+        if (llLiveStatus != null) {
+            llLiveStatus.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfileActivity.this, LiveStreamActivity.class);
+                startActivity(intent);
+            });
         }
     }
 
@@ -123,8 +131,8 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Liên kết cá nhân", Toast.LENGTH_SHORT).show());
         
         if (llLogout != null) llLogout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+            // FirebaseAuth.getInstance().signOut(); // Tạm thời bỏ xác thực
+            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();

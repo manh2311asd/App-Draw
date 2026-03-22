@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -26,11 +27,20 @@ public class CalendarActivity extends AppCompatActivity {
         layoutEventsContent = findViewById(R.id.layout_events_content);
         tabLessons = findViewById(R.id.tab_lessons);
         tabEvents = findViewById(R.id.tab_events);
+        ImageView btnCreateEvent = findViewById(R.id.btn_create_event);
 
         // Nút quay lại trên Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_calendar);
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> finish());
+        }
+
+        // Xử lý nút cộng (+) để tạo sự kiện mới
+        if (btnCreateEvent != null) {
+            btnCreateEvent.setOnClickListener(v -> {
+                Intent intent = new Intent(this, CreateEventActivity.class);
+                startActivity(intent);
+            });
         }
 
         // Mặc định hiển thị Lịch học

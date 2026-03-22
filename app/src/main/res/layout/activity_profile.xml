@@ -77,6 +77,7 @@
                                 app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent" />
 
                             <LinearLayout
+                                android:id="@+id/ll_live_status"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
@@ -84,7 +85,9 @@
                                 android:backgroundTint="#FF4B4B"
                                 android:gravity="center_vertical"
                                 android:paddingHorizontal="10dp"
-                                android:paddingVertical="4dp">
+                                android:paddingVertical="4dp"
+                                android:clickable="true"
+                                android:focusable="true">
                                 <ImageView
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
@@ -252,7 +255,9 @@
                         android:text="Tác phẩm"
                         android:textColor="#4272D0"
                         android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                     <TextView
                         android:id="@+id/tab_post"
                         android:layout_width="0dp"
@@ -262,7 +267,9 @@
                         android:paddingVertical="10dp"
                         android:text="Bài viết"
                         android:textColor="#888888"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                     <TextView
                         android:id="@+id/tab_project"
                         android:layout_width="0dp"
@@ -272,7 +279,9 @@
                         android:paddingVertical="10dp"
                         android:text="Dự án"
                         android:textColor="#888888"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                     <TextView
                         android:id="@+id/tab_saved"
                         android:layout_width="0dp"
@@ -282,7 +291,9 @@
                         android:paddingVertical="10dp"
                         android:text="Đã lưu"
                         android:textColor="#888888"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                 </LinearLayout>
 
                 <View
