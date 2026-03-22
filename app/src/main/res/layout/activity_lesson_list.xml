@@ -10,135 +10,111 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         app:elevation="0dp">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dành cho người mới bắt đầu"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="Tất cả bài học gợi ý"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btn_filter"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="#333333" />
+            </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <!-- Filter Chips -->
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:scrollbars="none">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:src="@drawable/banner_watercolor"
-                android:scaleType="centerCrop"/>
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Liên quan nhất"
+                    app:chipBackgroundColor="@color/primary_blue"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mới nhất" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phổ biến" />
+
+                <com.google.android.material.chip.Chip
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dành cho bạn" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/lesson_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Beginner Pack"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Dành cho người mới bắt đầu khám phá thế giới nghệ thuật với 7 bài học &amp; 2 dự án đơn giản."
-                    android:textSize="14sp"
-                    android:textColor="#333333"
-                    android:layout_marginTop="6dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Beginner"
-                        android:textSize="11sp"
-                        android:paddingHorizontal="14dp"
-                        android:paddingVertical="6dp"
-                        android:background="@drawable/bg_status_pill"
-                        android:backgroundTint="#FFE082"
-                        android:textColor="#795548"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="7 lessons"
-                        android:textSize="11sp"
-                        android:paddingHorizontal="14dp"
-                        android:paddingVertical="6dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_status_pill"
-                        android:backgroundTint="#90CAF9"
-                        android:textColor="#1565C0"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2 projects"
-                        android:textSize="11sp"
-                        android:paddingHorizontal="14dp"
-                        android:paddingVertical="6dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_status_pill"
-                        android:backgroundTint="#F48FB1"
-                        android:textColor="#AD1457"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/lesson_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="24dp">
-
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_1"/>
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_2"/>
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_3"/>
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_4"/>
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_5"/>
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_6"/>
-                    <include layout="@layout/item_lesson_list" android:id="@+id/lesson_7"/>
-
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Xem tất cả"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="32dp"
-                    app:cornerRadius="12dp"
-                    android:backgroundTint="#FFE082"
-                    android:textColor="#795548"
-                    android:textAllCaps="false"
-                    android:textStyle="bold"
-                    app:icon="@drawable/ic_back"
-                    app:iconGravity="textEnd"
-                    app:iconTint="#795548"
-                    android:rotationY="180"/>
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_1" />
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_2" />
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_3" />
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_4" />
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_5" />
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_6" />
+                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_7" />
 
             </LinearLayout>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

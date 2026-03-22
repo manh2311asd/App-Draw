@@ -1,6 +1,7 @@
 package com.example.appdraw;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -50,12 +51,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_profile);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+            toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
     private void setupTabs() {
@@ -71,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
             tabPost.setTextColor(getResources().getColor(R.color.primary_blue));
             tabPost.setTypeface(null, android.graphics.Typeface.BOLD);
             findViewById(R.id.gl_artworks).setVisibility(View.GONE);
+            Toast.makeText(this, "Mục Bài viết", Toast.LENGTH_SHORT).show();
         });
 
         tabProject.setOnClickListener(v -> {
@@ -89,11 +93,12 @@ public class ProfileActivity extends AppCompatActivity {
             tabSaved.setTextColor(getResources().getColor(R.color.primary_blue));
             tabSaved.setTypeface(null, android.graphics.Typeface.BOLD);
             findViewById(R.id.gl_artworks).setVisibility(View.GONE);
+            Toast.makeText(this, "Mục Đã lưu", Toast.LENGTH_SHORT).show();
         });
     }
 
     private void resetTabs() {
-        int gray = getResources().getColor(R.color.text_gray);
+        int gray = Color.parseColor("#888888");
         tabArtwork.setTextColor(gray);
         tabArtwork.setTypeface(null, android.graphics.Typeface.NORMAL);
         tabPost.setTextColor(gray);
@@ -105,19 +110,19 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupSettings() {
-        llAccount.setOnClickListener(v -> 
+        if (llAccount != null) llAccount.setOnClickListener(v -> 
             Toast.makeText(this, "Cài đặt tài khoản", Toast.LENGTH_SHORT).show());
         
-        llEditProfile.setOnClickListener(v -> 
+        if (llEditProfile != null) llEditProfile.setOnClickListener(v -> 
             Toast.makeText(this, "Chỉnh sửa hồ sơ", Toast.LENGTH_SHORT).show());
         
-        llLanguage.setOnClickListener(v -> 
+        if (llLanguage != null) llLanguage.setOnClickListener(v -> 
             Toast.makeText(this, "Cài đặt ngôn ngữ", Toast.LENGTH_SHORT).show());
         
-        llPersonal.setOnClickListener(v -> 
+        if (llPersonal != null) llPersonal.setOnClickListener(v -> 
             Toast.makeText(this, "Liên kết cá nhân", Toast.LENGTH_SHORT).show());
         
-        llLogout.setOnClickListener(v -> {
+        if (llLogout != null) llLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

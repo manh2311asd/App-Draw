@@ -1,5 +1,6 @@
 package com.example.appdraw;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -43,6 +44,29 @@ public class CalendarActivity extends AppCompatActivity {
         if (tabEvents != null) {
             tabEvents.setOnClickListener(v -> showEventsTab());
         }
+
+        // --- Thiết lập sự kiện cho phần ĐĂNG KÝ (bên tab Sự kiện) ---
+        setupEventRegistration();
+    }
+
+    private void setupEventRegistration() {
+        // Nút Đăng ký sự kiện 1
+        View btnRegister1 = findViewById(R.id.btn_register_event_1);
+        if (btnRegister1 != null) {
+            btnRegister1.setOnClickListener(v -> {
+                Intent intent = new Intent(this, EventRegistrationSuccessActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        // Nút Đăng ký sự kiện 2
+        View btnRegister2 = findViewById(R.id.btn_register_event_2);
+        if (btnRegister2 != null) {
+            btnRegister2.setOnClickListener(v -> {
+                Intent intent = new Intent(this, EventRegistrationSuccessActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void showLessonsTab() {
@@ -52,13 +76,15 @@ public class CalendarActivity extends AppCompatActivity {
         // Cập nhật UI cho Tab "Lịch học" (Selected)
         if (tabLessons != null) {
             tabLessons.setBackgroundResource(R.drawable.bg_chip_selected);
-            tabLessons.getBackground().setTint(ContextCompat.getColor(this, R.color.primary_blue)); // Hoặc mã màu #4272D0
+            if (tabLessons.getBackground() != null) {
+                tabLessons.getBackground().setTint(ContextCompat.getColor(this, R.color.primary_blue));
+            }
             tabLessons.setTextColor(Color.WHITE);
         }
 
         // Cập nhật UI cho Tab "Sự kiện" (Unselected)
         if (tabEvents != null) {
-            tabEvents.setBackgroundResource(0); // Bỏ background
+            tabEvents.setBackgroundResource(0);
             tabEvents.setTextColor(Color.parseColor("#888888"));
         }
     }
@@ -70,7 +96,9 @@ public class CalendarActivity extends AppCompatActivity {
         // Cập nhật UI cho Tab "Sự kiện" (Selected)
         if (tabEvents != null) {
             tabEvents.setBackgroundResource(R.drawable.bg_chip_selected);
-            tabEvents.getBackground().setTint(ContextCompat.getColor(this, R.color.primary_blue));
+            if (tabEvents.getBackground() != null) {
+                tabEvents.getBackground().setTint(ContextCompat.getColor(this, R.color.primary_blue));
+            }
             tabEvents.setTextColor(Color.WHITE);
         }
 

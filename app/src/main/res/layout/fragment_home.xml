@@ -308,7 +308,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Bài học gợi ý" android:textStyle="bold" android:textSize="16sp" android:textColor="@color/text_dark"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Xem tất cả >" android:textSize="13sp" android:textColor="@color/text_dark"/>
+                <TextView
+                    android:id="@+id/tv_view_all_lessons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem tất cả >"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_dark"
+                    android:padding="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
             <HorizontalScrollView
@@ -341,8 +351,10 @@
                     android:text="Xem tất cả >"
                     android:textSize="13sp"
                     android:textColor="@color/text_dark"
+                    android:padding="4dp"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
@@ -396,7 +408,17 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Sự kiện sắp tới" android:textStyle="bold" android:textSize="16sp" android:textColor="@color/text_dark"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Xem tất cả >" android:textSize="13sp" android:textColor="@color/text_dark"/>
+                <TextView
+                    android:id="@+id/tv_view_all_events"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem tất cả >"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_dark"
+                    android:padding="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
             <HorizontalScrollView

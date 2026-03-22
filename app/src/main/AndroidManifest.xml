@@ -69,6 +69,15 @@
         <activity
             android:name=".CalendarActivity"
             android:exported="false" />
+        <activity
+            android:name=".EventRegistrationSuccessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TicketActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OtherUserProfileActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

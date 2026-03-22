@@ -24,10 +24,28 @@ public class HomeFragment extends Fragment {
             });
         }
 
+        TextView tvViewAllLessons = view.findViewById(R.id.tv_view_all_lessons);
+        if (tvViewAllLessons != null) {
+            tvViewAllLessons.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), LessonListActivity.class);
+                intent.putExtra("TITLE", "Tất cả bài học gợi ý");
+                startActivity(intent);
+            });
+        }
+
         TextView tvViewAllChallenges = view.findViewById(R.id.tv_view_all_challenges);
         if (tvViewAllChallenges != null) {
             tvViewAllChallenges.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), ChallengeActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        TextView tvViewAllEvents = view.findViewById(R.id.tv_view_all_events);
+        if (tvViewAllEvents != null) {
+            tvViewAllEvents.setOnClickListener(v -> {
+                // Điều hướng đến CalendarActivity làm nơi xem danh sách sự kiện
+                Intent intent = new Intent(getActivity(), CalendarActivity.class);
                 startActivity(intent);
             });
         }

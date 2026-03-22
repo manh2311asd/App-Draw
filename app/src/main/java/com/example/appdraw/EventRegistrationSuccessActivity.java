@@ -18,7 +18,8 @@ public class EventRegistrationSuccessActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btn_view_ticket).setOnClickListener(v -> {
-            // Logic to view ticket
+            Intent intent = new Intent(this, TicketActivity.class);
+            startActivity(intent);
         });
     }
 }
