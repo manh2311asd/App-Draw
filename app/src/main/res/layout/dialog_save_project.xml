@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -10,7 +11,7 @@
         android:id="@+id/txtTitleSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lưu dự án"
+        android:text="Lưu dự án sáng tạo"
         android:textSize="20sp"
         android:textStyle="bold"
         android:paddingBottom="16dp"
@@ -20,7 +21,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tên dự án"
+        android:text="Tên tác phẩm"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#5F6368"
@@ -30,41 +31,91 @@
         android:id="@+id/etProjectName"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:hint="Nhập tên dự án..."
+        android:hint="Ví dụ: Hoàng hôn trên đỉnh núi"
         android:background="@drawable/rounded_bg_white_border"
         android:padding="12dp"
         android:layout_marginTop="8dp"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:singleLine="true"/>
+
+    <!-- Phần Tiến độ dựa trên Checklist -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tiến độ hoàn thành"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#5F6368"/>
+        <TextView
+            android:id="@+id/tv_save_progress_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textColor="#1A73E8"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/pb_save_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:progress="0"
+        app:trackThickness="8dp"
+        app:trackCornerRadius="4dp"
+        app:indicatorColor="#1A73E8"/>
+
+    <!-- Checklist ngay trong Dialog Lưu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="12dp">
+        <CheckBox android:id="@+id/cb_save_step1" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Phác thảo ý tưởng" android:textSize="13sp"/>
+        <CheckBox android:id="@+id/cb_save_step2" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Chuẩn bị vật liệu" android:textSize="13sp"/>
+        <CheckBox android:id="@+id/cb_save_step3" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Vẽ nền" android:textSize="13sp"/>
+        <CheckBox android:id="@+id/cb_save_step4" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tô màu chính" android:textSize="13sp"/>
+        <CheckBox android:id="@+id/cb_save_step5" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Hoàn thiện chi tiết" android:textSize="13sp"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mô tả mục tiêu"
+        android:text="Ghi chú / Cảm xúc"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#5F6368"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="12dp"/>
 
     <EditText
         android:id="@+id/etProjectDesc"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:hint="Nhập mục tiêu dự án..."
+        android:layout_height="80dp"
+        android:hint="Cảm nhận của bạn về buổi vẽ hôm nay..."
         android:gravity="top"
         android:padding="12dp"
         android:background="@drawable/rounded_bg_white_border"
         android:layout_marginTop="8dp"
-        android:textSize="16sp"/>
+        android:textSize="15sp"/>
 
     <Button
         android:id="@+id/btnFinalSave"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="Lưu dự án"
+        android:text="Xác nhận lưu"
         android:backgroundTint="#1A73E8"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textAllCaps="false"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="20dp"
+        app:cornerRadius="12dp"/>
 </LinearLayout>

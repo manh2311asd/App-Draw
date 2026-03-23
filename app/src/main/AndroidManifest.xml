@@ -96,6 +96,33 @@
         <activity
             android:name=".CreateEventActivity"
             android:exported="false" />
+        <activity
+            android:name=".LiveStreamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ArtistDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProjectListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreatePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterInterestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterLevelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DoingProjectDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TrendingDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

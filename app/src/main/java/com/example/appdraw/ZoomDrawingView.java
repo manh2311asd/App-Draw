@@ -29,6 +29,7 @@ public class ZoomDrawingView extends View {
         public final Path path;
         public final Paint paint;
         public Bitmap fillBitmap;
+        public boolean isClearMarker = false;
 
         public Stroke(Path path, Paint paint) {
             this.path = path;
@@ -39,6 +40,12 @@ public class ZoomDrawingView extends View {
             this.path = null;
             this.paint = null;
             this.fillBitmap = fillBitmap;
+        }
+
+        public Stroke(boolean isClearMarker) {
+            this.path = null;
+            this.paint = null;
+            this.isClearMarker = isClearMarker;
         }
     }
 
@@ -136,7 +143,9 @@ public class ZoomDrawingView extends View {
                 }
 
                 for (Stroke s : layer.strokes) {
-                    if (s.fillBitmap != null) {
+                    if (s.isClearMarker) {
+                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    } else if (s.fillBitmap != null) {
                         // Luôn dùng bitmapPaint để ảnh không bị vỡ khi zoom
                         canvas.drawBitmap(s.fillBitmap, 0, 0, bitmapPaint);
                     } else if (s.path != null) {
@@ -237,7 +246,8 @@ public class ZoomDrawingView extends View {
         Canvas canvas = new Canvas(bitmap);
         Layer layer = getActiveLayer();
         for (Stroke s : layer.strokes) {
-            if (s.fillBitmap != null) canvas.drawBitmap(s.fillBitmap, 0, 0, bitmapPaint);
+            if (s.isClearMarker) canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            else if (s.fillBitmap != null) canvas.drawBitmap(s.fillBitmap, 0, 0, bitmapPaint);
             else canvas.drawPath(s.path, s.paint);
         }
         int targetColor = bitmap.getPixel(x, y);
@@ -374,6 +384,14 @@ public class ZoomDrawingView extends View {
             activeLayer.strokes.clear();
             activeLayer.undone.clear();
             currentPath = null;
+            invalidate();
+        }
+    }
+    public void clearCanvasUndoable() {
+        Layer activeLayer = getActiveLayer();
+        if (activeLayer != null) {
+            activeLayer.undone.clear();
+            activeLayer.strokes.add(new Stroke(true));
             invalidate();
         }
     }

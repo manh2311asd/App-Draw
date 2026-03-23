@@ -47,6 +47,7 @@
                     android:textSize="17sp"
                     android:textStyle="bold"/>
                 <TextView
+                    android:id="@+id/tv_post_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="20 phút trước"
@@ -71,6 +72,7 @@
 
         <!-- Content -->
         <TextView
+            android:id="@+id/tv_post_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -87,6 +89,7 @@
             app:strokeColor="#4CAF50"
             app:strokeWidth="1dp">
             <ImageView
+                android:id="@+id/iv_post_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -168,6 +171,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_related_lesson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"

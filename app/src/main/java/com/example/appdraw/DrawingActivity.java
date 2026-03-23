@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -24,9 +26,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +45,10 @@ public class DrawingActivity extends AppCompatActivity {
     private View toolPen, toolEraser, toolFill;
     private int selectedColor = Color.BLACK;
     private int selectedOpacity = 100;
+    private String selectedBrushType = "Bút chì";
+    
+    private int penClickCount = 0;
+    private Handler penClickHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +81,22 @@ public class DrawingActivity extends AppCompatActivity {
         SeekBar seekSize = findViewById(R.id.seekSize);
         SeekBar seekOpacity = findViewById(R.id.seekOpacity);
 
-        // Tool Listeners
+        // Tool Listeners - Double click for Brush Settings
         toolPen.setOnClickListener(v -> {
+            // Select tool immediately for better feedback
             if (drawingView.isEraser() || drawingView.isFillMode()) {
                 selectTool("pen");
-            } else {
+            }
+
+            penClickCount++;
+            if (penClickCount == 1) {
+                penClickHandler.postDelayed(() -> {
+                    penClickCount = 0;
+                }, 300); // 300ms window for double click
+            } else if (penClickCount == 2) {
+                // Double Click logic
                 showBrushSettingsDialog();
+                penClickCount = 0;
             }
         });
         
@@ -88,7 +107,14 @@ public class DrawingActivity extends AppCompatActivity {
 
         toolEraser.setOnClickListener(v -> selectTool("eraser"));
         toolFill.setOnClickListener(v -> selectTool("fill"));
-        toolClear.setOnClickListener(v -> showConfirmClearDialog());
+        
+        // Thùng rác: Xóa thành trang trắng nhưng cho phép Undo (Quay lại)
+        if (toolClear != null) {
+            toolClear.setOnClickListener(v -> {
+                drawingView.clearCanvasUndoable();
+                Toast.makeText(this, "Đã xóa bảng vẽ (Có thể hoàn tác)", Toast.LENGTH_SHORT).show();
+            });
+        }
 
         btnUndo.setOnClickListener(v -> drawingView.undo());
         btnRedo.setOnClickListener(v -> drawingView.redo());
@@ -160,7 +186,7 @@ public class DrawingActivity extends AppCompatActivity {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
             lp.copyFrom(window.getAttributes());
-            lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9); // Chiếm 90% chiều rộng màn hình
+            lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             window.setAttributes(lp);
         }
@@ -179,6 +205,17 @@ public class DrawingActivity extends AppCompatActivity {
         
         View labelDesc = dialog.findViewById(R.id.etProjectDesc);
         if (labelDesc != null) labelDesc.setVisibility(View.GONE);
+        
+        View progressArea = dialog.findViewById(R.id.pb_save_progress);
+        if (progressArea != null && progressArea.getParent() instanceof View) {
+             ((View)progressArea.getParent()).setVisibility(View.GONE);
+        }
+        dialog.findViewById(R.id.pb_save_progress).setVisibility(View.GONE);
+        dialog.findViewById(R.id.cb_save_step1).setVisibility(View.GONE);
+        dialog.findViewById(R.id.cb_save_step2).setVisibility(View.GONE);
+        dialog.findViewById(R.id.cb_save_step3).setVisibility(View.GONE);
+        dialog.findViewById(R.id.cb_save_step4).setVisibility(View.GONE);
+        dialog.findViewById(R.id.cb_save_step5).setVisibility(View.GONE);
 
         Button btnYes = dialog.findViewById(R.id.btnFinalSave);
         if (btnYes != null) {
@@ -294,6 +331,34 @@ public class DrawingActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_brush_settings);
         setupWideDialog(dialog);
 
+        // --- Brush Selection Logic ---
+        ViewGroup[] brushes = new ViewGroup[]{
+                dialog.findViewById(R.id.brush1), dialog.findViewById(R.id.brush2),
+                dialog.findViewById(R.id.brush3), dialog.findViewById(R.id.brush4),
+                dialog.findViewById(R.id.brush5), dialog.findViewById(R.id.brush6),
+                dialog.findViewById(R.id.brush7), dialog.findViewById(R.id.brush8)
+        };
+
+        for (ViewGroup brush : brushes) {
+            if (brush == null) continue;
+            
+            // Set initial selection
+            TextView tv = (TextView) brush.getChildAt(1);
+            if (tv != null && tv.getText().toString().equals(selectedBrushType)) {
+                brush.setBackgroundResource(R.drawable.selected_tool_bg);
+            }
+
+            brush.setOnClickListener(v -> {
+                for (ViewGroup b : brushes) if (b != null) b.setBackgroundResource(0);
+                v.setBackgroundResource(R.drawable.selected_tool_bg);
+                selectedBrushType = ((TextView) ((ViewGroup) v).getChildAt(1)).getText().toString();
+                Toast.makeText(this, "Đã chọn: " + selectedBrushType, Toast.LENGTH_SHORT).show();
+                
+                // Khi người dùng chủ động chọn loại bút trong dialog, chuyển sang chế độ bút
+                selectTool("pen");
+            });
+        }
+
         View viewCurrentColor = dialog.findViewById(R.id.viewCurrentColor);
         TextView txtColorHex = dialog.findViewById(R.id.txtColorHex);
         SeekBar seekBrushOpacity = dialog.findViewById(R.id.seekBrushOpacity);
@@ -307,6 +372,9 @@ public class DrawingActivity extends AppCompatActivity {
             btnDialogColorPicker.setOnClickListener(v -> showColorPickerDialog(color -> {
                 if (viewCurrentColor != null) viewCurrentColor.setBackgroundColor(color);
                 if (txtColorHex != null) txtColorHex.setText(String.format("#%06X", (0xFFFFFF & color)));
+                
+                // Khi đổi màu, chuyển sang chế độ bút
+                selectTool("pen");
             }));
         }
 
@@ -316,11 +384,16 @@ public class DrawingActivity extends AppCompatActivity {
                 drawingView.setBrushOpacityPercent(selectedOpacity);
                 ((SeekBar)findViewById(R.id.seekOpacity)).setProgress(selectedOpacity);
             }
-            selectTool("pen");
+            // Không tự động gọi selectTool("pen") khi lưu cài đặt chung (như độ mờ)
+            // để giữ nguyên trạng thái nếu người dùng đang dùng tẩy.
             dialog.dismiss();
         });
 
         dialog.findViewById(R.id.btnCancelBrush).setOnClickListener(v -> dialog.dismiss());
+        if (dialog.findViewById(R.id.btnBackBrush) != null) {
+            dialog.findViewById(R.id.btnBackBrush).setOnClickListener(v -> dialog.dismiss());
+        }
+
         dialog.show();
     }
 
@@ -354,6 +427,27 @@ public class DrawingActivity extends AppCompatActivity {
         setupWideDialog(dialog);
 
         EditText et = dialog.findViewById(R.id.etProjectName);
+        LinearProgressIndicator pbSave = dialog.findViewById(R.id.pb_save_progress);
+        TextView tvPercent = dialog.findViewById(R.id.tv_save_progress_percent);
+        
+        CheckBox[] checkBoxes = new CheckBox[]{
+                dialog.findViewById(R.id.cb_save_step1),
+                dialog.findViewById(R.id.cb_save_step2),
+                dialog.findViewById(R.id.cb_save_step3),
+                dialog.findViewById(R.id.cb_save_step4),
+                dialog.findViewById(R.id.cb_save_step5)
+        };
+
+        for (CheckBox cb : checkBoxes) {
+            cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                int checkedCount = 0;
+                for (CheckBox c : checkBoxes) if (c.isChecked()) checkedCount++;
+                int percent = (checkedCount * 100) / checkBoxes.length;
+                if (pbSave != null) pbSave.setProgress(percent);
+                if (tvPercent != null) tvPercent.setText(percent + "%");
+            });
+        }
+
         dialog.findViewById(R.id.btnFinalSave).setOnClickListener(v -> {
             String name = et.getText().toString();
             if (name.isEmpty()) name = "Bản vẽ mới";

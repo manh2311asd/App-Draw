@@ -20,12 +20,16 @@
             android:textStyle="bold"
             android:textColor="#333333"/>
         <ImageView
+            android:id="@+id/btn_notifications_community"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@android:drawable/ic_popup_reminder"
-            app:tint="#333333"/>
+            app:tint="#333333"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
     </RelativeLayout>
 
     <!-- Tabs (Khám phá, Tác phẩm, etc.) -->
@@ -41,6 +45,7 @@
             android:orientation="horizontal"
             android:paddingHorizontal="16dp">
             <TextView
+                android:id="@+id/tv_comm_explore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Khám phá"
@@ -48,28 +53,42 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:background="@drawable/selected_tool_bg"/>
+                android:background="@drawable/selected_tool_bg"
+                android:clickable="true"
+                android:focusable="true"/>
             <TextView
+                android:id="@+id/tv_comm_works"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tác phẩm"
                 android:textColor="#888888"
                 android:textSize="16sp"
-                android:padding="12dp"/>
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
             <TextView
+                android:id="@+id/tv_comm_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tiến độ"
                 android:textColor="#888888"
                 android:textSize="16sp"
-                android:padding="12dp"/>
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
             <TextView
+                android:id="@+id/tv_comm_tips"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tips"
                 android:textColor="#888888"
                 android:textSize="16sp"
-                android:padding="12dp"/>
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -90,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/chip_comm_topic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Chủ đề"
@@ -97,8 +117,11 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:focusable="true"/>
                 <TextView
+                    android:id="@+id/chip_comm_watercolor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Màu nước"
@@ -106,8 +129,12 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:textColor="#666666"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
                 <TextView
+                    android:id="@+id/chip_comm_sketch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phác thảo"
@@ -117,7 +144,9 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:textColor="#795548"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:focusable="true"/>
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -128,6 +157,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
             <TextView
+                android:id="@+id/tv_comm_filter_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đang lọc : Phác thảo ✕"
@@ -135,9 +165,12 @@
                 android:textColor="#333333"
                 android:background="@drawable/rounded_bg_white_border"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"/>
+                android:paddingVertical="4dp"
+                android:clickable="true"
+                android:focusable="true"/>
             <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
             <TextView
+                android:id="@+id/tv_comm_sort"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mới nhất ▼"
@@ -145,7 +178,9 @@
                 android:textColor="#333333"
                 android:background="@drawable/rounded_bg_white_border"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"/>
+                android:paddingVertical="4dp"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
     </LinearLayout>
 

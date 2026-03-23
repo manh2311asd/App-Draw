@@ -25,6 +25,11 @@ public class ProfileActivity extends AppCompatActivity {
         setupTabs();
         setupSettings();
 
+        // Kiểm tra xem có yêu cầu mở tab Dự án không
+        if (getIntent().getBooleanExtra("OPEN_PROJECT_TAB", false)) {
+            openProjectTab();
+        }
+
         // Check if viewing other user profile
         if (getIntent().getBooleanExtra("IS_OTHER_USER", false)) {
             String otherName = getIntent().getStringExtra("USER_NAME");
@@ -86,11 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         tabProject.setOnClickListener(v -> {
-            resetTabs();
-            tabProject.setTextColor(getResources().getColor(R.color.primary_blue));
-            tabProject.setTypeface(null, android.graphics.Typeface.BOLD);
-            findViewById(R.id.gl_artworks).setVisibility(View.GONE);
-            
+            openProjectTab();
             // Chuyển sang trang danh sách dự án
             Intent intent = new Intent(ProfileActivity.this, ProjectListActivity.class);
             startActivity(intent);
@@ -103,6 +104,13 @@ public class ProfileActivity extends AppCompatActivity {
             findViewById(R.id.gl_artworks).setVisibility(View.GONE);
             Toast.makeText(this, "Mục Đã lưu", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void openProjectTab() {
+        resetTabs();
+        tabProject.setTextColor(getResources().getColor(R.color.primary_blue));
+        tabProject.setTypeface(null, android.graphics.Typeface.BOLD);
+        findViewById(R.id.gl_artworks).setVisibility(View.GONE);
     }
 
     private void resetTabs() {
@@ -131,7 +139,6 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Liên kết cá nhân", Toast.LENGTH_SHORT).show());
         
         if (llLogout != null) llLogout.setOnClickListener(v -> {
-            // FirebaseAuth.getInstance().signOut(); // Tạm thời bỏ xác thực
             Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

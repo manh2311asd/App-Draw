@@ -1,404 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F0F4FF">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#F0F4FF"
-        app:elevation="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_projects"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:contentInsetStartWithNavigation="0dp"
-            app:navigationIcon="@drawable/ic_back">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dự án của tôi"
-                android:textColor="#1A1A1A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <!-- Background Pattern -->
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:scaleType="centerCrop"
+        android:src="@drawable/backgroud_app_draw"
+        android:alpha="0.6"/>
 
-        <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
-            <!-- Toggle Tabs -->
-            <com.google.android.material.card.MaterialCardView
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_projects"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#DDDDDD"
-                app:strokeWidth="1dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/tab_doing"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_chip_selected"
-                        android:backgroundTint="#F0B259"
-                        android:gravity="center"
-                        android:text="Đang làm"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/tab_completed"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Đã hoàn thành"
-                        android:textColor="#888888" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_height="?attr/actionBarSize"
+                app:contentInsetStartWithNavigation="0dp"
+                app:navigationIcon="@drawable/ic_back">
 
-            <!-- Projects Grid -->
-            <GridLayout
-                android:id="@+id/gl_project_list"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dự án của tôi"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:alignmentMode="alignMargins"
-                android:columnOrderPreserved="false">
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp">
 
-                <!-- Project Item 1: Tranh núi sơn dầu (Completed) -->
+                <!-- Tab Switcher -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_project_rose"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginBottom="24dp"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#DDDDDD"
+                    app:strokeWidth="1dp">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/tp_trending_1" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tranh núi sơn dầu"
-                                android:textColor="#1A1A1A"
-                                android:textStyle="bold"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Progress"
-                                android:textColor="#888888"
-                                android:textSize="11sp" />
-                            <com.google.android.material.progressindicator.LinearProgressIndicator
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:progress="100"
-                                app:indicatorColor="#4272D0"
-                                app:trackColor="#EEEEEE"
-                                app:trackThickness="4dp"
-                                app:trackCornerRadius="2dp" />
-                        </LinearLayout>
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tab_doing"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_chip_selected"
+                            android:backgroundTint="#F0B259"
+                            android:gravity="center"
+                            android:text="Đang làm"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tab_completed"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Đã hoàn thành"
+                            android:textColor="#666666"
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Project Item 2: Tranh cây cảnh -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_project_tree"
-                    android:layout_width="0dp"
+                <!-- Doing Projects List (Visible by default) -->
+                <GridLayout
+                    android:id="@+id/gl_projects_doing"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ve_thien_nhien" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tranh cây cảnh"
-                                android:textColor="#1A1A1A"
-                                android:textStyle="bold"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Progress"
-                                android:textColor="#888888"
-                                android:textSize="11sp" />
-                            <com.google.android.material.progressindicator.LinearProgressIndicator
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:progress="70"
-                                app:indicatorColor="#4272D0"
-                                app:trackColor="#EEEEEE"
-                                app:trackThickness="4dp"
-                                app:trackCornerRadius="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:columnCount="2"
+                    android:alignmentMode="alignMargins"
+                    android:columnOrderPreserved="false"
+                    android:visibility="visible">
 
-                <!-- Project Item 3 -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ve_hoa_mau_nuoc" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cảnh biển"
-                                android:textColor="#1A1A1A"
-                                android:textStyle="bold"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Progress"
-                                android:textColor="#888888"
-                                android:textSize="11sp" />
-                            <com.google.android.material.progressindicator.LinearProgressIndicator
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:progress="30"
-                                app:indicatorColor="#4272D0"
-                                app:trackColor="#EEEEEE"
-                                app:trackThickness="4dp"
-                                app:trackCornerRadius="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <!-- Project 1: Tranh núi sơn dầu -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_1"/>
 
-                <!-- Project Item 4 -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/tp_trending_3" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cảnh hoàng hôn"
-                                android:textColor="#1A1A1A"
-                                android:textStyle="bold"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Progress"
-                                android:textColor="#888888"
-                                android:textSize="11sp" />
-                            <com.google.android.material.progressindicator.LinearProgressIndicator
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:progress="85"
-                                app:indicatorColor="#4272D0"
-                                app:trackColor="#EEEEEE"
-                                app:trackThickness="4dp"
-                                app:trackCornerRadius="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <!-- Project 2: Tranh cây cảnh -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_2"/>
 
-                <!-- Project Item 5 -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/banner_watercolor" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Màu nước trừu tượng"
-                                android:textColor="#1A1A1A"
-                                android:textStyle="bold"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Progress"
-                                android:textColor="#888888"
-                                android:textSize="11sp" />
-                            <com.google.android.material.progressindicator.LinearProgressIndicator
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:progress="45"
-                                app:indicatorColor="#4272D0"
-                                app:trackColor="#EEEEEE"
-                                app:trackThickness="4dp"
-                                app:trackCornerRadius="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <!-- Project 3: Cảnh biển -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_3"/>
 
-                <!-- Project Item 6 -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/img_challenge_tree" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Mầm cây"
-                                android:textColor="#1A1A1A"
-                                android:textStyle="bold"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Progress"
-                                android:textColor="#888888"
-                                android:textSize="11sp" />
-                            <com.google.android.material.progressindicator.LinearProgressIndicator
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:progress="20"
-                                app:indicatorColor="#4272D0"
-                                app:trackColor="#EEEEEE"
-                                app:trackThickness="4dp"
-                                app:trackCornerRadius="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <!-- Project 4: Cảnh hoàng hôn -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_4"/>
 
-            </GridLayout>
+                    <!-- Project 5: Tranh núi sơn dầu 2 -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_5"/>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                    <!-- Project 6: Mầm cây -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_6"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_project"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#F0B259"
-        app:tint="#FFFFFF"
-        app:elevation="6dp" />
+                    <!-- Project 7 -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_7" android:visibility="gone"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    <!-- Project 8 -->
+                    <include layout="@layout/item_project_card" android:id="@+id/proj_8" android:visibility="gone"/>
+
+                </GridLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="100dp"/>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_project"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="24dp"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="#F0B259"
+            app:tint="#FFFFFF"
+            app:elevation="6dp"
+            app:fabSize="normal" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

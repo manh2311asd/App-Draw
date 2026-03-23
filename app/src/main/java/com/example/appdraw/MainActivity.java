@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvHome, tvExplore, tvCommunity, tvProfile;
     private FloatingActionButton fabDraw;
     private int primaryBlue, textGray;
+    private int currentNavIndex = 0; // Lưu vị trí tab hiện tại
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,13 @@ public class MainActivity extends AppCompatActivity {
         // Mặc định load HomeFragment
         loadFragment(new HomeFragment());
         updateUI(0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Khi quay lại từ ProfileActivity, đảm bảo UI khớp với Fragment đang hiển thị (Home/Explore...)
+        updateUI(currentNavIndex);
     }
     
     private void setupNavigation() {
@@ -55,19 +63,22 @@ public class MainActivity extends AppCompatActivity {
         fabDraw = findViewById(R.id.fab_draw);
         
         navHome.setOnClickListener(v -> {
+            currentNavIndex = 0;
             loadFragment(new HomeFragment());
             updateUI(0);
         });
         navExplore.setOnClickListener(v -> {
+            currentNavIndex = 1;
             loadFragment(new ExploreFragment());
             updateUI(1);
         });
         navCommunity.setOnClickListener(v -> {
+            currentNavIndex = 2;
             loadFragment(new CommunityFragment());
             updateUI(2);
         });
         navProfile.setOnClickListener(v -> {
-            updateUI(3);
+            // Không gọi updateUI(3) ở đây để tránh làm sáng icon Hồ sơ trong khi vẫn ở MainActivity
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         });

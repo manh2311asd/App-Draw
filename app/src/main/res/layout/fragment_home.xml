@@ -15,6 +15,7 @@
         android:gravity="center_vertical">
 
         <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_avatar_home"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@android:drawable/ic_menu_myplaces"
@@ -31,6 +32,7 @@
             android:orientation="vertical"
             android:layout_marginStart="12dp">
             <TextView
+                android:id="@+id/tv_greeting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chào Phong!"
@@ -247,6 +249,7 @@
                         </LinearLayout>
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_join_live"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:text="Tham gia"
@@ -475,8 +478,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <include layout="@layout/item_event_preview"/>
-                    <include layout="@layout/item_event_preview" />
+                    <include android:id="@+id/layout_event_1" layout="@layout/item_event_preview"/>
+                    <include android:id="@+id/layout_event_2" layout="@layout/item_event_preview" />
                     <include layout="@layout/item_event_preview" />
                 </LinearLayout>
             </HorizontalScrollView>
