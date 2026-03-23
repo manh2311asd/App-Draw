@@ -301,7 +301,9 @@ public class ZoomDrawingView extends View {
     private void updatePaint() {
         if (eraserMode) {
             currentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            currentPaint.setAlpha(0);
+            // Không setAlpha(0) vì Mode.CLEAR sẽ xóa pixel bất kể alpha.
+            // Để giữ nguyên tính chất của tẩy, chúng ta dùng alpha tối đa.
+            currentPaint.setAlpha(255); 
         } else {
             currentPaint.setXfermode(null);
             currentPaint.setColor(brushColor);
@@ -336,6 +338,7 @@ public class ZoomDrawingView extends View {
     }
     public void setBrushColor(int color) {
         this.brushColor = color;
+        // KHÔNG tự động tắt eraserMode ở đây để tránh bị chuyển về bút khi không muốn
         updatePaint();
         invalidate();
     }
@@ -347,18 +350,19 @@ public class ZoomDrawingView extends View {
     public void setBrushOpacityPercent(int percent) {
         int p = Math.max(0, Math.min(100, percent));
         this.brushAlpha = (int) (255f * (p / 100f));
+        // KHÔNG tự động tắt eraserMode ở đây
         updatePaint();
         invalidate();
     }
     public void setEraser(boolean enabled) {
         this.eraserMode = enabled;
-        this.fillMode = false;
+        if (enabled) this.fillMode = false;
         updatePaint();
         invalidate();
     }
     public void setFillMode(boolean enabled) {
         this.fillMode = enabled;
-        this.eraserMode = false;
+        if (enabled) this.eraserMode = false;
         invalidate();
     }
     public boolean isEraser() { return eraserMode; }

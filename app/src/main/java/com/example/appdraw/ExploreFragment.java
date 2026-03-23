@@ -10,10 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.chip.Chip;
 
 public class ExploreFragment extends Fragment {
 
@@ -22,23 +19,7 @@ public class ExploreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
 
-        // --- Navigation Tabs ---
-        setupNavigationTabs(view);
-
-        // --- Category Chips ---
-        setupCategoryChips(view);
-
-        // --- Filter and Sort ---
-        View tvFilterStatus = view.findViewById(R.id.tv_filter_status);
-        if (tvFilterStatus != null) {
-            tvFilterStatus.setOnClickListener(v -> Toast.makeText(getContext(), "Xóa bộ lọc", Toast.LENGTH_SHORT).show());
-        }
-        View tvSortNewest = view.findViewById(R.id.tv_sort_newest);
-        if (tvSortNewest != null) {
-            tvSortNewest.setOnClickListener(v -> Toast.makeText(getContext(), "Sắp xếp: Mới nhất", Toast.LENGTH_SHORT).show());
-        }
-
-        // --- Other existing logic ---
+        // --- Search Bar ---
         View cardSearch = view.findViewById(R.id.card_search);
         if (cardSearch != null) {
             cardSearch.setOnClickListener(v -> {
@@ -47,11 +28,10 @@ public class ExploreFragment extends Fragment {
             });
         }
 
-        ImageView ivFilter = view.findViewById(R.id.iv_filter_explore);
-        if (ivFilter != null) {
-            ivFilter.setOnClickListener(v -> showFilterDialog());
-        }
+        // --- Category Chips ---
+        setupCategoryChips(view);
 
+        // --- Banner ---
         View btnExploreNow = view.findViewById(R.id.btn_explore_now);
         if (btnExploreNow != null) {
             btnExploreNow.setOnClickListener(v -> {
@@ -66,66 +46,16 @@ public class ExploreFragment extends Fragment {
         return view;
     }
 
-    private void setupNavigationTabs(View view) {
-        TextView tvExplore = view.findViewById(R.id.tv_nav_explore);
-        TextView tvWorks = view.findViewById(R.id.tv_nav_works);
-        TextView tvProgress = view.findViewById(R.id.tv_nav_progress);
-        TextView tvTips = view.findViewById(R.id.tv_nav_tips);
-
-        View.OnClickListener tabListener = v -> {
-            String text = ((TextView) v).getText().toString();
-            Toast.makeText(getContext(), "Chọn: " + text, Toast.LENGTH_SHORT).show();
-            updateTabSelection((TextView) v, tvExplore, tvWorks, tvProgress, tvTips);
-        };
-
-        if (tvExplore != null) {
-            tvExplore.setClickable(true);
-            tvExplore.setFocusable(true);
-            tvExplore.setOnClickListener(tabListener);
-        }
-        if (tvWorks != null) {
-            tvWorks.setClickable(true);
-            tvWorks.setFocusable(true);
-            tvWorks.setOnClickListener(tabListener);
-        }
-        if (tvProgress != null) {
-            tvProgress.setClickable(true);
-            tvProgress.setFocusable(true);
-            tvProgress.setOnClickListener(tabListener);
-        }
-        if (tvTips != null) {
-            tvTips.setClickable(true);
-            tvTips.setFocusable(true);
-            tvTips.setOnClickListener(tabListener);
-        }
-    }
-
-    private void updateTabSelection(TextView selected, TextView... others) {
-        int blueColor = ContextCompat.getColor(requireContext(), R.color.primary_blue);
-        int grayColor = ContextCompat.getColor(requireContext(), R.color.text_gray);
-
-        for (TextView tab : others) {
-            if (tab == null) continue;
-            if (tab == selected) {
-                tab.setTextColor(blueColor);
-                tab.setTypeface(null, android.graphics.Typeface.BOLD);
-                tab.setBackgroundResource(R.drawable.bg_chip_selected);
-            } else {
-                tab.setTextColor(grayColor);
-                tab.setTypeface(null, android.graphics.Typeface.NORMAL);
-                tab.setBackground(null);
-            }
-        }
-    }
-
     private void setupCategoryChips(View view) {
         View chipTopic = view.findViewById(R.id.chip_topic);
-        View chipWatercolor = view.findViewById(R.id.chip_watercolor);
-        View chipSketch = view.findViewById(R.id.chip_sketch);
+        View chipTechnique = view.findViewById(R.id.chip_technique);
+        View chipMaterials = view.findViewById(R.id.chip_materials);
+        View chipLevel = view.findViewById(R.id.chip_level);
 
         if (chipTopic != null) chipTopic.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Chủ đề", Toast.LENGTH_SHORT).show());
-        if (chipWatercolor != null) chipWatercolor.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Màu nước", Toast.LENGTH_SHORT).show());
-        if (chipSketch != null) chipSketch.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Phác thảo", Toast.LENGTH_SHORT).show());
+        if (chipTechnique != null) chipTechnique.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Kỹ thuật", Toast.LENGTH_SHORT).show());
+        if (chipMaterials != null) chipMaterials.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Vật liệu", Toast.LENGTH_SHORT).show());
+        if (chipLevel != null) chipLevel.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Level", Toast.LENGTH_SHORT).show());
     }
 
     private void setupDummyData(View view) {
@@ -176,7 +106,7 @@ public class ExploreFragment extends Fragment {
 
         // --- Cấu hình Nghệ sĩ nổi bật ---
         setupArtist(view.findViewById(R.id.artist_1), "Hoàng Lam", R.drawable.nghe_si_hoang_lam, 
-            "Nghệ sĩ Hoàng Lam là một trong những họa sĩ màu nước hàng đầu với hơn 10 năm kinh nghiệm. Anh nổi tiếng with phong cách vẽ thiên nhiên đầy sống động và cảm xúc.");
+            "Nghệ sĩ Hoàng Lam là một trong những họa sĩ màu nước hàng đầu với hơn 10 năm kinh nghiệm. Anh nổi tiếng với phong cách vẽ thiên nhiên đầy sống động và cảm xúc.");
         
         setupArtist(view.findViewById(R.id.artist_2), "Liên Ninh", R.drawable.nghe_si_lien_ninh, 
             "Nghệ sĩ Liên Ninh chuyên về phong cách vẽ minh họa hoa lá và chân dung. Cô có cách phối màu nhẹ nhàng, thanh lịch, mang lại cảm giác bình yên.");
@@ -229,12 +159,5 @@ public class ExploreFragment extends Fragment {
             intent.putExtra("ARTIST_BIO", bio);
             startActivity(intent);
         });
-    }
-
-    private void showFilterDialog() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_filter, null);
-        bottomSheetDialog.setContentView(dialogView);
-        bottomSheetDialog.show();
     }
 }

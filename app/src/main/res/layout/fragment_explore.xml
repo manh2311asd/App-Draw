@@ -11,139 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Top Navigation Tabs -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_marginBottom="16dp">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tv_nav_explore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Khám phá"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#4272D0"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="@drawable/bg_chip_selected"/>
-                <TextView
-                    android:id="@+id/tv_nav_works"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tác phẩm"
-                    android:textSize="18sp"
-                    android:textColor="#888888"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-                <TextView
-                    android:id="@+id/tv_nav_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tiến độ"
-                    android:textSize="18sp"
-                    android:textColor="#888888"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-                <TextView
-                    android:id="@+id/tv_nav_tips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tips"
-                    android:textSize="18sp"
-                    android:textColor="#888888"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- Category Chips from Image -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_marginBottom="12dp">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_topic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chủ đề"
-                    app:chipBackgroundColor="#5C6BC0"
-                    android:textColor="#FFFFFF"
-                    app:chipStrokeWidth="0dp"/>
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_watercolor"
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Màu nước"
-                    app:chipBackgroundColor="#FFFFFF"
-                    app:chipStrokeColor="#DDDDDD"
-                    app:chipStrokeWidth="1dp"/>
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_sketch"
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Phác thảo"
-                    app:chipBackgroundColor="#FFE082"
-                    app:chipStrokeWidth="0dp"/>
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- Filter Status Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:id="@+id/tv_filter_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đang lọc : Phác thảo X"
-                android:textSize="14sp"
-                android:textColor="#4272D0"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:background="@drawable/rounded_bg_blue_border"/>
-            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
-            <TextView
-                android:id="@+id/tv_sort_newest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mới nhất ▼"
-                android:textSize="14sp"
-                android:textColor="#333333"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:background="@drawable/rounded_bg_blue_border"/>
-        </LinearLayout>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -158,8 +25,8 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_search"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            app:cardCornerRadius="24dp"
+            android:layout_height="44dp"
+            app:cardCornerRadius="22dp"
             app:cardElevation="2dp"
             app:strokeWidth="0dp">
             <LinearLayout
@@ -170,8 +37,8 @@
                 android:paddingHorizontal="16dp"
                 android:background="#FFFFFF">
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:src="@drawable/ic_search"
                     app:tint="#888888"/>
                 <TextView
@@ -179,27 +46,82 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Tìm bài học, dự án..."
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     android:layout_marginStart="12dp"
                     android:textColor="#9E9E9E"/>
-
                 <ImageView
-                    android:id="@+id/iv_filter_explore"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@android:drawable/ic_menu_sort_by_size"
-                    app:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:src="@android:drawable/ic_btn_speak_now"
                     app:tint="#888888"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Watercolor Week Banner -->
+        <!-- Category Chips -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:scrollbars="none">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/chip_topic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chủ đề"
+                    android:background="@drawable/bg_chip_selected"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_technique"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kỹ thuật"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/rounded_bg_white"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="#666666"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_materials"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vật liệu"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/rounded_bg_white"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="#666666"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Level"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/rounded_bg_white"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="#666666"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Banner -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="180dp"
@@ -207,24 +129,20 @@
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:strokeWidth="0dp">
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/banner_watercolor"
                     android:scaleType="centerCrop"/>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
                     android:padding="20dp">
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -233,7 +151,6 @@
                         android:textStyle="italic"
                         android:textColor="#4834DF"
                         android:fontFamily="serif"/>
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -244,7 +161,6 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:lineSpacingExtra="2dp"/>
-
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_explore_now"
                         android:layout_width="wrap_content"
@@ -276,7 +192,7 @@
                 android:text="Chủ đề"
                 android:textStyle="bold"
                 android:textColor="#333333"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -295,11 +211,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <include layout="@layout/item_explore_category" android:id="@+id/topic_1"/>
                 <include layout="@layout/item_explore_category" android:id="@+id/topic_2"/>
                 <include layout="@layout/item_explore_category" android:id="@+id/topic_3"/>
-
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -317,7 +231,7 @@
                 android:text="Nghệ sĩ nổi bật"
                 android:textStyle="bold"
                 android:textColor="#333333"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -356,7 +270,7 @@
                 android:text="Tác phẩm Trending"
                 android:textStyle="bold"
                 android:textColor="#333333"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
