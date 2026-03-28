@@ -5,46 +5,34 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.FragmentTransaction;
+import com.example.appdraw.community.CommunityFragment;
+import com.example.appdraw.drawing.DrawingActivity;
+import com.example.appdraw.explore.ExploreFragment;
+import com.example.appdraw.main.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private View navHome, navExplore, navCommunity, navProfile;
     private ImageView ivHome, ivExplore, ivCommunity, ivProfile;
     private TextView tvHome, tvExplore, tvCommunity, tvProfile;
-    private FloatingActionButton fabDraw;
-    private int primaryBlue, textGray;
-    private int currentNavIndex = 0; // Lưu vị trí tab hiện tại
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        primaryBlue = ContextCompat.getColor(this, R.color.primary_blue);
-        textGray = ContextCompat.getColor(this, R.color.text_gray);
-
+        initViews();
         setupNavigation();
 
-        // Mặc định load HomeFragment
+        // Default fragment
         loadFragment(new HomeFragment());
-        updateUI(0);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Khi quay lại từ ProfileActivity, đảm bảo UI khớp với Fragment đang hiển thị (Home/Explore...)
-        updateUI(currentNavIndex);
-    }
-    
-    private void setupNavigation() {
+    private void initViews() {
         navHome = findViewById(R.id.nav_home);
         navExplore = findViewById(R.id.nav_explore);
         navCommunity = findViewById(R.id.nav_community);
@@ -60,88 +48,56 @@ public class MainActivity extends AppCompatActivity {
         tvCommunity = findViewById(R.id.tv_community);
         tvProfile = findViewById(R.id.tv_profile);
 
-        fabDraw = findViewById(R.id.fab_draw);
-        
-        navHome.setOnClickListener(v -> {
-            currentNavIndex = 0;
-            loadFragment(new HomeFragment());
-            updateUI(0);
-        });
-        navExplore.setOnClickListener(v -> {
-            currentNavIndex = 1;
-            loadFragment(new ExploreFragment());
-            updateUI(1);
-        });
-        navCommunity.setOnClickListener(v -> {
-            currentNavIndex = 2;
-            loadFragment(new CommunityFragment());
-            updateUI(2);
-        });
-        navProfile.setOnClickListener(v -> {
-            // Không gọi updateUI(3) ở đây để tránh làm sáng icon Hồ sơ trong khi vẫn ở MainActivity
-            Intent intent = new Intent(this, ProfileActivity.class);
+        findViewById(R.id.fab_draw).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DrawingActivity.class);
             startActivity(intent);
         });
-
-        if (fabDraw != null) {
-            fabDraw.setOnClickListener(v -> {
-                showCreatePostOptions();
-            });
-        }
     }
 
-    private void showCreatePostOptions() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_options, null);
-        bottomSheetDialog.setContentView(dialogView);
-
-        dialogView.findViewById(R.id.ll_option_draw).setOnClickListener(v -> {
-            bottomSheetDialog.dismiss();
-            startActivity(new Intent(this, DrawingActivity.class));
+    private void setupNavigation() {
+        navHome.setOnClickListener(v -> {
+            loadFragment(new HomeFragment());
+            updateNavUI(0);
         });
 
-        dialogView.findViewById(R.id.ll_option_post).setOnClickListener(v -> {
-            bottomSheetDialog.dismiss();
-            startActivity(new Intent(this, CreatePostActivity.class));
+        navExplore.setOnClickListener(v -> {
+            loadFragment(new ExploreFragment());
+            updateNavUI(1);
         });
 
-        bottomSheetDialog.show();
+        navCommunity.setOnClickListener(v -> {
+            loadFragment(new CommunityFragment());
+            updateNavUI(2);
+        });
+
+        navProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
     }
 
-    private void updateUI(int index) {
-        ivHome.setColorFilter(textGray);
-        tvHome.setTextColor(textGray);
-        ivExplore.setColorFilter(textGray);
-        tvExplore.setTextColor(textGray);
-        ivCommunity.setColorFilter(textGray);
-        tvCommunity.setTextColor(textGray);
-        ivProfile.setColorFilter(textGray);
-        tvProfile.setTextColor(textGray);
+    private void updateNavUI(int selectedIndex) {
+        int activeColor = ContextCompat.getColor(this, R.color.primary_blue);
+        int inactiveColor = ContextCompat.getColor(this, R.color.text_gray);
 
-        switch (index) {
-            case 0:
-                ivHome.setColorFilter(primaryBlue);
-                tvHome.setTextColor(primaryBlue);
-                break;
-            case 1:
-                ivExplore.setColorFilter(primaryBlue);
-                tvExplore.setTextColor(primaryBlue);
-                break;
-            case 2:
-                ivCommunity.setColorFilter(primaryBlue);
-                tvCommunity.setTextColor(primaryBlue);
-                break;
-            case 3:
-                ivProfile.setColorFilter(primaryBlue);
-                tvProfile.setTextColor(primaryBlue);
-                break;
-        }
+        ivHome.setColorFilter(selectedIndex == 0 ? activeColor : inactiveColor);
+        tvHome.setTextColor(selectedIndex == 0 ? activeColor : inactiveColor);
+
+        ivExplore.setColorFilter(selectedIndex == 1 ? activeColor : inactiveColor);
+        tvExplore.setTextColor(selectedIndex == 1 ? activeColor : inactiveColor);
+
+        ivCommunity.setColorFilter(selectedIndex == 2 ? activeColor : inactiveColor);
+        tvCommunity.setTextColor(selectedIndex == 2 ? activeColor : inactiveColor);
+
+        // Profile is an activity, so we don't necessarily "select" it in the same way here 
+        // if it stays on top of MainActivity, but we can reset the colors anyway.
+        ivProfile.setColorFilter(inactiveColor);
+        tvProfile.setTextColor(inactiveColor);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.appdraw;
+package com.example.appdraw.main;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -7,13 +7,25 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.example.appdraw.LiveStreamActivity;
+import com.example.appdraw.NotificationsActivity;
+import com.example.appdraw.ProfileActivity;
+import com.example.appdraw.R;
+import com.example.appdraw.challenge.ChallengeActivity;
+import com.example.appdraw.challenge.ChallengeDetailActivity;
+import com.example.appdraw.drawing.DrawingActivity;
+import com.example.appdraw.event.CalendarActivity;
+import com.example.appdraw.event.EventListActivity;
+import com.example.appdraw.explore.LessonDetailActivity;
+import com.example.appdraw.explore.LessonListActivity;
+import com.example.appdraw.explore.SearchActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class HomeFragment extends Fragment {

@@ -1,4 +1,4 @@
-package com.example.appdraw;
+package com.example.appdraw.explore;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import com.example.appdraw.HomeworkActivity;
+import com.example.appdraw.R;
 
 public class LessonDetailActivity extends AppCompatActivity {
 

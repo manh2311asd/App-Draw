@@ -19,6 +19,7 @@
             app:navigationIcon="@drawable/ic_back">
 
             <TextView
+                android:id="@+id/tv_challenge_detail_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nặn đất sét sáng tạo"

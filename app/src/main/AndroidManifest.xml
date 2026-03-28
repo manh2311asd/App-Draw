@@ -22,106 +22,106 @@
         </activity>
 
         <activity
-            android:name=".LoginOptionsActivity"
+            android:name=".auth.LoginOptionsActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".auth.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".DrawingActivity"
+            android:name=".drawing.DrawingActivity"
             android:exported="false" />
         <activity
-            android:name=".LessonListActivity"
+            android:name=".explore.LessonListActivity"
             android:exported="false" />
         <activity
-            android:name=".LessonDetailActivity"
+            android:name=".explore.LessonDetailActivity"
             android:exported="false" />
         <activity
             android:name=".HomeworkActivity"
             android:exported="false" />
         <activity
-            android:name=".PostDetailActivity"
+            android:name=".community.PostDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ProjectDetailActivity"
+            android:name=".project.ProjectDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ChallengeActivity"
+            android:name=".challenge.ChallengeActivity"
             android:exported="false" />
         <activity
-            android:name=".ChallengeDetailActivity"
+            android:name=".challenge.ChallengeDetailActivity"
             android:exported="false" />
         <activity
             android:name=".NotificationsActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".explore.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".CalendarActivity"
+            android:name=".event.CalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".EventRegistrationSuccessActivity"
+            android:name=".event.EventRegistrationSuccessActivity"
             android:exported="false" />
         <activity
-            android:name=".TicketActivity"
+            android:name=".event.TicketActivity"
             android:exported="false" />
         <activity
-            android:name=".OtherUserProfileActivity"
+            android:name=".community.OtherUserProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".EventListActivity"
+            android:name=".event.EventListActivity"
             android:exported="false" />
         <activity
             android:name=".CreateProjectActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateChallengeActivity"
+            android:name=".challenge.CreateChallengeActivity"
             android:exported="false" />
         <activity
-            android:name=".ChallengeGradingActivity"
+            android:name=".challenge.ChallengeGradingActivity"
             android:exported="false" />
         <activity
-            android:name=".ChallengeEntryListActivity"
+            android:name=".challenge.ChallengeEntryListActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateEventActivity"
+            android:name=".event.CreateEventActivity"
             android:exported="false" />
         <activity
             android:name=".LiveStreamActivity"
             android:exported="false" />
         <activity
-            android:name=".ArtistDetailActivity"
+            android:name=".explore.ArtistDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ProjectListActivity"
+            android:name=".project.ProjectListActivity"
             android:exported="false" />
         <activity
-            android:name=".CreatePostActivity"
+            android:name=".community.CreatePostActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterProfileActivity"
+            android:name=".auth.RegisterProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterInterestsActivity"
+            android:name=".auth.RegisterInterestsActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterLevelActivity"
+            android:name=".auth.RegisterLevelActivity"
             android:exported="false" />
         <activity
-            android:name=".DoingProjectDetailActivity"
+            android:name=".project.DoingProjectDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".TrendingDetailActivity"
+            android:name=".explore.TrendingDetailActivity"
             android:exported="false" />
     </application>
 
