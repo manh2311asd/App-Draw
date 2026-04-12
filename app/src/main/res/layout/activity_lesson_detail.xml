@@ -51,36 +51,60 @@
                 app:strokeWidth="2dp">
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ImageView
-                        android:id="@+id/iv_lesson_thumbnail"
+                    android:layout_height="match_parent"
+                    android:background="#000000">
+
+                    <VideoView
+                        android:id="@+id/video_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/banner_watercolor" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#1A000000"/>
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
                         android:layout_gravity="center"
-                        android:src="@android:drawable/ic_media_play"
-                        android:background="@drawable/circle_color_bg"
-                        android:backgroundTint="#80FFFFFF"
-                        android:padding="12dp"
-                        app:tint="#333333" />
+                        android:visibility="gone"/>
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="bottom|end"
-                        android:layout_margin="16dp"
-                        android:src="@android:drawable/ic_menu_zoom"
-                        app:tint="#FFFFFF"/>
+                    <FrameLayout
+                        android:id="@+id/fl_video_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/iv_lesson_thumbnail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/banner_watercolor" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#33000000"/>
+
+                        <ImageView
+                            android:id="@+id/iv_play_button"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_gravity="center"
+                            android:src="@android:drawable/ic_media_play"
+                            android:background="@drawable/circle_color_bg"
+                            android:backgroundTint="#80FFFFFF"
+                            android:padding="12dp"
+                            app:tint="#333333" />
+
+                        <ProgressBar
+                            android:id="@+id/pb_video_loading"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:indeterminateTint="#FFFFFF"
+                            android:visibility="gone"/>
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="bottom|end"
+                            android:layout_margin="16dp"
+                            android:src="@android:drawable/ic_menu_zoom"
+                            app:tint="#FFFFFF"/>
+                    </FrameLayout>
 
                     <!-- Progress bar for Step 1/4 -->
                     <LinearLayout
@@ -206,6 +230,7 @@
                     android:orientation="horizontal"
                     android:visibility="gone">
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_checklist"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
                         android:layout_weight="1"
@@ -217,6 +242,7 @@
                         app:icon="@drawable/ic_search" />
                     <View android:layout_width="16dp" android:layout_height="1dp" />
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_notes"
                         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                         android:layout_width="0dp"
                         android:layout_height="56dp"
@@ -276,7 +302,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/rounded_bg_white_border"
+                    android:background="@drawable/rounded_bg_white"
+                    android:elevation="4dp"
+                    android:paddingVertical="8dp"
                     android:orientation="vertical">
 
                     <!-- Step Item 1 -->
@@ -285,29 +313,54 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="16dp">
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="16dp"
+                        android:background="?attr/selectableItemBackground">
                         <ImageView
                             android:id="@+id/iv_step1_check"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/circle_color" />
-                        <TextView
-                            android:id="@+id/tv_step1_text"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_step_pending" />
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
                             android:layout_weight="1"
-                            android:text="Bước 1: Chuẩn bị dụng cụ"
-                            android:textColor="#333333"
-                            android:textSize="17sp"
-                            android:textStyle="bold"/>
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_media_play"
-                            app:tint="#4272D0" />
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:text="Bước 1"
+                                android:textSize="12sp"
+                                android:textColor="#4272D0"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:id="@+id/tv_step1_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chuẩn bị dụng cụ"
+                                android:textColor="#192A56"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardBackgroundColor="#F4F7FB"
+                            app:cardElevation="0dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_media_play"
+                                app:tint="#4272D0" />
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F4FA" android:layout_marginHorizontal="20dp"/>
 
                     <!-- Step Item 2 -->
                     <LinearLayout
@@ -315,28 +368,54 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="16dp">
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="16dp"
+                        android:background="?attr/selectableItemBackground">
                         <ImageView
                             android:id="@+id/iv_step2_check"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/circle_color" />
-                        <TextView
-                            android:id="@+id/tv_step2_text"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_step_pending" />
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
                             android:layout_weight="1"
-                            android:text="Bước 2: Phác thảo hình dạng hoa"
-                            android:textColor="#333333"
-                            android:textSize="17sp" />
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_media_play"
-                            app:tint="#808080" />
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:text="Bước 2"
+                                android:textSize="12sp"
+                                android:textColor="#4272D0"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:id="@+id/tv_step2_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Phác thảo hình dạng hoa"
+                                android:textColor="#192A56"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardBackgroundColor="#F4F7FB"
+                            app:cardElevation="0dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_media_play"
+                                app:tint="#4272D0" />
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F4FA" android:layout_marginHorizontal="20dp"/>
 
                     <!-- Step Item 3 -->
                     <LinearLayout
@@ -344,28 +423,54 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="16dp">
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="16dp"
+                        android:background="?attr/selectableItemBackground">
                         <ImageView
                             android:id="@+id/iv_step3_check"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/circle_color" />
-                        <TextView
-                            android:id="@+id/tv_step3_text"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_step_pending" />
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
                             android:layout_weight="1"
-                            android:text="Bước 3: Tô màu lớp nền"
-                            android:textColor="#333333"
-                            android:textSize="17sp" />
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_media_play"
-                            app:tint="#808080" />
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:text="Bước 3"
+                                android:textSize="12sp"
+                                android:textColor="#4272D0"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:id="@+id/tv_step3_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tô màu lớp nền"
+                                android:textColor="#192A56"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardBackgroundColor="#F4F7FB"
+                            app:cardElevation="0dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_media_play"
+                                app:tint="#4272D0" />
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F4FA" android:layout_marginHorizontal="20dp"/>
 
                     <!-- Step Item 4 -->
                     <LinearLayout
@@ -373,26 +478,51 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="16dp">
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="16dp"
+                        android:background="?attr/selectableItemBackground">
                         <ImageView
                             android:id="@+id/iv_step4_check"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/circle_color" />
-                        <TextView
-                            android:id="@+id/tv_step4_text"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_step_pending" />
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
                             android:layout_weight="1"
-                            android:text="Bước 4: Hoàn thiện và thêm chi tiết"
-                            android:textColor="#333333"
-                            android:textSize="17sp" />
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_media_play"
-                            app:tint="#808080" />
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:text="Bước 4"
+                                android:textSize="12sp"
+                                android:textColor="#4272D0"
+                                android:textStyle="bold"
+                                android:textAllCaps="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:id="@+id/tv_step4_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hoàn thiện và thêm chi tiết"
+                                android:textColor="#192A56"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardBackgroundColor="#F4F7FB"
+                            app:cardElevation="0dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_media_play"
+                                app:tint="#4272D0" />
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
                 </LinearLayout>
 

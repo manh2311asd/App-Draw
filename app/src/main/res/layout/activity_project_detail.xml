@@ -1,207 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F0F2F5">
 
-    <!-- Background Pattern -->
-    <ImageView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/backgroud_app_draw"
-        android:alpha="0.6"/>
+        android:layout_height="320dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@android:color/transparent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp">
+            android:layout_height="match_parent"
+            app:contentScrim="#4272D0"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:titleCollapseMode="fade">
+
+            <ImageView
+                android:id="@+id/iv_project_cover_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/backgroud_app_draw"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7" />
+
+            <!-- Dark gradient over the image -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_dark_bottom"
+                app:layout_collapseMode="pin"/>
+
+            <!-- Project Details Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:padding="24dp"
+                app:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/tv_project_title_expanded"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên sổ vẽ"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="0"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"/>
+
+                <TextView
+                    android:id="@+id/tv_project_desc_expanded"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Sổ vẽ này dùng để chứa các kiệt tác của tôi."
+                    android:textColor="#EEEEEE"
+                    android:textSize="14sp"
+                    android:maxLines="3"
+                    android:ellipsize="end" />
+            </LinearLayout>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_project_detail"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_back">
-
                 <TextView
                     android:id="@+id/tv_project_title_toolbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tranh sơn dầu"
-                    android:textColor="#333333"
+                    android:text=""
+                    android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingBottom="120dp">
+    <!-- Artworks Background layer -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/backgroud_app_draw"
+        android:alpha="0.2"/>
 
-                <!-- Main Image -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="240dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:strokeWidth="0dp">
-                    <ImageView
-                        android:id="@+id/iv_project_main"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/tp_trending_1" />
-                </com.google.android.material.card.MaterialCardView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_artworks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-                <!-- Project Info Section -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/rounded_bg_white"
-                    android:padding="16dp">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_artwork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#4272D0"
+        app:tint="#FFFFFF"
+        app:elevation="6dp"/>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:src="@android:drawable/ic_menu_recent_history"
-                            app:tint="#333333"/>
-                        <TextView
-                            android:id="@+id/tv_done_date_detail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="Hoàn thành ngày: 20/12/2023"
-                            android:textColor="#333333"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:src="@android:drawable/ic_menu_edit"
-                            app:tint="#333333"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="Chất liệu: Sơn dầu"
-                            android:textColor="#333333"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="top"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_marginTop="2dp"
-                            android:src="@android:drawable/ic_dialog_info"
-                            app:tint="#333333"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="Mô tả:"
-                            android:textColor="#333333"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="4dp"
-                        android:text="Bức tranh tái hiện khung cảnh núi non hùng vĩ bên hồ nước tĩnh lặng vào một buổi chiều dịu nhẹ. Tông màu xanh lam và tím nhạt được sử dụng để tạo chiều sâu cho dãy núi phía xa, trong khi các mảng màu vàng nhạt ở tiền cảnh giúp bức tranh trở nên ấm áp và cân bằng hơn.\nMình tập trung vào việc xử lý ánh sáng phản chiếu trên mặt hồ để tạo cảm giác yên bình và thư giãn."
-                        android:textColor="#555555"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-
-        <!-- Bottom Action Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="Sửa lại dự án"
-                    android:textAllCaps="false"
-                    android:textSize="13sp"
-                    app:backgroundTint="#F0B259"
-                    app:cornerRadius="24dp"
-                    app:icon="@android:drawable/ic_menu_edit"
-                    app:iconSize="16dp"/>
-
-                <View android:layout_width="12dp" android:layout_height="1dp"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="Chia sẻ tác phẩm"
-                    android:textAllCaps="false"
-                    android:textSize="13sp"
-                    app:backgroundTint="#2ECC71"
-                    app:cornerRadius="24dp"
-                    app:icon="@android:drawable/ic_menu_share"
-                    app:iconSize="16dp"/>
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="12dp"
-                android:text="Xóa dự án"
-                android:textAllCaps="false"
-                android:textSize="13sp"
-                app:backgroundTint="#FF4B4B"
-                app:cornerRadius="24dp"
-                app:icon="@android:drawable/ic_menu_delete"
-                app:iconSize="16dp"/>
-        </LinearLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

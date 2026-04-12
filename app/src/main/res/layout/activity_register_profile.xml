@@ -1,179 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F4FF">
+    android:background="@drawable/backgroud_app_draw">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp">
 
     <TextView
-        android:id="@+id/tv_profile_setup_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:layout_marginTop="32dp"
         android:text="Hồ sơ người dùng"
         android:textColor="#1A1A1A"
         android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textStyle="bold" />
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_profile_next"
-        app:layout_constraintTop_toBottomOf="@id/tv_profile_setup_title">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="32dp">
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="24dp">
 
-            <RelativeLayout
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="0dp">
+                <ImageView
                     android:id="@+id/iv_setup_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:src="@android:drawable/ic_menu_myplaces"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"
-                    android:background="#E1F5FE"
-                    android:padding="16dp"
-                    app:tint="#4272D0"/>
+                    android:background="#BBDEFB"
+                    android:padding="20dp"
+                    app:tint="#FFFFFF"/>
+            </androidx.cardview.widget.CardView>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
-                    android:src="@android:drawable/ic_menu_add"
-                    app:tint="#333333"/>
-            </RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:text="Thêm ảnh"
-                android:textColor="#666666"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Họ và tên"
-                android:textColor="#1A1A1A"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_setup_fullname"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="8dp"
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:src="@android:drawable/ic_menu_add"
                 android:background="@drawable/rounded_bg_white"
-                android:hint="Nhập tên của bạn..."
-                android:paddingHorizontal="16dp"
-                android:textSize="14sp" />
+                app:tint="#333333"/>
+        </RelativeLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Giới thiệu bản thân"
-                android:textColor="#1A1A1A"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Thêm ảnh"
+            android:textColor="#666666"
+            android:textSize="12sp" />
+    </LinearLayout>
 
-            <EditText
-                android:id="@+id/et_setup_bio"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_bg_white"
-                android:gravity="top"
-                android:hint="Chia sẻ vài dòng về bản thân bạn"
-                android:padding="16dp"
-                android:textSize="14sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Họ và tên"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Sở thích của bạn"
-                android:textColor="#1A1A1A"
-                android:textStyle="bold" />
+    <EditText
+        android:id="@+id/et_setup_fullname"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_bg_white"
+        android:hint="Nhập tên của bạn..."
+        android:paddingHorizontal="16dp"
+        android:inputType="text"
+        android:textSize="14sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_bg_gray"
-                    android:backgroundTint="#E8F5E9"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="Vẽ tranh"
-                    android:textColor="#4CAF50"
-                    android:textSize="12sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/rounded_bg_gray"
-                    android:backgroundTint="#FFEBEE"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="Học kí họa"
-                    android:textColor="#F44336"
-                    android:textSize="12sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/rounded_bg_gray"
-                    android:backgroundTint="#E1F5FE"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="Thủ công"
-                    android:textColor="#03A9F4"
-                    android:textSize="12sp" />
-            </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Giới thiệu bản thân"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_bg_white"
-                android:hint="Khác..."
-                android:paddingHorizontal="16dp"
-                android:textSize="14sp" />
+    <EditText
+        android:id="@+id/et_setup_bio"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_bg_white"
+        android:gravity="top"
+        android:hint="Chia sẻ vài dòng về bản thân bạn"
+        android:padding="16dp"
+        android:inputType="textMultiLine"
+        android:textSize="14sp" />
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    <!-- Filler to push button down -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_profile_next"
-        android:layout_width="match_parent"
+        android:layout_width="160dp"
         android:layout_height="56dp"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginBottom="40dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="32dp"
         android:text="Tiếp tục"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:backgroundTint="#4272D0"
-        app:cornerRadius="16dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:backgroundTint="#3B69D6"
+        app:cornerRadius="12dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
+
+    <!-- Rèm đen phủ mờ khóa tương tác khi tài -->
+    <RelativeLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg_white"
+            android:padding="24dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_centerInParent="true">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="#3B69D6"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đang lưu hồ sơ..."
+                android:textColor="#333333"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

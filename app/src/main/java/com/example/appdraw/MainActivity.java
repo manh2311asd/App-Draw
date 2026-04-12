@@ -30,6 +30,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Default fragment
         loadFragment(new HomeFragment());
+        checkNavigationIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        checkNavigationIntent(intent);
+    }
+
+    private void checkNavigationIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("NAVIGATE_TO_COMMUNITY", false)) {
+            navCommunity.performClick();
+        }
     }
 
     private void initViews() {
@@ -49,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         tvProfile = findViewById(R.id.tv_profile);
 
         findViewById(R.id.fab_draw).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DrawingActivity.class);
+            Intent intent = new Intent(MainActivity.this, com.example.appdraw.community.CreatePostActivity.class);
             startActivity(intent);
         });
     }

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -48,6 +50,12 @@
         <activity
             android:name=".community.PostDetailActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".community.FullScreenImageActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />

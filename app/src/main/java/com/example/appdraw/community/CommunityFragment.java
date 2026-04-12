@@ -36,114 +36,169 @@ public class CommunityFragment extends Fragment {
             });
         }
 
-        // --- Tabs ---
-        setupTabs(view);
 
-        // --- Category Chips ---
-        setupCategoryChips(view);
-
-        // --- Filter and Sort ---
-        View tvFilterStatus = view.findViewById(R.id.tv_comm_filter_status);
-        if (tvFilterStatus != null) {
-            tvFilterStatus.setOnClickListener(v -> Toast.makeText(getContext(), "Xóa bộ lọc", Toast.LENGTH_SHORT).show());
-        }
-        View tvSort = view.findViewById(R.id.tv_comm_sort);
-        if (tvSort != null) {
-            tvSort.setOnClickListener(v -> Toast.makeText(getContext(), "Sắp xếp: Mới nhất", Toast.LENGTH_SHORT).show());
-        }
 
         // --- Post Feed ---
         LinearLayout postContainer = view.findViewById(R.id.ll_post_container);
         if (postContainer != null) {
-            View postView = inflater.inflate(R.layout.item_post, postContainer, false);
-            
-            // Xử lý nút Tim (Like)
-            View llLike = postView.findViewById(R.id.ll_like);
-            ImageView ivLike = postView.findViewById(R.id.iv_like);
-            TextView tvLikeCount = postView.findViewById(R.id.tv_like_count);
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("Posts")
+                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    postContainer.removeAllViews();
+                    if (value == null) return;
 
-            if (llLike != null && ivLike != null && tvLikeCount != null) {
-                llLike.setOnClickListener(v -> {
-                    if (!isLiked) {
-                        isLiked = true;
-                        likeCount++;
-                        ivLike.setImageResource(R.drawable.ic_heart);
-                        ivLike.setColorFilter(Color.parseColor("#E91E63")); 
-                        tvLikeCount.setText(String.valueOf(likeCount));
-                    } else {
-                        isLiked = false;
-                        likeCount--;
-                        ivLike.setColorFilter(Color.parseColor("#888888"));
-                        tvLikeCount.setText(String.valueOf(likeCount));
+                    String currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
+
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot doc : value) {
+                        com.example.appdraw.model.Post post = doc.toObject(com.example.appdraw.model.Post.class);
+                        
+                        View postView = inflater.inflate(R.layout.item_post, postContainer, false);
+                        
+                        // Load image if available. Normally item_post should have an ImageView for content
+                        ImageView ivPostImg = postView.findViewById(R.id.iv_post_image);
+                        if (ivPostImg != null && post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
+                            ivPostImg.setVisibility(View.VISIBLE);
+                            if (post.getImageUrl().startsWith("data:image")) {
+                                String base64Str = post.getImageUrl().substring(post.getImageUrl().indexOf(",") + 1);
+                                byte[] decodedBytes = android.util.Base64.decode(base64Str, android.util.Base64.DEFAULT);
+                                com.bumptech.glide.Glide.with(requireContext()).load(decodedBytes).into(ivPostImg);
+                            } else {
+                                com.bumptech.glide.Glide.with(requireContext()).load(post.getImageUrl()).into(ivPostImg);
+                            }
+                        } else if (ivPostImg != null) {
+                            ivPostImg.setVisibility(View.GONE);
+                        }
+
+                        // Load content
+                        TextView tvContent = postView.findViewById(R.id.tv_post_content);
+                        if (tvContent != null) {
+                            tvContent.setText(post.getContent());
+                        }
+
+                        // Process Follow Button based on Ownership
+                        TextView tvFollowStatus = postView.findViewById(R.id.tv_follow_status);
+                        if (tvFollowStatus != null) {
+                            if (post.getUid() != null && post.getUid().equals(currentUid)) {
+                                tvFollowStatus.setVisibility(View.GONE);
+                            } else {
+                                tvFollowStatus.setVisibility(View.VISIBLE);
+                                tvFollowStatus.setText("Theo dõi");
+                            }
+                        }
+
+                        // Process Real Comment Count
+                        TextView tvCommentCount = postView.findViewById(R.id.tv_comment_count);
+                        if (tvCommentCount != null) {
+                            tvCommentCount.setText(String.valueOf(post.getCommentsCount()));
+                        }
+
+                        // Fetching author data
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Users").document(post.getUid())
+                            .get().addOnSuccessListener(userDoc -> {
+                                if (userDoc.exists() && userDoc.contains("profile")) {
+                                    java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
+                                    if (profile != null) {
+                                        String fullName = (String) profile.get("fullName");
+                                        String avatarUrl = (String) profile.get("avatarUrl");
+                                        TextView tvName = postView.findViewById(R.id.tv_user_name);
+                                        ImageView ivAvatar = postView.findViewById(R.id.iv_user_avatar);
+                                        if (tvName != null) tvName.setText(fullName);
+                                        if (ivAvatar != null) {
+                                            if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("data:image")) {
+                                                byte[] b = android.util.Base64.decode(avatarUrl.split(",")[1], android.util.Base64.DEFAULT);
+                                                com.bumptech.glide.Glide.with(requireContext()).load(b).circleCrop().into(ivAvatar);
+                                            } else if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                                com.bumptech.glide.Glide.with(requireContext()).load(avatarUrl).circleCrop().into(ivAvatar);
+                                            } else {
+                                                com.bumptech.glide.Glide.with(requireContext()).load(R.drawable.ic_default_user).circleCrop().into(ivAvatar);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                        // Xử lý nút Tim (Like)
+                        View llLike = postView.findViewById(R.id.ll_like);
+                        ImageView ivLike = postView.findViewById(R.id.iv_like);
+                        TextView tvLikeCount = postView.findViewById(R.id.tv_like_count);
+
+                        if (llLike != null && ivLike != null && tvLikeCount != null) {
+                            boolean isLiked = post.getLikedBy().contains(currentUid);
+                            tvLikeCount.setText(String.valueOf(post.getLikesCount()));
+                            if (isLiked) {
+                                ivLike.setImageResource(R.drawable.ic_heart);
+                                ivLike.setColorFilter(Color.parseColor("#E91E63"));
+                            } else {
+                                ivLike.setColorFilter(Color.parseColor("#888888"));
+                            }
+
+                            llLike.setOnClickListener(v -> {
+                                if (currentUid == null) {
+                                    Toast.makeText(getContext(), "Vui lòng đăng nhập!", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                com.google.firebase.firestore.DocumentReference postRef = doc.getReference();
+                                com.google.firebase.firestore.FirebaseFirestore.getInstance().runTransaction(transaction -> {
+                                    com.google.firebase.firestore.DocumentSnapshot snapshot = transaction.get(postRef);
+                                    com.example.appdraw.model.Post p = snapshot.toObject(com.example.appdraw.model.Post.class);
+                                    if (p != null) {
+                                        if (p.getLikedBy().contains(currentUid)) {
+                                            p.getLikedBy().remove(currentUid);
+                                            p.setLikesCount(Math.max(0, p.getLikesCount() - 1));
+                                        } else {
+                                            p.getLikedBy().add(currentUid);
+                                            p.setLikesCount(p.getLikesCount() + 1);
+                                        }
+                                        transaction.set(postRef, p);
+                                    }
+                                    return null;
+                                }).addOnFailureListener(e -> Toast.makeText(getContext(), "Lỗi mạng", Toast.LENGTH_SHORT).show());
+                            });
+                        }
+
+                        // Click image to see Fullscreen
+                        if (ivPostImg != null) {
+                            ivPostImg.setOnClickListener(v -> {
+                                Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+                                intent.putExtra("IMAGE_URL", post.getImageUrl());
+                                startActivity(intent);
+                            });
+                        }
+
+                        // Click comment to see Detail comments
+                        View llComment = postView.findViewById(R.id.ll_comment);
+                        if (llComment != null) {
+                            llComment.setOnClickListener(v -> {
+                                Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                                intent.putExtra("POST_ID", post.getId());
+                                startActivity(intent);
+                            });
+                        }
+
+                        // Click avatar/name to see profile
+                        View userHeader = postView.findViewById(R.id.ll_user_header);
+                        if (userHeader != null) {
+                            userHeader.setOnClickListener(v -> {
+                                Intent intent = new Intent(getActivity(), OtherUserProfileActivity.class);
+                                intent.putExtra("USER_ID", post.getUid());
+                                startActivity(intent);
+                            });
+                        }
+
+                        // Click anywhere else on the post card to see Detail
+                        postView.setOnClickListener(v -> {
+                            Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                            intent.putExtra("POST_ID", post.getId());
+                            startActivity(intent);
+                        });
+
+                        postContainer.addView(postView);
                     }
                 });
-            }
-
-            // Click to see detail
-            postView.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                startActivity(intent);
-            });
-
-            // Click avatar/name to see profile
-            View userHeader = postView.findViewById(R.id.ll_user_header);
-            if (userHeader != null) {
-                userHeader.setOnClickListener(v -> {
-                    Intent intent = new Intent(getActivity(), OtherUserProfileActivity.class);
-                    intent.putExtra("USER_NAME", "Linh Trần");
-                    startActivity(intent);
-                });
-            }
-
-            postContainer.addView(postView);
         }
 
         return view;
-    }
-
-    private void setupTabs(View view) {
-        TextView tvExplore = view.findViewById(R.id.tv_comm_explore);
-        TextView tvWorks = view.findViewById(R.id.tv_comm_works);
-        TextView tvProgress = view.findViewById(R.id.tv_comm_progress);
-        TextView tvTips = view.findViewById(R.id.tv_comm_tips);
-
-        View.OnClickListener tabListener = v -> {
-            String text = ((TextView) v).getText().toString();
-            Toast.makeText(getContext(), "Chọn tab: " + text, Toast.LENGTH_SHORT).show();
-            updateTabSelection((TextView) v, tvExplore, tvWorks, tvProgress, tvTips);
-        };
-
-        if (tvExplore != null) tvExplore.setOnClickListener(tabListener);
-        if (tvWorks != null) tvWorks.setOnClickListener(tabListener);
-        if (tvProgress != null) tvProgress.setOnClickListener(tabListener);
-        if (tvTips != null) tvTips.setOnClickListener(tabListener);
-    }
-
-    private void updateTabSelection(TextView selected, TextView... others) {
-        int blueColor = ContextCompat.getColor(requireContext(), R.color.primary_blue);
-        int grayColor = ContextCompat.getColor(requireContext(), R.color.text_gray);
-
-        for (TextView tab : others) {
-            if (tab == null) continue;
-            if (tab == selected) {
-                tab.setTextColor(blueColor);
-                tab.setTypeface(null, android.graphics.Typeface.BOLD);
-                tab.setBackgroundResource(R.drawable.selected_tool_bg);
-            } else {
-                tab.setTextColor(grayColor);
-                tab.setTypeface(null, android.graphics.Typeface.NORMAL);
-                tab.setBackground(null);
-            }
-        }
-    }
-
-    private void setupCategoryChips(View view) {
-        View chipTopic = view.findViewById(R.id.chip_comm_topic);
-        View chipWatercolor = view.findViewById(R.id.chip_comm_watercolor);
-        View chipSketch = view.findViewById(R.id.chip_comm_sketch);
-
-        if (chipTopic != null) chipTopic.setOnClickListener(v -> Toast.makeText(getContext(), "Lọc Chủ đề", Toast.LENGTH_SHORT).show());
-        if (chipWatercolor != null) chipWatercolor.setOnClickListener(v -> Toast.makeText(getContext(), "Lọc Màu nước", Toast.LENGTH_SHORT).show());
-        if (chipSketch != null) chipSketch.setOnClickListener(v -> Toast.makeText(getContext(), "Lọc Phác thảo", Toast.LENGTH_SHORT).show());
     }
 }

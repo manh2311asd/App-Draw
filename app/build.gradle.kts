@@ -48,6 +48,9 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
+    
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
 
 tasks.register("testClasses") {

@@ -39,94 +39,15 @@
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_projects"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="8dp">
-
-                <!-- Tab Switcher -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:layout_marginBottom="24dp"
-                    app:cardCornerRadius="22dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#DDDDDD"
-                    app:strokeWidth="1dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/tab_doing"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_chip_selected"
-                            android:backgroundTint="#F0B259"
-                            android:gravity="center"
-                            android:text="Đang làm"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/tab_completed"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Đã hoàn thành"
-                            android:textColor="#666666"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Doing Projects List (Visible by default) -->
-                <GridLayout
-                    android:id="@+id/gl_projects_doing"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:alignmentMode="alignMargins"
-                    android:columnOrderPreserved="false"
-                    android:visibility="visible">
-
-                    <!-- Project 1: Tranh núi sơn dầu -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_1"/>
-
-                    <!-- Project 2: Tranh cây cảnh -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_2"/>
-
-                    <!-- Project 3: Cảnh biển -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_3"/>
-
-                    <!-- Project 4: Cảnh hoàng hôn -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_4"/>
-
-                    <!-- Project 5: Tranh núi sơn dầu 2 -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_5"/>
-
-                    <!-- Project 6: Mầm cây -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_6"/>
-
-                    <!-- Project 7 -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_7" android:visibility="gone"/>
-
-                    <!-- Project 8 -->
-                    <include layout="@layout/item_project_card" android:id="@+id/proj_8" android:visibility="gone"/>
-
-                </GridLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="100dp"/>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="100dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_project"

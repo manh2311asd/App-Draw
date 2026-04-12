@@ -14,6 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.Map;
+
 import com.example.appdraw.LiveStreamActivity;
 import com.example.appdraw.NotificationsActivity;
 import com.example.appdraw.ProfileActivity;
@@ -27,6 +32,8 @@ import com.example.appdraw.explore.LessonDetailActivity;
 import com.example.appdraw.explore.LessonListActivity;
 import com.example.appdraw.explore.SearchActivity;
 import com.google.android.material.button.MaterialButton;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 
 public class HomeFragment extends Fragment {
 
@@ -34,6 +41,55 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        
+        // --- Fetch User Role and Profile from Firestore ---
+        TextView tvGreeting = view.findViewById(R.id.tv_greeting);
+        View layoutBadgeMentor = view.findViewById(R.id.layout_badge_mentor);
+        MaterialButton btnJoinChallenge = view.findViewById(R.id.btnJoinChallenge);
+        ImageView ivAvatarHome = view.findViewById(R.id.iv_avatar_home);
+        
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            FirebaseFirestore.getInstance().collection("Users").document(user.getUid()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> profile = (Map<String, Object>) documentSnapshot.get("profile");
+                        if (profile != null) {
+                            if (profile.containsKey("fullName")) {
+                                String name = (String) profile.get("fullName");
+                                String shortName = name;
+                                if (name.contains(" ")) {
+                                    shortName = name.substring(name.lastIndexOf(" ") + 1);
+                                }
+                                if (tvGreeting != null) tvGreeting.setText("Chào " + shortName + "!");
+                            }
+                            if (profile.containsKey("avatarUrl")) {
+                                String avatarUrl = (String) profile.get("avatarUrl");
+                                if (ivAvatarHome != null && getContext() != null) {
+                                    ivAvatarHome.setPadding(0, 0, 0, 0);
+                                    if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("data:image")) {
+                                        byte[] b = android.util.Base64.decode(avatarUrl.split(",")[1], android.util.Base64.DEFAULT);
+                                        Glide.with(getContext()).load(b).circleCrop().into(ivAvatarHome);
+                                    } else if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                        Glide.with(getContext()).load(avatarUrl).circleCrop().into(ivAvatarHome);
+                                    } else {
+                                        Glide.with(getContext()).load(R.drawable.ic_default_user).circleCrop().into(ivAvatarHome);
+                                    }
+                                }
+                            } else if (ivAvatarHome != null && getContext() != null) {
+                                ivAvatarHome.setPadding(0, 0, 0, 0);
+                                Glide.with(getContext()).load(R.drawable.ic_default_user).circleCrop().into(ivAvatarHome);
+                            }
+                        }
+
+                        String role = documentSnapshot.getString("role");
+                        if ("mentor".equals(role)) {
+                            if (layoutBadgeMentor != null) layoutBadgeMentor.setVisibility(View.VISIBLE);
+                            if (btnJoinChallenge != null) btnJoinChallenge.setText("Quản lý");
+                        }
+                    }
+                });
+        }
 
         // Nút thông báo
         View btnNotifications = view.findViewById(R.id.btn_notifications);

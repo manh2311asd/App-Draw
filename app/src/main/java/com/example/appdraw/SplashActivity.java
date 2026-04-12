@@ -14,7 +14,15 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, LoginOptionsActivity.class);
+            android.content.SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+            long lastLoginTime = prefs.getLong("last_login_time", 0);
+            long THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000L;
+            Intent intent;
+            if (System.currentTimeMillis() - lastLoginTime < THREE_DAYS_MS) {
+                intent = new Intent(SplashActivity.this, com.example.appdraw.MainActivity.class);
+            } else {
+                intent = new Intent(SplashActivity.this, LoginOptionsActivity.class);
+            }
             startActivity(intent);
             finish();
         }, 2000);

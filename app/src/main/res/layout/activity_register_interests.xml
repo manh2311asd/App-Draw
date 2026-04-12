@@ -1,171 +1,411 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F4FF">
+    android:background="@drawable/backgroud_app_draw"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/tv_interest_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Chọn sở thích"
-        android:textColor="#1A1A1A"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_interest_next"
-        app:layout_constraintTop_toBottomOf="@id/tv_interest_title">
-
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:padding="16dp">
-
-            <!-- Interest Item 1 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
+                android:layout_marginTop="24dp"
+                android:text="Chọn sở thích"
+                android:textColor="#1A1A1A"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none">
+
+                <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:src="@drawable/giay_ve"
-                        android:scaleType="centerInside"/>
-                    <TextView
-                        android:layout_width="wrap_content"
+                    android:columnCount="2"
+                    android:useDefaultMargins="true"
+                    android:alignmentMode="alignBounds"
+                    android:columnOrderPreserved="false"
+                    android:paddingHorizontal="16dp">
+
+                    <!-- Interest Item 1 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_1"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Vẽ chì màu"
-                        android:textColor="#333333"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/giay_ve"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Vẽ chì màu"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-            <!-- Interest Item 2 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:src="@drawable/mau_nuoc"
-                        android:scaleType="centerInside"/>
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Interest Item 2 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_2"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Vẽ màu nước"
-                        android:textColor="#333333"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/mau_nuoc"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Vẽ màu nước"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-            <!-- Interest Item 3 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:src="@drawable/ve_hoa_mau_nuoc"
-                        android:scaleType="centerInside"/>
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Interest Item 3 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_3"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Vẽ phong cảnh"
-                        android:textColor="#333333"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/co_ve"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Vẽ màu sáp"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-            <!-- Interest Item 4 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:src="@drawable/img_origami_art"
-                        android:scaleType="centerInside"/>
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Interest Item 4 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_4"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Đồ thủ công"
-                        android:textColor="#333333"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/ve_thien_nhien"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Vẽ phong cảnh"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-        </GridLayout>
-    </ScrollView>
+                    <!-- Interest Item 5 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/coc_nuoc"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Vẽ chân dung"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_interest_next"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginBottom="40dp"
-        android:text="Tiếp tục"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="#4272D0"
-        app:cornerRadius="16dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+                    <!-- Interest Item 6 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/ve_hoa_mau_nuoc"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tranh sơn dầu"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_6"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <!-- Interest Item 7 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/img_start_drawing"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Kí họa"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_7"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Interest Item 8 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/ll_interest_8"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="8dp"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                android:src="@drawable/img_origami_art"
+                                android:scaleType="centerInside"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:orientation="vertical"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đồ thủ công"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp" />
+                                <View
+                                    android:id="@+id/view_line_8"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="3dp"
+                                    android:layout_marginTop="2dp"
+                                    android:background="#3B82F6"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </GridLayout>
+            </ScrollView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_interest_next"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_margin="16dp"
+                android:text="Tiếp tục"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:backgroundTint="#3B69D6"
+                app:cornerRadius="12dp" />
+
+</LinearLayout>

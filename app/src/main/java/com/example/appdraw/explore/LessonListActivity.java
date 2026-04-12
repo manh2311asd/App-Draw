@@ -21,5 +21,19 @@ public class LessonListActivity extends AppCompatActivity {
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> finish());
         }
+
+        // Add dummy click listeners for lesson lists
+        int[] lessonIds = {R.id.lesson_1, R.id.lesson_2, R.id.lesson_3, R.id.lesson_4, R.id.lesson_5, R.id.lesson_6, R.id.lesson_7};
+        for (int id : lessonIds) {
+            android.view.View lessonView = findViewById(id);
+            if (lessonView != null) {
+                lessonView.setOnClickListener(v -> {
+                    android.content.Intent intent = new android.content.Intent(LessonListActivity.this, LessonDetailActivity.class);
+                    // Pass a mock title to the detail activity
+                    intent.putExtra("LESSON_TITLE", title != null ? title + " - Bài Tương Tác" : "Bài học mẫu");
+                    startActivity(intent);
+                });
+            }
+        }
     }
 }

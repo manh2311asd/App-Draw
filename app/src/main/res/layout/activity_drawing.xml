@@ -75,8 +75,8 @@
         android:layout_margin="12dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="8dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#DADCE0"
+        app:strokeWidth="2dp"
+        app:strokeColor="#757575"
         app:layout_constraintTop_toBottomOf="@id/topBarCard"
         app:layout_constraintBottom_toTopOf="@id/bottomControlCard"
         app:layout_constraintStart_toStartOf="parent"
@@ -89,22 +89,30 @@
 
         <!-- Zoom Hint -->
         <LinearLayout
+            android:id="@+id/zoomHintLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="24dp"
             android:background="@drawable/rounded_bg_white_border"
-            android:alpha="0.7"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
+            android:alpha="0.8"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
             android:gravity="center"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🖐️ Dùng 2 ngón để di chuyển &amp; zoom"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textColor="#5F6368"/>
+            <ImageView
+                android:id="@+id/btnCloseHint"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="12dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="#5F6368"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -152,7 +160,7 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     android:paddingVertical="8dp">
-                    <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@android:drawable/ic_input_delete" app:tint="#5F6368"/>
+                    <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_eraser" app:tint="#5F6368"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tẩy" android:textSize="11sp" android:textColor="#5F6368"/>
                 </LinearLayout>
 
@@ -195,8 +203,8 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
                     <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@android:drawable/ic_menu_sort_by_size" app:tint="#5F6368"/>
-                    <SeekBar android:id="@+id/seekSize" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="24" android:progressTint="#1A73E8" android:thumbTint="#1A73E8"/>
-                    <TextView android:id="@+id/txtSizeVal" android:layout_width="40dp" android:layout_height="wrap_content" android:text="24px" android:textSize="11sp" android:gravity="end" android:textColor="#5F6368"/>
+                    <SeekBar android:id="@+id/seekSize" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="15" android:progress="10" android:progressTint="#1A73E8" android:thumbTint="#1A73E8"/>
+                    <TextView android:id="@+id/txtSizeVal" android:layout_width="40dp" android:layout_height="wrap_content" android:text="10px" android:textSize="11sp" android:gravity="end" android:textColor="#5F6368"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -235,7 +243,7 @@
                     android:id="@+id/btnLayers"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@android:drawable/ic_menu_slideshow"
+                    android:src="@drawable/ic_layers"
                     android:padding="12dp"
                     android:background="@drawable/circle_bg_gray"
                     android:layout_marginEnd="16dp"

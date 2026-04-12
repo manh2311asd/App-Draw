@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "653973398375",
-    "project_id": "appdraw-395b2",
-    "storage_bucket": "appdraw-395b2.firebasestorage.app"
+    "project_number": "999893202390",
+    "firebase_url": "https://appdrawdb-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "appdrawdb",
+    "storage_bucket": "appdrawdb.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:653973398375:android:7e4b080c361059d34145c2",
+        "mobilesdk_app_id": "1:999893202390:android:fb062b5860c11ccef36077",
         "android_client_info": {
           "package_name": "com.example.appdraw"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBH8P2EIKnpEYZ7N7GWCGS8iv_ZiRb_dFE"
+          "current_key": "AIzaSyCvZcoKYoaD08Di9xg-wy7v9e016fA7r8M"
         }
       ],
       "services": {

@@ -18,11 +18,12 @@
             android:textStyle="bold"
             android:paddingBottom="12dp"/>
 
-        <com.example.appdraw.ColorWheelView
+        <com.example.appdraw.drawing.ColorPickerView
             android:id="@+id/colorWheel"
-            android:layout_width="220dp"
-            android:layout_height="220dp"
-            android:layout_gravity="center" />
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" />
 
         <!-- Gần đây -->
         <TextView
@@ -48,42 +49,7 @@
             <View android:layout_width="32dp" android:layout_height="32dp" android:background="#0b5394" android:layout_marginEnd="8dp" android:clickable="true"/>
         </LinearLayout>
 
-        <!-- Màu cơ bản -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Màu cơ bản"
-            android:textSize="14sp"
-            android:textColor="#333333"
-            android:paddingTop="16dp"/>
-
-        <GridLayout
-            android:id="@+id/baseColorsGrid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="9"
-            android:paddingTop="8dp">
-            <!-- Row 1 -->
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFFFFF" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFF9C4" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFE082" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#FFCCBC" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#F8BBD0" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#E1BEE7" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#D1C4E9" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#C5CAE9" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#BBDEFB" android:layout_margin="4dp" android:clickable="true"/>
-            <!-- Row 2 -->
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#81D4FA" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#80CBC4" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#B2DFDB" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#C8E6C9" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#DCEDC8" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#F0F4C3" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#A1887F" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#757575" android:layout_margin="4dp" android:clickable="true"/>
-            <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/circle_color" android:backgroundTint="#BDBDBD" android:layout_margin="4dp" android:clickable="true"/>
-        </GridLayout>
+        <!-- Removed Màu cơ bản as requested -->
 
         <TextView
             android:layout_width="wrap_content"

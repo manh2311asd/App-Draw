@@ -3,17 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="16dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="0dp">
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginTop="20dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:strokeColor="#EEF2F9"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <!-- User Info -->
         <LinearLayout
@@ -29,21 +31,22 @@
                 android:id="@+id/iv_user_avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/nghe_si_lien_ninh"
+                android:src="@drawable/ic_default_user"
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.SmallComponent"/>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="16dp"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/tv_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Linh Trần"
-                    android:textColor="#333333"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    tools:text="Tên từ Firebase"
+                    android:textColor="#1A1A1A"
                     android:textSize="17sp"
                     android:textStyle="bold"/>
                 <TextView
@@ -52,22 +55,27 @@
                     android:layout_height="wrap_content"
                     android:text="20 phút trước"
                     android:textColor="#888888"
-                    android:textSize="14sp"/>
+                    android:textSize="13sp"/>
             </LinearLayout>
+            <!-- Vibrant Follow Button Pill -->
             <TextView
+                android:id="@+id/tv_follow_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="✓ Đang theo dõi"
-                android:textColor="#4272D0"
+                android:text="Theo dõi"
+                android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"/>
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="6dp"
+                android:background="@drawable/rounded_bg_blue"/>
+            
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginStart="12dp"
                 android:src="@android:drawable/ic_menu_more"
-                app:tint="#888888"/>
+                app:tint="#B3B9C5"/>
         </LinearLayout>
 
         <!-- Content -->
@@ -75,23 +83,25 @@
             android:id="@+id/tv_post_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Tranh mới vừa vẽ #phác thảo#màu nước#hoa"
-            android:textColor="#333333"
+            android:layout_marginTop="16dp"
+            android:text="Tranh mới vừa vẽ #phác_thảo #màu_nước #hoa"
+            android:textColor="#2D3436"
+            android:lineSpacingExtra="4dp"
             android:textSize="15sp"/>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_post_image"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="12dp"
-            app:strokeColor="#4CAF50"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#EEF2F9"
             app:strokeWidth="1dp">
             <ImageView
                 android:id="@+id/iv_post_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="240dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ve_hoa_mau_nuoc"/>
         </com.google.android.material.card.MaterialCardView>
@@ -100,10 +110,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
+            <!-- Pill Like -->
             <LinearLayout
                 android:id="@+id/ll_like"
                 android:layout_width="wrap_content"
@@ -111,76 +122,94 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/rounded_bg_gray"
+                android:backgroundTint="#F2F5FA">
                 <ImageView
                     android:id="@+id/iv_like"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_heart"
-                    app:tint="#888888"/>
+                    app:tint="#636E72"/>
                 <TextView
                     android:id="@+id/tv_like_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1200"
-                    android:layout_marginStart="6dp"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
+                    android:layout_marginStart="8dp"
+                    android:textColor="#3D4A52"
+                    android:textStyle="bold"
+                    android:textSize="14sp"/>
             </LinearLayout>
 
+            <!-- Pill Comment -->
             <LinearLayout
+                android:id="@+id/ll_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="12dp"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/rounded_bg_gray"
+                android:backgroundTint="#F2F5FA">
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_comment"
-                    app:tint="#333333"/>
+                    app:tint="#636E72"/>
                 <TextView
+                    android:id="@+id/tv_comment_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="145"
-                    android:layout_marginStart="6dp"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
+                    android:text="0"
+                    android:layout_marginStart="8dp"
+                    android:textColor="#3D4A52"
+                    android:textStyle="bold"
+                    android:textSize="14sp"/>
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="16dp"
-                android:src="@android:drawable/ic_menu_share"
-                app:tint="#333333"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Share"
-                android:layout_marginStart="6dp"
-                android:textColor="#333333"
-                android:textSize="15sp"/>
-
             <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+            
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_menu_share"
+                app:tint="#636E72"
+                android:background="@drawable/rounded_bg_gray"
+                android:backgroundTint="#F2F5FA"/>
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:padding="8dp"
                 android:src="@android:drawable/btn_star_big_off"
-                app:tint="#333333"/>
+                app:tint="#636E72"
+                android:background="@drawable/rounded_bg_gray"
+                android:backgroundTint="#F2F5FA"/>
         </LinearLayout>
 
+        <!-- Vibrant Related Lesson Banner -->
         <TextView
             android:id="@+id/tv_related_lesson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp"
-            android:background="@drawable/rounded_bg_gray"
-            android:text="Xem bài học liên quan đến Watercolor hoa cơ bản →"
-            android:textColor="#333333"
-            android:textSize="13sp"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:background="@drawable/rounded_bg_blue"
+            android:backgroundTint="#EBF3FF"
+            android:text="🎨 Xem bài học liên quan đến Watercolor hoa cơ bản →"
+            android:textColor="#3B71E1"
+            android:textStyle="bold"
+            android:textSize="14sp"
             android:gravity="center"/>
 
     </LinearLayout>

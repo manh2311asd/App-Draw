@@ -25,6 +25,9 @@ import java.util.Queue;
 
 public class ZoomDrawingView extends View {
 
+    public enum BrushType { PENCIL, WATERCOLOR, CRAYON, INK, MARKER, AIRBRUSH, CALLIGRAPHY, OIL }
+    public enum Hardness { SOFT, MEDIUM, HARD }
+
     public static class Stroke {
         public final Path path;
         public final Paint paint;
@@ -65,8 +68,10 @@ public class ZoomDrawingView extends View {
     private int activeLayerIndex = 0;
 
     private int brushColor = Color.BLACK;
-    private float brushSizePx = 24f;
+    private float brushSizePx = 10f;
     private int brushAlpha = 255; 
+    private BrushType brushType = BrushType.INK;
+    private Hardness hardness = Hardness.MEDIUM;
     private boolean eraserMode = false;
     private boolean fillMode = false;
     private int canvasBgColor = Color.WHITE;
@@ -83,6 +88,10 @@ public class ZoomDrawingView extends View {
 
     private boolean isScaling = false;
     private float lastMidX = 0f, lastMidY = 0f;
+    
+    private float mScaleFactor = 1.0f;
+    private final float MIN_SCALE = 1.0f; // Thu nhỏ tối đa vừa khít khung (100%)
+    private final float MAX_SCALE = 20.0f; // Cho phép phóng to tối đa 20 lần
 
     private final ScaleGestureDetector scaleDetector;
 
@@ -112,7 +121,13 @@ public class ZoomDrawingView extends View {
                     @Override
                     public boolean onScale(ScaleGestureDetector detector) {
                         float factor = detector.getScaleFactor();
-                        viewMatrix.postScale(factor, factor, detector.getFocusX(), detector.getFocusY());
+                        float prevScale = mScaleFactor;
+                        mScaleFactor *= factor;
+                        mScaleFactor = Math.max(MIN_SCALE, Math.min(mScaleFactor, MAX_SCALE));
+                        float effectiveFactor = mScaleFactor / prevScale;
+                        
+                        viewMatrix.postScale(effectiveFactor, effectiveFactor, detector.getFocusX(), detector.getFocusY());
+                        clampMatrix();
                         updateInverse();
                         invalidate();
                         return true;
@@ -167,11 +182,23 @@ public class ZoomDrawingView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         scaleDetector.onTouchEvent(event);
+
         if (event.getPointerCount() >= 2) {
+            if (currentPath != null) {
+                currentPath = null;
+                invalidate();
+            }
             handleTwoFingerPan(event);
             return true;
         }
-        if (isScaling) return true;
+        
+        if (isScaling) {
+            if (currentPath != null) {
+                currentPath = null;
+                invalidate();
+            }
+            return true;
+        }
 
         Layer activeLayer = getActiveLayer();
         if (activeLayer == null || activeLayer.isLocked || !activeLayer.isVisible) return true;
@@ -179,8 +206,12 @@ public class ZoomDrawingView extends View {
         float[] mapped = mapToContent(event.getX(), event.getY());
         float x = mapped[0];
         float y = mapped[1];
+        
+        if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
+            return true;
+        }
 
-        if (fillMode && event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (fillMode && event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             handleFloodFill((int) x, (int) y);
             return true;
         }
@@ -196,14 +227,16 @@ public class ZoomDrawingView extends View {
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                float dx = Math.abs(x - lastX);
-                float dy = Math.abs(y - lastY);
-                if (dx >= touchTolerance || dy >= touchTolerance) {
-                    currentPath.quadTo(lastX, lastY, (x + lastX) / 2f, (y + lastY) / 2f);
-                    lastX = x;
-                    lastY = y;
+                if (currentPath != null) {
+                    float dx = Math.abs(x - lastX);
+                    float dy = Math.abs(y - lastY);
+                    if (dx >= touchTolerance || dy >= touchTolerance) {
+                        currentPath.quadTo(lastX, lastY, (x + lastX) / 2f, (y + lastY) / 2f);
+                        lastX = x;
+                        lastY = y;
+                    }
+                    invalidate();
                 }
-                invalidate();
                 return true;
 
             case MotionEvent.ACTION_UP:
@@ -229,13 +262,23 @@ public class ZoomDrawingView extends View {
                 lastMidY = midY;
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (lastMidX == 0f && lastMidY == 0f) {
+                    lastMidX = midX;
+                    lastMidY = midY;
+                }
                 float dx = midX - lastMidX;
                 float dy = midY - lastMidY;
                 viewMatrix.postTranslate(dx, dy);
+                clampMatrix();
                 lastMidX = midX;
                 lastMidY = midY;
                 updateInverse();
                 invalidate();
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_UP:
+                lastMidX = 0f;
+                lastMidY = 0f;
                 break;
         }
     }
@@ -299,18 +342,79 @@ public class ZoomDrawingView extends View {
     }
 
     private void updatePaint() {
+        currentPaint.setPathEffect(null);
+        currentPaint.setMaskFilter(null);
+        currentPaint.setStrokeJoin(Paint.Join.ROUND);
+        currentPaint.setStrokeCap(Paint.Cap.ROUND);
+        currentPaint.setXfermode(null);
+
         if (eraserMode) {
             currentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            // Không setAlpha(0) vì Mode.CLEAR sẽ xóa pixel bất kể alpha.
-            // Để giữ nguyên tính chất của tẩy, chúng ta dùng alpha tối đa.
-            currentPaint.setAlpha(255); 
-        } else {
-            currentPaint.setXfermode(null);
-            currentPaint.setColor(brushColor);
-            currentPaint.setAlpha(brushAlpha);
+            currentPaint.setAlpha(255);
+            currentPaint.setStrokeWidth(brushSizePx);
+            return;
         }
+
+        currentPaint.setColor(brushColor);
+        int finalAlpha = brushAlpha;
+
+        switch (brushType) {
+            case WATERCOLOR:
+                finalAlpha = (int)(brushAlpha * 0.4f);
+                break;
+            case CRAYON:
+                currentPaint.setPathEffect(new android.graphics.DiscretePathEffect(Math.max(brushSizePx * 0.2f, 2f), Math.max(brushSizePx * 0.5f, 2f)));
+                break;
+            case MARKER:
+                currentPaint.setStrokeCap(Paint.Cap.SQUARE);
+                finalAlpha = (int)(brushAlpha * 0.6f);
+                break;
+            case AIRBRUSH:
+                currentPaint.setMaskFilter(new android.graphics.BlurMaskFilter(Math.max(brushSizePx * 1.5f, 2f), android.graphics.BlurMaskFilter.Blur.NORMAL));
+                finalAlpha = (int)(brushAlpha * 0.5f);
+                break;
+            case CALLIGRAPHY:
+                Path dashPath = new Path();
+                dashPath.addOval(new android.graphics.RectF(0, 0, brushSizePx, Math.max(brushSizePx * 0.2f, 2f)), Path.Direction.CCW);
+                Matrix m = new Matrix();
+                m.postRotate(45, brushSizePx / 2f, brushSizePx * 0.1f);
+                dashPath.transform(m);
+                currentPaint.setPathEffect(new android.graphics.PathDashPathEffect(dashPath, brushSizePx * 0.15f, 0, android.graphics.PathDashPathEffect.Style.MORPH));
+                break;
+            case OIL:
+                currentPaint.setPathEffect(new android.graphics.DiscretePathEffect(brushSizePx * 0.1f, brushSizePx * 0.2f));
+                break;
+            default:
+                break;
+        }
+
+        if (brushType != BrushType.AIRBRUSH && brushType != BrushType.CALLIGRAPHY) {
+            if (hardness == Hardness.SOFT) {
+                currentPaint.setMaskFilter(new android.graphics.BlurMaskFilter(Math.max(brushSizePx * 0.5f, 1f), android.graphics.BlurMaskFilter.Blur.NORMAL));
+            } else if (hardness == Hardness.MEDIUM) {
+                currentPaint.setMaskFilter(new android.graphics.BlurMaskFilter(Math.max(brushSizePx * 0.15f, 1f), android.graphics.BlurMaskFilter.Blur.NORMAL));
+            }
+        }
+
+        currentPaint.setAlpha(finalAlpha);
         currentPaint.setStrokeWidth(brushSizePx);
     }
+
+    public void setBrushType(BrushType type) {
+        this.brushType = type;
+        setEraser(false);
+        setFillMode(false);
+        updatePaint();
+        invalidate();
+    }
+    public BrushType getBrushType() { return brushType; }
+
+    public void setHardness(Hardness h) {
+        this.hardness = h;
+        updatePaint();
+        invalidate();
+    }
+    public Hardness getHardness() { return hardness; }
 
     public List<Layer> getLayers() { return layers; }
     public int getActiveLayerIndex() { return activeLayerIndex; }
@@ -350,9 +454,11 @@ public class ZoomDrawingView extends View {
     public void setBrushOpacityPercent(int percent) {
         int p = Math.max(0, Math.min(100, percent));
         this.brushAlpha = (int) (255f * (p / 100f));
-        // KHÔNG tự động tắt eraserMode ở đây
         updatePaint();
         invalidate();
+    }
+    public int getBrushOpacityPercent() {
+        return (int) ((brushAlpha / 255f) * 100);
     }
     public void setEraser(boolean enabled) {
         this.eraserMode = enabled;
@@ -405,5 +511,35 @@ public class ZoomDrawingView extends View {
         Canvas c = new Canvas(out);
         draw(c);
         return out;
+    }
+
+    private void clampMatrix() {
+        if (getWidth() == 0 || getHeight() == 0) return;
+        float[] values = new float[9];
+        viewMatrix.getValues(values);
+        float scale = values[Matrix.MSCALE_X];
+        float transX = values[Matrix.MTRANS_X];
+        float transY = values[Matrix.MTRANS_Y];
+
+        float winWidth = getWidth();
+        float winHeight = getHeight();
+        float scaledWidth = winWidth * scale;
+        float scaledHeight = winHeight * scale;
+
+        if (scaledWidth >= winWidth) {
+            transX = Math.max(winWidth - scaledWidth, Math.min(transX, 0));
+        } else {
+            transX = (winWidth - scaledWidth) / 2f;
+        }
+
+        if (scaledHeight >= winHeight) {
+            transY = Math.max(winHeight - scaledHeight, Math.min(transY, 0));
+        } else {
+            transY = (winHeight - scaledHeight) / 2f;
+        }
+
+        values[Matrix.MTRANS_X] = transX;
+        values[Matrix.MTRANS_Y] = transY;
+        viewMatrix.setValues(values);
     }
 }

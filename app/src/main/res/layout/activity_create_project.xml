@@ -25,7 +25,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tạo dự án"
+                android:text="Khởi Tạo Dự Án"
                 android:textColor="#1A1A1A"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -35,7 +35,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="40dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,44 +48,92 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tên dự án"
+                    android:text="Hãy đặt tên cho\ncuốn Album của bạn ✨"
                     android:textColor="#1A1A1A"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="24dp"/>
 
-                <EditText
-                    android:id="@+id/et_project_name"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/rounded_bg_white_border"
-                    android:paddingHorizontal="16dp"
-                    android:hint=""
-                    android:textColor="#1A1A1A"
-                    android:textSize="14sp"
-                    android:singleLine="true"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Mục tiêu"
-                    android:textColor="#1A1A1A"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    app:cardBackgroundColor="#CCFFFFFF"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="8dp"
+                    app:strokeColor="#FFFFFF"
+                    app:strokeWidth="2dp">
 
-                <EditText
-                    android:id="@+id/et_project_goal"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/rounded_bg_white"
-                    android:gravity="top"
-                    android:padding="16dp"
-                    android:hint="Nhập mục tiêu dự án ..."
-                    android:textColor="#1A1A1A"
-                    android:textColorHint="#999999"
-                    android:textSize="14sp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tên dự án"
+                            android:textColor="#4272D0"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/et_project_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@android:color/transparent"
+                            android:hint="Ví dụ: Kí hoạ phong cảnh Tây Bắc"
+                            android:textColor="#1A1A1A"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:singleLine="true"/>
+                        
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginBottom="16dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mục tiêu (Tuỳ chọn)"
+                            android:textColor="#888888"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/et_project_goal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:background="@android:color/transparent"
+                            android:hint="Mục tiêu hoặc mốc thời gian..."
+                            android:textColor="#333333"
+                            android:textSize="15sp"
+                            android:singleLine="false"/>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="8dp" android:background="#E0E0E0" android:layout_marginBottom="16dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mô tả chi tiết"
+                            android:textColor="#888888"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/et_project_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/rounded_bg_white"
+                            android:gravity="top"
+                            android:padding="12dp"
+                            android:hint="Chia sẻ ý tưởng tạo nên dự án này..."
+                            android:textColor="#333333"
+                            android:textColorHint="#999999"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
         </ScrollView>
@@ -91,14 +141,16 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_start_now"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_margin="24dp"
-            android:text="Bắt đầu ngay"
-            android:textAllCaps="false"
-            android:textSize="16sp"
+            android:layout_height="64dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="32dp"
+            android:text="TẠO DỰ ÁN"
+            android:textStyle="bold"
+            android:textSize="18sp"
             android:textColor="#FFFFFF"
             app:backgroundTint="#4272D0"
-            app:cornerRadius="12dp" />
+            app:cornerRadius="32dp"
+            app:elevation="8dp"/>
 
     </LinearLayout>
 </FrameLayout>
