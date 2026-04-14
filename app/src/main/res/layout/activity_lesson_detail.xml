@@ -590,6 +590,7 @@
             <View android:layout_width="16dp" android:layout_height="1dp"/>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_download_materials"
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_weight="1.4"

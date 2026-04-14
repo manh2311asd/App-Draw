@@ -3,77 +3,111 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FE">
+    android:background="#FFFFFF">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="#00000000"
         app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_challenge"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:contentInsetStartWithNavigation="0dp"
-            app:navigationIcon="@drawable/ic_back">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thử thách"
-                android:textColor="#1A1A1A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
+            android:layout_height="wrap_content">
+            
+            <!-- Use ConstraintLayout 0dp so it strictly matches the height of the LinearLayout -->
             <ImageView
-                android:id="@+id/btn_add_challenge"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="16dp"
-                android:src="@android:drawable/ic_menu_add"
-                app:tint="#333333"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout_challenge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabIndicatorColor="#4272D0"
-            app:tabSelectedTextColor="#4272D0"
-            app:tabTextColor="#888888"
-            app:tabMode="scrollable">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/backgroud_app_draw"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+                
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tuần này" />
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tháng này" />
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_challenge"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:contentInsetStartWithNavigation="0dp"
+                    app:navigationIcon="@drawable/ic_back">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đã kết thúc" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Thử thách"
+                        android:textColor="#111111"
+                        android:textSize="20sp" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chấm điểm" />
-        </com.google.android.material.tabs.TabLayout>
+                    <ImageView
+                        android:id="@+id/btn_add_challenge"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="16dp"
+                        android:src="@android:drawable/ic_menu_add"
+                        app:tint="#111111"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"/>
+                </androidx.appcompat.widget.Toolbar>
 
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout_challenge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabIndicatorColor="#2D5A9E"
+                    app:tabSelectedTextColor="#2D5A9E"
+                    app:tabTextColor="#555555"
+                    android:background="#00FFFFFF"
+                    app:tabMode="scrollable">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tuần này" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tháng này" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đã kết thúc" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chấm điểm" />
+                </com.google.android.material.tabs.TabLayout>
+                
+                <!-- Bottom border line for header area -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"/>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Filters section with white background -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
+            android:paddingVertical="12dp"
+            android:background="#FFFFFF"
             android:scrollbars="none">
 
             <LinearLayout
@@ -84,40 +118,40 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_bg_gray"
+                    android:background="@drawable/bg_chip_outline"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:text="Kỹ thuật ▾"
-                    android:textColor="#333333"
-                    android:textSize="13sp" />
+                    android:textColor="#555555"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/rounded_bg_gray"
+                    android:background="@drawable/bg_chip_outline"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:text="Vật liệu ▾"
-                    android:textColor="#333333"
-                    android:textSize="13sp" />
+                    android:textColor="#555555"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/rounded_bg_gray"
+                    android:background="@drawable/bg_chip_outline"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:text="Level ▾"
-                    android:textColor="#333333"
-                    android:textSize="13sp" />
+                    android:textColor="#555555"
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/rounded_bg_gray"
+                    android:background="@drawable/bg_chip_outline"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp">
@@ -126,45 +160,39 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:src="@drawable/ic_search"
-                        app:tint="#4272D0" />
+                        app:tint="#2D5A9E" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:text="Lọc"
-                        android:textColor="#4272D0"
-                        android:textSize="13sp" />
+                        android:textColor="#2D5A9E"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
         </HorizontalScrollView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
+        android:background="#FFFFFF"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_challenges"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Challenge 1: Vẽ ký họa phố cổ -->
-            <include layout="@layout/item_challenge_list" android:id="@+id/challenge_1" />
-
-            <!-- Challenge 2: Nặn đất sét sáng tạo -->
-            <include layout="@layout/item_challenge_list" android:id="@+id/challenge_2" android:layout_marginTop="16dp" />
-
-            <!-- Challenge 3: Vẽ cảnh biển cả -->
-            <include layout="@layout/item_challenge_list" android:id="@+id/challenge_3" android:layout_marginTop="16dp" />
-
-            <!-- Challenge 4: Vẽ tranh ngày Trái Đất -->
-            <include layout="@layout/item_challenge_list" android:id="@+id/challenge_4" android:layout_marginTop="16dp" />
-
-        </LinearLayout>
+            android:nestedScrollingEnabled="false"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"/>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

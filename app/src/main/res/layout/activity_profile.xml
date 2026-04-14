@@ -28,6 +28,7 @@
                 app:navigationIcon="@drawable/ic_back">
 
                 <TextView
+                    android:id="@+id/tv_toolbar_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hồ sơ người dùng"
@@ -121,10 +122,20 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Phong Nguyễn"
+                                        android:text=""
                                         android:textColor="#1A1A1A"
                                         android:textSize="20sp"
                                         android:textStyle="bold" />
+                                        
+                                    <ImageView
+                                        android:id="@+id/iv_mentor_badge"
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:layout_marginStart="4dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:src="@drawable/ic_star"
+                                        app:tint="#FF9800"
+                                        android:visibility="gone" />
                                         
                                     <LinearLayout
                                         android:id="@+id/ll_live_status"
@@ -137,7 +148,8 @@
                                         android:paddingVertical="4dp"
                                         android:elevation="2dp"
                                         android:clickable="true"
-                                        android:focusable="true">
+                                        android:focusable="true"
+                                        android:visibility="gone">
                                         <ImageView
                                             android:layout_width="12dp"
                                             android:layout_height="12dp"
@@ -251,7 +263,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:text="Xin chào mọi người, mình là Phong. Mình thích vẽ tranh phong cảnh và khám phá các chất liệu màu nước. Mong được kết bạn và học hỏi thêm từ mọi người!"
+                            android:text=""
                             android:textColor="#555555"
                             android:textSize="13sp"
                             android:lineSpacingExtra="3dp"/>

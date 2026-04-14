@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F0F4FF">
+    android:background="@drawable/backgroud_app_draw">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_create_challenge"
@@ -52,6 +52,7 @@
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_add_image"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 android:layout_marginTop="12dp"
@@ -61,7 +62,9 @@
                 app:strokeWidth="1dp"
                 android:clickable="true"
                 android:focusable="true">
+                
                 <LinearLayout
+                    android:id="@+id/ll_placeholder_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -78,6 +81,13 @@
                         android:layout_marginTop="8dp"
                         android:textColor="#666666"/>
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_selected_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Section: Challenge Name -->
@@ -102,6 +112,7 @@
             </LinearLayout>
 
             <EditText
+                android:id="@+id/edt_challenge_title"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
@@ -159,6 +170,7 @@
                                 android:textSize="11sp"
                                 android:textColor="#666666"/>
                             <TextView
+                                android:id="@+id/tv_start_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Chọn ngày >"
@@ -182,6 +194,7 @@
                                 android:textSize="11sp"
                                 android:textColor="#666666"/>
                             <TextView
+                                android:id="@+id/tv_end_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Chọn ngày >"
@@ -193,13 +206,6 @@
                                 android:paddingVertical="4dp" />
                         </LinearLayout>
                     </LinearLayout>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Kết thúc sau 10 ngày"
-                        android:layout_marginTop="8dp"
-                        android:textSize="11sp"
-                        android:textColor="#999999"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -225,6 +231,7 @@
             </LinearLayout>
 
             <EditText
+                android:id="@+id/edt_challenge_rules"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
@@ -257,13 +264,15 @@
             </LinearLayout>
 
             <EditText
+                android:id="@+id/edt_challenge_rewards"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="120dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_bg_white"
                 android:gravity="top"
                 android:padding="16dp"
                 android:hint="Nhập giải thưởng của thử thách..."
+                android:text="Top 1: \nTop 2: \nTop 3: "
                 android:textSize="14sp"
                 android:inputType="textMultiLine" />
 

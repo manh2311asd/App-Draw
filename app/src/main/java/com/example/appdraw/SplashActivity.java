@@ -14,17 +14,26 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(() -> {
+            com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
             android.content.SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
             long lastLoginTime = prefs.getLong("last_login_time", 0);
             long THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000L;
-            Intent intent;
-            if (System.currentTimeMillis() - lastLoginTime < THREE_DAYS_MS) {
-                intent = new Intent(SplashActivity.this, com.example.appdraw.MainActivity.class);
+
+            if (user != null && System.currentTimeMillis() - lastLoginTime < THREE_DAYS_MS) {
+                user.reload().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        startActivity(new Intent(SplashActivity.this, com.example.appdraw.MainActivity.class));
+                    } else {
+                        com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(SplashActivity.this, LoginOptionsActivity.class));
+                    }
+                    finish();
+                });
             } else {
-                intent = new Intent(SplashActivity.this, LoginOptionsActivity.class);
+                if (user != null) com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(SplashActivity.this, LoginOptionsActivity.class));
+                finish();
             }
-            startActivity(intent);
-            finish();
-        }, 2000);
+        }, 1000);
     }
 }

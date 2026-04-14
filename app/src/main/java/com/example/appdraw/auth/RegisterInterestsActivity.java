@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class RegisterInterestsActivity extends AppCompatActivity {
     
-    private String selectedInterest = null;
+    private final java.util.List<String> selectedInterests = new java.util.ArrayList<>();
     
     // Arrays for IDs
     private final int[] blockIds = {
@@ -45,8 +45,8 @@ public class RegisterInterestsActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.btn_interest_next).setOnClickListener(v -> {
-            if (selectedInterest == null) {
-                Toast.makeText(this, "Vui lòng chọn 1 sở thích", Toast.LENGTH_SHORT).show();
+            if (selectedInterests.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn ít nhất 1 sở thích", Toast.LENGTH_SHORT).show();
                 return;
             }
             
@@ -55,7 +55,9 @@ public class RegisterInterestsActivity extends AppCompatActivity {
             if (user != null) {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Map<String, Object> data = new HashMap<>();
-                data.put("interest", selectedInterest);
+                
+                String joinedInterests = android.text.TextUtils.join(", ", selectedInterests);
+                data.put("interest", joinedInterests);
                 
                 db.collection("Users").document(user.getUid()).set(data, SetOptions.merge())
                     .addOnCompleteListener(task -> {
@@ -73,12 +75,15 @@ public class RegisterInterestsActivity extends AppCompatActivity {
     }
     
     private void selectInterest(int selectedIndex) {
-        // Clear all
-        for (int id : lineIds) {
-            findViewById(id).setVisibility(View.INVISIBLE);
+        String item = interests[selectedIndex];
+        View line = findViewById(lineIds[selectedIndex]);
+        
+        if (selectedInterests.contains(item)) {
+            selectedInterests.remove(item);
+            line.setVisibility(View.INVISIBLE);
+        } else {
+            selectedInterests.add(item);
+            line.setVisibility(View.VISIBLE);
         }
-        // Show selection line
-        findViewById(lineIds[selectedIndex]).setVisibility(View.VISIBLE);
-        selectedInterest = interests[selectedIndex];
     }
 }

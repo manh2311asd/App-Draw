@@ -66,18 +66,24 @@ public class CreatePostActivity extends AppCompatActivity {
         }
 
         etContent = findViewById(R.id.et_post_content);
-        
-        // Populate text if coming from Homework Submission
-        String prefillText = getIntent().getStringExtra("PREFILL_TEXT");
-        if (prefillText != null && !prefillText.isEmpty()) {
-            etContent.setText(prefillText);
-        }
         ivImage = findViewById(R.id.iv_post_image);
         btnPickGallery = findViewById(R.id.btn_pick_gallery);
         btnRemoveImage = findViewById(R.id.btn_remove_image);
         rgCategory = findViewById(R.id.rg_category);
         swShare = findViewById(R.id.sw_share);
         swComment = findViewById(R.id.sw_comment);
+
+        // Populate text if coming from Homework Submission
+        String prefillText = getIntent().getStringExtra("PREFILL_TEXT");
+        if (prefillText != null && !prefillText.isEmpty()) {
+            etContent.setText(prefillText);
+        }
+
+        String prefillImageUriStr = getIntent().getStringExtra("PREFILL_IMAGE_URI");
+        if (prefillImageUriStr != null && !prefillImageUriStr.isEmpty()) {
+            selectedLocalUri = Uri.parse(prefillImageUriStr);
+            showSelectedImage(prefillImageUriStr);
+        }
 
         btnPickGallery.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
@@ -178,6 +184,9 @@ public class CreatePostActivity extends AppCompatActivity {
 
         db.collection("Posts").document(docId).set(post)
                 .addOnSuccessListener(aVoid -> {
+                    // Cập nhật postCount cho User
+                    db.collection("Users").document(currentUid).update("postCount", com.google.firebase.firestore.FieldValue.increment(1));
+                    
                     Toast.makeText(this, "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(this, com.example.appdraw.MainActivity.class);
                     // Dùng cờ này để MainActivity nhận onNewIntent (nếu đã mở) thay vì tạo mới activity

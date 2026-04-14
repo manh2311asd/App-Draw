@@ -45,8 +45,12 @@ public class HomeFragment extends Fragment {
         // --- Fetch User Role and Profile from Firestore ---
         TextView tvGreeting = view.findViewById(R.id.tv_greeting);
         View layoutBadgeMentor = view.findViewById(R.id.layout_badge_mentor);
-        MaterialButton btnJoinChallenge = view.findViewById(R.id.btnJoinChallenge);
         ImageView ivAvatarHome = view.findViewById(R.id.iv_avatar_home);
+        
+        ImageView btnAddChallenge = view.findViewById(R.id.btn_add_challenge);
+        if (btnAddChallenge != null) {
+            btnAddChallenge.setVisibility(View.GONE); // Hide completely
+        }
         
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -85,8 +89,15 @@ public class HomeFragment extends Fragment {
                         String role = documentSnapshot.getString("role");
                         if ("mentor".equals(role)) {
                             if (layoutBadgeMentor != null) layoutBadgeMentor.setVisibility(View.VISIBLE);
-                            if (btnJoinChallenge != null) btnJoinChallenge.setText("Quản lý");
                         }
+                    } else {
+                        // User deleted from DB -> logout
+                        Toast.makeText(getContext(), "Tài khoản của bạn không tồn tại hoặc đã bị xóa.", Toast.LENGTH_LONG).show();
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(getActivity(), com.example.appdraw.auth.LoginOptionsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        if (getActivity() != null) getActivity().finish();
                     }
                 });
         }
@@ -157,15 +168,8 @@ public class HomeFragment extends Fragment {
             });
         }
 
-        // Tham gia thử thách cụ thể
-        View cardChallenge = view.findViewById(R.id.card_challenge_new);
-        if (cardChallenge != null) {
-            cardChallenge.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), ChallengeDetailActivity.class);
-                intent.putExtra("CHALLENGE_TITLE", "Vẽ cây ngày trái đất");
-                startActivity(intent);
-            });
-        }
+        // --- Thử Thách ---
+        setupChallenges(view);
 
         // --- Sự kiện sắp tới ---
         setupUpcomingEvents(view);
@@ -183,50 +187,121 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupSuggestedLessons(View view) {
-        // Lesson 1
-        View lesson1 = view.findViewById(R.id.suggested_lesson_1);
-        if (lesson1 != null) {
-            ((TextView) lesson1.findViewById(R.id.tv_lesson_title)).setText("Vẽ mèo dễ thương");
-            ((TextView) lesson1.findViewById(R.id.tv_lesson_author)).setText("Bởi Linh Trần");
-            TextView status1 = lesson1.findViewById(R.id.tv_lesson_status);
-            status1.setText("Chưa học");
-            status1.setBackgroundTintList(null); // Reset to default
-            lesson1.setOnClickListener(v -> openLessonDetail("Vẽ mèo dễ thương", "Chưa học"));
-        }
+        android.widget.LinearLayout container = view.findViewById(R.id.ll_suggested_lessons_container);
+        if (container == null) return;
 
-        // Lesson 2
-        View lesson2 = view.findViewById(R.id.suggested_lesson_2);
-        if (lesson2 != null) {
-            ((TextView) lesson2.findViewById(R.id.tv_lesson_title)).setText("Phối màu nước");
-            ((TextView) lesson2.findViewById(R.id.tv_lesson_author)).setText("Bởi Hoàng Lam");
-            TextView status2 = lesson2.findViewById(R.id.tv_lesson_status);
-            status2.setText("Đang học");
-            status2.setBackgroundResource(R.drawable.rounded_bg_gray); // Giả sử dùng màu xám cho đang học
-            status2.setTextColor(Color.parseColor("#666666"));
-            lesson2.setOnClickListener(v -> openLessonDetail("Phối màu nước", "Đang học"));
-        }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("SuggestedLessons").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            boolean isCorrupted = !queryDocumentSnapshots.isEmpty() 
+                && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes") != null 
+                && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes").matches("-?\\d+");
 
-        // Lesson 3
-        View lesson3 = view.findViewById(R.id.suggested_lesson_3);
-        if (lesson3 != null) {
-            ((TextView) lesson3.findViewById(R.id.tv_lesson_title)).setText("Kỹ thuật vẽ chì");
-            ((TextView) lesson3.findViewById(R.id.tv_lesson_author)).setText("Bởi Donal");
-            TextView status3 = lesson3.findViewById(R.id.tv_lesson_status);
-            status3.setText("Hoàn thành");
-            status3.setBackgroundResource(R.drawable.bg_badge_completed);
-            status3.setTextColor(Color.WHITE);
-            lesson3.setOnClickListener(v -> openLessonDetail("Kỹ thuật vẽ chì", "Hoàn thành"));
-        }
-    }
+            if (queryDocumentSnapshots.isEmpty() || isCorrupted) {
+                if (isCorrupted) {
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                        doc.getReference().delete();
+                    }
+                }
 
-    private void openLessonDetail(String title, String status) {
-        if ("Hoàn thành".equals(status)) {
-            Toast.makeText(getContext(), "Bạn đã hoàn thành bài học: " + title, Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
-            intent.putExtra("LESSON_TITLE", title);
-            startActivity(intent);
-        }
+                // Auto seed 5 default realistic lessons
+                String[] titles = {"Phác thảo Manga", "Vẽ hoa màu nước", "Gấp hạc giấy cơ bản", "Phong cảnh đồi núi", "Rừng thông sương mù"};
+                String[] authors = {"Bởi Linh Trần", "Bởi Hoàng Lam", "Bởi Donal", "Bởi Thùy Chi", "Bởi Tuấn Vũ"};
+                String[] durations = {"25 min", "45 min", "60 min", "30 min", "50 min"};
+                String[] images = {"tp_trending_1", "ve_hoa_mau_nuoc", "ve_thien_nhien", "banner_watercolor", "tp_trending_2"};
+                
+                for (int i = 0; i < titles.length; i++) {
+                    java.util.Map<String, Object> data = new java.util.HashMap<>();
+                    data.put("title", titles[i]);
+                    data.put("author", authors[i]);
+                    data.put("duration", durations[i]);
+                    data.put("imageRes", images[i]);
+                    db.collection("SuggestedLessons").add(data);
+                }
+                container.postDelayed(() -> setupSuggestedLessons(view), 2500);
+                return;
+            }
+
+            if (getContext() == null) return;
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            container.removeAllViews();
+            
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            String uid = (auth.getCurrentUser() != null) ? auth.getCurrentUser().getUid() : null;
+
+            for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                String title = doc.getString("title");
+                String author = doc.getString("author");
+                String duration = doc.getString("duration");
+                String imageResStr = doc.getString("imageRes");
+                String imageUrl = doc.getString("imageUrl");
+
+                View lessonView = inflater.inflate(R.layout.item_lesson_preview, container, false);
+                
+                TextView tvTitle = lessonView.findViewById(R.id.tv_lesson_title);
+                TextView tvAuthor = lessonView.findViewById(R.id.tv_lesson_author);
+                ImageView ivThumb = lessonView.findViewById(R.id.iv_lesson_thumb);
+                TextView tvStatus = lessonView.findViewById(R.id.tv_lesson_status);
+                // Try to map duration if we had a dedicated ID, but item_lesson_preview has 25 min static text,
+                // let's just find the textview dynamically without ID or skip it. (Oh wait, no ID for duration in item_lesson_preview, so we leave it).
+                
+                if (tvTitle != null) tvTitle.setText(title);
+                if (tvAuthor != null) tvAuthor.setText(author);
+                
+                if (ivThumb != null) {
+                    if (imageResStr != null && !imageResStr.isEmpty() && !imageResStr.matches("-?\\d+")) {
+                        try { 
+                            int resId = getResources().getIdentifier(imageResStr, "drawable", getContext().getPackageName());
+                            if (resId != 0) ivThumb.setImageResource(resId);
+                        } catch (Exception e){}
+                    } else if (imageUrl != null && !imageUrl.isEmpty()) {
+                        Glide.with(this).load(imageUrl).centerCrop().into(ivThumb);
+                    }
+                }
+
+                // Default status
+                tvStatus.setText("Chưa học");
+                tvStatus.setBackgroundResource(R.drawable.rounded_bg_gray);
+                tvStatus.setTextColor(Color.parseColor("#808080"));
+                
+                android.widget.RatingBar rb = lessonView.findViewById(R.id.rating_bar);
+                if (rb != null) {
+                    float randomRating = 3.5f + (float)(Math.random() * 1.5f);
+                    rb.setRating(randomRating);
+                }
+
+                // Check sync progress
+                if (uid != null && title != null) {
+                    db.collection("Users").document(uid).collection("lessonProgress").document(title)
+                        .get().addOnSuccessListener(progDoc -> {
+                            if (progDoc.exists()) {
+                                String status = progDoc.getString("status");
+                                if ("COMPLETED".equals(status)) {
+                                    tvStatus.setText("Hoàn thành");
+                                    tvStatus.setBackgroundResource(R.drawable.bg_badge_completed);
+                                    tvStatus.setTextColor(Color.WHITE);
+                                } else if ("IN_PROGRESS".equals(status)) {
+                                    tvStatus.setText("Đang học");
+                                    tvStatus.setBackgroundResource(R.drawable.rounded_bg_gray);
+                                    tvStatus.setTextColor(Color.parseColor("#666666"));
+                                }
+                            }
+                        });
+                }
+
+                lessonView.setOnClickListener(v -> {
+                    String currentStatus = tvStatus.getText().toString();
+                    if ("Hoàn thành".equals(currentStatus)) {
+                        Toast.makeText(getContext(), "Bạn đã hoàn thành bài học: " + title, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
+                        intent.putExtra("LESSON_TITLE", title);
+                        startActivity(intent);
+                    }
+                });
+
+                container.addView(lessonView);
+            }
+        });
     }
 
     private void setupUpcomingEvents(View view) {
@@ -256,5 +331,157 @@ public class HomeFragment extends Fragment {
             button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2ECC71"))); // Màu xanh lá sáng lên
             Toast.makeText(getContext(), "Đăng ký thành công: " + eventTitle, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupChallenges(View view) {
+        android.widget.LinearLayout container = view.findViewById(R.id.ll_challenges_container);
+        if (container == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Challenges").addSnapshotListener((queryDocumentSnapshots, error) -> {
+            if (error != null || queryDocumentSnapshots == null) return;
+
+            if (queryDocumentSnapshots.isEmpty()) {
+                // Auto seed challenges
+                String[] titles = {"Vẽ cây ngày trái đất", "14 ngày ký họa phong cảnh", "Thử thách Anime 30 ngày"};
+                String[] authors = {"Mentor: Linh Trần", "Mentor: Thùy Chi", "Mentor: Hoàng Lam"};
+                String[] dates = {"12/04 - 19/04", "01/05 - 14/05", "10/05 - 10/06"};
+                String[] participants = {"256 đã tham gia", "1.2k đã tham gia", "840 đã tham gia"};
+                int[] images = {R.drawable.img_challenge_tree, R.drawable.ve_thien_nhien, R.drawable.tp_trending_2};
+
+                for (int i = 0; i < titles.length; i++) {
+                    java.util.Map<String, Object> data = new java.util.HashMap<>();
+                    data.put("title", titles[i]);
+                    data.put("author", authors[i]);
+                    data.put("dateStr", dates[i]);
+                    data.put("participantsCount", participants[i]);
+                    data.put("imageRes", String.valueOf(images[i]));
+                    db.collection("Challenges").add(data);
+                }
+                container.postDelayed(() -> setupChallenges(view), 2000);
+                return;
+            }
+
+            if (getContext() == null) return;
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            container.removeAllViews();
+
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            String uid = (auth.getCurrentUser() != null) ? auth.getCurrentUser().getUid() : null;
+
+            int count = 0;
+            for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                if (count >= 1) break; // Only display 1 challenge dynamically
+                
+                String title = doc.getString("title");
+                String author = doc.getString("author");
+                String dateStr = doc.getString("dateStr");
+                String participantsCount = doc.getString("participantsCount");
+                String imageResStr = doc.getString("imageRes");
+                String imageUrl = doc.getString("imageUrl");
+                String rulesStr = doc.getString("rules");
+                String rewardsStr = doc.getString("rewards");
+
+                View cardView = inflater.inflate(R.layout.item_challenge_card, container, false);
+
+                TextView tvTitle = cardView.findViewById(R.id.tv_challenge_title);
+                TextView tvAuthor = cardView.findViewById(R.id.tv_challenge_author);
+                TextView tvDate = cardView.findViewById(R.id.tv_challenge_date);
+                TextView tvParticipants = cardView.findViewById(R.id.tv_participants_count);
+                ImageView ivImage = cardView.findViewById(R.id.iv_challenge_image);
+                MaterialButton btnJoin = cardView.findViewById(R.id.btnJoinChallenge);
+
+                if (tvTitle != null) tvTitle.setText(title);
+                if (tvAuthor != null) tvAuthor.setText(author);
+                if (tvDate != null) tvDate.setText(dateStr);
+                if (tvParticipants != null) tvParticipants.setText(participantsCount);
+
+                if (ivImage != null) {
+                    if (imageResStr != null && !imageResStr.isEmpty()) {
+                        try { ivImage.setImageResource(Integer.parseInt(imageResStr)); } catch (Exception e){}
+                    } else if (imageUrl != null && !imageUrl.isEmpty()) {
+                        Glide.with(this).load(imageUrl).centerCrop().into(ivImage);
+                    }
+                }
+
+                // Check role and status locally
+                if (uid != null) {
+                    db.collection("Users").document(uid).get().addOnSuccessListener(userDoc -> {
+                        String role = userDoc.getString("role");
+                        if ("mentor".equals(role)) {
+                            if (btnJoin != null) btnJoin.setText("Quản lý");
+                        } else {
+                            // Check if joined
+                            db.collection("Users").document(uid).collection("joinedChallenges").document(title)
+                                .get().addOnSuccessListener(chalDoc -> {
+                                    if (chalDoc.exists() && btnJoin != null) {
+                                        btnJoin.setText("Tiếp tục");
+                                        btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E67E22"))); // Orange
+                                    }
+                                });
+                        }
+                    });
+                }
+
+                if (btnJoin != null) {
+                    btnJoin.setOnClickListener(v -> {
+                        String currentText = btnJoin.getText().toString();
+                        if ("Tham gia".equals(currentText) && uid != null) {
+                            btnJoin.setEnabled(false); // Ngăn double-click
+                            
+                            // Check if previously joined to prevent multiple increments
+                            db.collection("Users").document(uid).collection("joinedChallenges").document(title)
+                                .get().addOnSuccessListener(chalDoc -> {
+                                    if (!chalDoc.exists()) {
+                                        java.util.Map<String, Object> joinData = new java.util.HashMap<>();
+                                        joinData.put("status", "JOINED");
+                                        db.collection("Users").document(uid).collection("joinedChallenges").document(title).set(joinData);
+                                        
+                                        // Increment global counter
+                                        try {
+                                            String countStr = participantsCount;
+                                            if (countStr != null) countStr = countStr.replaceAll("[^0-9]", "");
+                                            int currentCount = (countStr == null || countStr.isEmpty()) ? 0 : Integer.parseInt(countStr);
+                                            currentCount++;
+                                            String newCountStr = currentCount + " đã tham gia";
+                                            db.collection("Challenges").document(doc.getId()).update("participantsCount", newCountStr);
+                                            if (tvParticipants != null) tvParticipants.setText(newCountStr);
+                                        } catch (Exception e) {}
+                                        
+                                        Toast.makeText(getContext(), "Đã tham gia thử thách!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    
+                                    btnJoin.setEnabled(true);
+                                    btnJoin.setText("Tiếp tục");
+                                    btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E67E22")));
+                                })
+                                .addOnFailureListener(e -> btnJoin.setEnabled(true));
+                        } else {
+                            Intent intent = new Intent(getActivity(), ChallengeDetailActivity.class);
+                            intent.putExtra("CHALLENGE_TITLE", title);
+                            intent.putExtra("CHALLENGE_IMAGE_URL", imageUrl);
+                            intent.putExtra("CHALLENGE_RULES", rulesStr);
+                            intent.putExtra("CHALLENGE_REWARDS", rewardsStr);
+                            intent.putExtra("CHALLENGE_DEADLINE", dateStr);
+                            startActivity(intent);
+                        }
+                    });
+                }
+
+                // Also make the whole card clickable
+                cardView.setOnClickListener(v -> {
+                    Intent intent = new Intent(getActivity(), ChallengeDetailActivity.class);
+                    intent.putExtra("CHALLENGE_TITLE", title);
+                    intent.putExtra("CHALLENGE_IMAGE_URL", imageUrl);
+                    intent.putExtra("CHALLENGE_RULES", rulesStr);
+                    intent.putExtra("CHALLENGE_REWARDS", rewardsStr);
+                    intent.putExtra("CHALLENGE_DEADLINE", dateStr);
+                    startActivity(intent);
+                });
+
+                container.addView(cardView);
+                count++;
+            }
+        });
     }
 }

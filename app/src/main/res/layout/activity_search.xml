@@ -81,6 +81,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Default Search Content (Suggestions) -->
+            <LinearLayout
+                android:id="@+id/ll_search_suggestions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <!-- Category Chips -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -286,6 +293,52 @@
                             android:textColor="#666666"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            </LinearLayout> <!-- End of ll_search_suggestions -->
+
+            <!-- Search Results -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:clipToPadding="false"
+                android:paddingBottom="100dp" />
+
+            <!-- Empty Search State -->
+            <LinearLayout
+                android:id="@+id/ll_empty_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginTop="64dp">
+                
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="#BDBDBD"/>
+                    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Không tìm thấy kết quả phù hợp"
+                    android:textColor="#555555"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"/>
+                    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thử tìm với một từ khóa khác xem sao"
+                    android:textColor="#888888"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
 
         </LinearLayout>

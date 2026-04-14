@@ -52,12 +52,12 @@ public class LessonDetailActivity extends AppCompatActivity {
     private ProgressBar pbVideoLoading;
     private MediaController mediaController;
 
-    private final String[] videoUrls = {
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
-    };
+    private com.example.appdraw.model.Lesson currentLesson;
+    private java.util.List<String> dynamicVideoUrls = new java.util.ArrayList<>();
+    
+    // Notes variables
+    private java.util.List<com.example.appdraw.model.Note> noteList = new java.util.ArrayList<>();
+    private NoteAdapter noteAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +107,7 @@ public class LessonDetailActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.btn_checklist).setOnClickListener(v -> showChecklistDialog());
-        findViewById(R.id.btn_notes).setOnClickListener(v -> android.widget.Toast.makeText(this, "Tính năng Ghi chú cá nhân đang phát triển!", android.widget.Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btn_notes).setOnClickListener(v -> showNotesBottomSheet());
 
         videoView = findViewById(R.id.video_view);
         flVideoThumbnail = findViewById(R.id.fl_video_thumbnail);
@@ -128,7 +128,12 @@ public class LessonDetailActivity extends AppCompatActivity {
         findViewById(R.id.ll_step3).setOnClickListener(v -> handleStepClick(3));
         findViewById(R.id.ll_step4).setOnClickListener(v -> handleStepClick(4));
 
-        setupMaterials();
+        View btnDownload = findViewById(R.id.btn_download_materials);
+        if (btnDownload != null) {
+            btnDownload.setOnClickListener(v -> downloadMaterials());
+        }
+
+        fetchLessonData();
 
         btnMainAction.setOnClickListener(v -> {
             if ("COMPLETED".equals(lessonStatus)) {
@@ -227,7 +232,7 @@ public class LessonDetailActivity extends AppCompatActivity {
     }
 
     private void playStepVideo(int index) {
-        if (index < 0 || index >= videoUrls.length) return;
+        if (index < 0 || index >= dynamicVideoUrls.size()) return;
         
         videoView.stopPlayback();
         videoView.setVisibility(View.GONE);
@@ -235,7 +240,7 @@ public class LessonDetailActivity extends AppCompatActivity {
         ivPlayButton.setVisibility(View.GONE);
         pbVideoLoading.setVisibility(View.VISIBLE);
         
-        Uri videoUri = Uri.parse(videoUrls[index]);
+        Uri videoUri = Uri.parse(dynamicVideoUrls.get(index));
         videoView.setVideoURI(videoUri);
         
         videoView.setOnPreparedListener(mp -> {
@@ -370,5 +375,155 @@ public class LessonDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HomeworkActivity.class);
         intent.putExtra("LESSON_TITLE", lessonTitle);
         startActivity(intent);
+    }
+
+    private void fetchLessonData() {
+        db.collection("Lessons").document(lessonTitle)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        currentLesson = documentSnapshot.toObject(com.example.appdraw.model.Lesson.class);
+                        if (currentLesson != null) {
+                            renderLessonData();
+                        }
+                    } else {
+                        createDummyLessonAndRender();
+                    }
+                })
+                .addOnFailureListener(e -> android.widget.Toast.makeText(this, "Lỗi tải bài học", android.widget.Toast.LENGTH_SHORT).show());
+    }
+
+    private void createDummyLessonAndRender() {
+        currentLesson = new com.example.appdraw.model.Lesson();
+        currentLesson.setId(lessonTitle);
+        currentLesson.setTitle(lessonTitle);
+        currentLesson.setAuthor("Phong Artist");
+        currentLesson.setLevel("Beginner");
+        currentLesson.setDurationMin(25);
+        currentLesson.setRating(4.5f);
+        currentLesson.setDescription("Hướng dẫn chi tiết cách hoàn thành tác phẩm tuyệt đẹp dành cho người mới bắt đầu.");
+        currentLesson.setMaterials(java.util.Arrays.asList("Màu nước", "Giấy vẽ 300gsm", "Cọ vẽ", "Cốc nước"));
+        
+        java.util.List<com.example.appdraw.model.Lesson.Step> steps = new java.util.ArrayList<>();
+        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Chuẩn bị dụng cụ", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Phác thảo cơ bản", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Tô màu nền", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 4", "Hoàn thiện chi tiết", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"));
+        currentLesson.setSteps(steps);
+
+        db.collection("Lessons").document(lessonTitle).set(currentLesson);
+        renderLessonData();
+    }
+
+    private void renderLessonData() {
+        tvToolbarTitle.setText(currentLesson.getTitle());
+        ((TextView) findViewById(R.id.tv_lesson_detail_title)).setText(currentLesson.getTitle());
+        TextView tvDesc = findViewById(R.id.tv_lesson_description);
+        if (tvDesc != null) tvDesc.setText(currentLesson.getDescription());
+        
+        dynamicVideoUrls.clear();
+        if (currentLesson.getSteps() != null) {
+            for (int i = 0; i < currentLesson.getSteps().size() && i < 4; i++) {
+                com.example.appdraw.model.Lesson.Step step = currentLesson.getSteps().get(i);
+                dynamicVideoUrls.add(step.getVideoUrl());
+                stepTexts[i].setText(step.getDescription());
+            }
+        }
+        setupMaterialsDynamic();
+    }
+
+    private void setupMaterialsDynamic() {
+        if (llMaterialsContainer == null || currentLesson == null) return;
+        llMaterialsContainer.removeAllViews();
+        java.util.List<String> materials = currentLesson.getMaterials();
+        if (materials == null) return;
+        
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (String name : materials) {
+            View itemView = inflater.inflate(R.layout.item_lesson_material, llMaterialsContainer, false);
+            ((TextView) itemView.findViewById(R.id.tv_material_name)).setText(name);
+            ((ImageView) itemView.findViewById(R.id.iv_material)).setImageResource(R.drawable.mau_nuoc);
+            llMaterialsContainer.addView(itemView);
+        }
+    }
+
+    private void downloadMaterials() {
+        android.widget.Toast.makeText(this, "Đang tải xuống tài liệu...", android.widget.Toast.LENGTH_SHORT).show();
+        
+        String dummyPdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+        android.app.DownloadManager.Request request = new android.app.DownloadManager.Request(Uri.parse(dummyPdfUrl));
+        request.setTitle("Tài liệu bài học - " + currentLesson.getTitle());
+        request.setDescription("Đang tải dữ liệu tham khảo...");
+        request.setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, lessonTitle + "_materials.pdf");
+        
+        android.app.DownloadManager manager = (android.app.DownloadManager) getSystemService(android.content.Context.DOWNLOAD_SERVICE);
+        if (manager != null) {
+            manager.enqueue(request);
+        }
+    }
+
+    private void showNotesBottomSheet() {
+        com.google.android.material.bottomsheet.BottomSheetDialog bottomSheetDialog = new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_lesson_notes, null);
+        bottomSheetDialog.setContentView(dialogView);
+
+        androidx.recyclerview.widget.RecyclerView rvNotes = dialogView.findViewById(R.id.rv_notes);
+        rvNotes.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+        
+        noteAdapter = new NoteAdapter(noteList, note -> {
+            bottomSheetDialog.dismiss();
+            videoView.seekTo(note.getTimestampMs());
+            videoView.start();
+        });
+        rvNotes.setAdapter(noteAdapter);
+
+        fetchNotesFromFirestore(rvNotes);
+
+        android.widget.EditText etNoteInput = dialogView.findViewById(R.id.et_note_input);
+        dialogView.findViewById(R.id.btn_send_note).setOnClickListener(v -> {
+            String content = etNoteInput.getText().toString().trim();
+            if (content.isEmpty()) return;
+            
+            int currentPos = videoView.getCurrentPosition(); // in milliseconds
+            int seconds = currentPos / 1000;
+            int mins = seconds / 60;
+            int secs = seconds % 60;
+            String formattedTime = String.format("%02d:%02d", mins, secs);
+
+            com.example.appdraw.model.Note newNote = new com.example.appdraw.model.Note(
+                java.util.UUID.randomUUID().toString(), content, currentStep, currentPos, formattedTime);
+                
+            db.collection("Users").document(uid).collection("notes")
+                .document(lessonTitle).collection("userNotes").document(newNote.getId())
+                .set(newNote)
+                .addOnSuccessListener(aVoid -> {
+                    noteList.add(newNote);
+                    noteAdapter.notifyItemInserted(noteList.size() - 1);
+                    rvNotes.scrollToPosition(noteList.size() - 1);
+                    etNoteInput.setText("");
+                });
+        });
+
+        bottomSheetDialog.show();
+    }
+
+    private void fetchNotesFromFirestore(androidx.recyclerview.widget.RecyclerView rvNotes) {
+        if ("guest".equals(uid)) return;
+        db.collection("Users").document(uid).collection("notes")
+            .document(lessonTitle).collection("userNotes")
+            .orderBy("timestampMs")
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                noteList.clear();
+                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                    com.example.appdraw.model.Note note = doc.toObject(com.example.appdraw.model.Note.class);
+                    if (note != null) noteList.add(note);
+                }
+                noteAdapter.notifyDataSetChanged();
+                if (!noteList.isEmpty()) {
+                    rvNotes.scrollToPosition(noteList.size() - 1);
+                }
+            });
     }
 }

@@ -84,31 +84,16 @@
                     android:paddingVertical="4dp"
                     android:background="@drawable/bg_badge_completed"/>
 
-                <LinearLayout
+                <RatingBar
+                    android:id="@+id/rating_bar"
+                    style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:tint="#FFD700"/>
-                    <ImageView
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:tint="#FFD700"
-                        android:layout_marginStart="1dp"/>
-                    <ImageView
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:tint="#FFD700"
-                        android:layout_marginStart="1dp"/>
-                </LinearLayout>
+                    android:numStars="5"
+                    android:rating="0"
+                    android:progressTint="#FFD700" />
             </RelativeLayout>
 
             <LinearLayout
@@ -117,17 +102,14 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical">
-                <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/circle_color" android:backgroundTint="#FF5252"/>
-                <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/circle_color" android:backgroundTint="#448AFF" android:layout_marginStart="4dp"/>
-                <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/circle_color" android:backgroundTint="#FFD740" android:layout_marginStart="4dp"/>
 
                 <TextView
+                    android:id="@+id/tv_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="25 min"
                     android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginStart="8dp"/>
+                    android:textColor="#999999" />
 
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
                 <ImageView android:layout_width="12dp" android:layout_height="12dp" android:src="@android:drawable/ic_menu_view" app:tint="#999999"/>

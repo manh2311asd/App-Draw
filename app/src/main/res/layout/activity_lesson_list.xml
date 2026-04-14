@@ -105,15 +105,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
-
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_1" />
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_2" />
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_3" />
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_4" />
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_5" />
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_6" />
-                <include layout="@layout/item_lesson_list" android:id="@+id/lesson_7" />
-
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>

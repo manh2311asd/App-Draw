@@ -3,150 +3,172 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F8FAFF">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+        android:background="#FFFFFF">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:contentScrim="?attr/colorPrimary"
+            android:layout_height="250dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            app:contentScrim="#FFFFFF">
 
+            <!-- Banner -->
             <ImageView
-                android:id="@+id/iv_artist_large"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/banner_watercolor"
+                app:layout_collapseMode="parallax" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/nghe_si_hoang_lam"
-                app:layout_collapseMode="parallax" />
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="100dp"
+                app:layout_collapseMode="parallax">
+                
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_artist_large"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"
+                    android:padding="2dp"
+                    android:background="#FFFFFF"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp">
+                    <TextView
+                        android:id="@+id/tv_artist_name_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tên nghệ sĩ"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check_circle"
+                        app:tint="#4272D0"
+                        android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_followers_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 người theo dõi"
+                    android:textColor="#888888"
+                    android:textSize="13sp"/>
+            </LinearLayout>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:navigationIcon="@drawable/ic_back" />
-
+                app:navigationIcon="@drawable/ic_back"/>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingBottom="16dp">
+            
+            <TextView
+                android:id="@+id/tv_artist_bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bio của họa sĩ..."
+                android:textColor="#555555"
+                android:textSize="14sp"
+                android:layout_marginVertical="8dp"
+                android:gravity="center"/>
+                
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_follow"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Theo dõi"
+                app:cornerRadius="24dp"
+                app:backgroundTint="#4272D0"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabTextColor="#888888"
+            app:tabSelectedTextColor="#4272D0"
+            app:tabIndicatorColor="#4272D0">
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Khóa học"/>
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tác phẩm"/>
+        </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <TextView
-                android:id="@+id/tv_artist_name_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hoàng Lam"
-                android:textColor="#333333"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Giới thiệu"
-                android:textColor="#333333"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_artist_bio"
+            android:layout_height="wrap_content">
+            
+            <!-- Tab Khóa học Content -->
+            <LinearLayout
+                android:id="@+id/ll_tab_lessons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:lineSpacingExtra="4dp"
-                android:text="Nghệ sĩ Hoàng Lam là một trong những họa sĩ màu nước hàng đầu với hơn 10 năm kinh nghiệm. Anh nổi tiếng với phong cách vẽ thiên nhiên đầy sống động và cảm xúc."
-                android:textColor="#666666"
-                android:textSize="15sp" />
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="visible">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Khóa học chưa được cập nhật."
+                    android:gravity="center"
+                    android:textColor="#999999"
+                    android:layout_marginTop="40dp"/>
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Tác phẩm nổi bật"
-                android:textColor="#333333"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <GridLayout
+            <!-- Tab Tác phẩm Content -->
+            <LinearLayout
+                android:id="@+id/ll_tab_artworks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:columnCount="2"
-                android:alignmentMode="alignMargins">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="12dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ve_hoa_mau_nuoc" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="12dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ve_thien_nhien" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="12dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/tp_trending_1" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="12dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/banner_watercolor" />
-                </com.google.android.material.card.MaterialCardView>
-
-            </GridLayout>
-
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nghệ sĩ chưa có tác phẩm nào."
+                    android:gravity="center"
+                    android:textColor="#999999"
+                    android:layout_marginTop="40dp"/>
+            </LinearLayout>
+        </FrameLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

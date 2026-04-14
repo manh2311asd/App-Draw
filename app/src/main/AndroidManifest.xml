@@ -102,6 +102,20 @@
             android:name=".challenge.ChallengeEntryListActivity"
             android:exported="false" />
         <activity
+            android:name=".challenge.SubmitChallengeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".challenge.ChallengeSubmissionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".challenge.SubmissionDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name=".challenge.GradeSubmissionActivity"
+            android:exported="false" />
+        <activity
             android:name=".event.CreateEventActivity"
             android:exported="false" />
         <activity

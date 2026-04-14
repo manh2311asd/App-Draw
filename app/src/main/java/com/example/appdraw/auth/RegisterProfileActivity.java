@@ -34,6 +34,7 @@ public class RegisterProfileActivity extends AppCompatActivity {
                     selectedImageUri = uri;
                     ivAvatar.setImageURI(uri);
                     ivAvatar.setPadding(0, 0, 0, 0); // Xóa padding mặc định khi có ảnh
+                    ivAvatar.setImageTintList(null); // Xóa tint trắng mặc định
                 }
             });
 
@@ -67,13 +68,26 @@ public class RegisterProfileActivity extends AppCompatActivity {
                 layoutLoading.setVisibility(View.VISIBLE);
                 
                 if (selectedImageUri != null) {
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Avatars/" + user.getUid() + ".jpg");
-                    storageRef.putFile(selectedImageUri)
-                        .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> saveData(user.getUid(), fullName, bio, uri.toString())))
-                        .addOnFailureListener(e -> {
-                            layoutLoading.setVisibility(View.GONE);
-                            Toast.makeText(this, "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
+                    try {
+                        android.graphics.Bitmap bitmap;
+                        if (android.os.Build.VERSION.SDK_INT >= 28) {
+                            android.graphics.ImageDecoder.Source source = android.graphics.ImageDecoder.createSource(getContentResolver(), selectedImageUri);
+                            bitmap = android.graphics.ImageDecoder.decodeBitmap(source);
+                        } else {
+                            bitmap = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                        }
+                        
+                        android.graphics.Bitmap scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+                        scaledBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, buffer);
+                        byte[] fileBytes = buffer.toByteArray();
+                        
+                        String base64Image = "data:image/jpeg;base64," + android.util.Base64.encodeToString(fileBytes, android.util.Base64.DEFAULT);
+                        saveData(user.getUid(), fullName, bio, base64Image);
+                    } catch (Exception e) {
+                        layoutLoading.setVisibility(View.GONE);
+                        Toast.makeText(this, "Lỗi nén ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     saveData(user.getUid(), fullName, bio, "");
                 }

@@ -54,27 +54,51 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_challenge_banner"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp">
-                <ImageView
+                app:cardElevation="2dp"
+                app:strokeColor="#EEF2F9"
+                app:strokeWidth="1dp">
+                
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/banner_watercolor" />
+                    android:layout_height="match_parent">
+                    
+                    <ImageView
+                        android:id="@+id/iv_challenge_banner_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/banner_watercolor" />
+                        
+                    <!-- Mockup overlay: Deadline -->
+                    <TextView
+                        android:id="@+id/tv_challenge_deadline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|start"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/rounded_bg_white_trans"
+                        android:backgroundTint="#F2FFFFFF"
+                        android:text="Deadline: 3 ngày còn lại"
+                        android:textColor="#333333"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"/>
+                </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Status Section (Ảnh 1 style) -->
+            <!-- Status Section -->
             <LinearLayout
+                android:id="@+id/ll_top_status_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:background="#E8F0FE"
-                android:layout_marginBottom="8dp">
+                android:paddingHorizontal="20dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -82,8 +106,8 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:src="@drawable/ic_community"
                         app:tint="#1A1A1A" />
                     <TextView
@@ -93,33 +117,27 @@
                         android:text="Trạng thái: "
                         android:textColor="#1A1A1A"
                         android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Đã tham gia"
                         android:textColor="#4CAF50"
                         android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginStart="4dp"
-                        android:src="@android:drawable/checkbox_on_background"
-                        app:tint="#4CAF50" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
                     <ImageView
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:src="@drawable/ic_video"
-                        app:tint="#1A1A1A" />
+                        app:tint="#666666" />
                     <TextView
                         android:id="@+id/tv_submission_status_info"
                         android:layout_width="wrap_content"
@@ -131,43 +149,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Deadline Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:background="#F8F9FE">
-                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@android:drawable/ic_menu_today"
-                        app:tint="#1A1A1A" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Deadline"
-                        android:textColor="#1A1A1A"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="26dp"
-                    android:text="Kết thúc trong 15 giờ tới"
-                    android:textColor="#666666"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E8EAF6" />
 
             <!-- Rules Section -->
             <LinearLayout
@@ -195,9 +177,15 @@
                         android:textStyle="bold"
                         android:textSize="14sp" />
                 </LinearLayout>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="26dp" android:layout_marginTop="4dp" android:text="● Tác phẩm phải được làm từ đất sét" android:textSize="12sp" android:textColor="#333333" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="26dp" android:layout_marginTop="2dp" android:text="● Có thể dùng màu nước / sơn phủ" android:textSize="12sp" android:textColor="#333333" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="26dp" android:layout_marginTop="2dp" android:text="● Tác phẩm phải do bạn tự thực hiện" android:textSize="12sp" android:textColor="#333333" />
+                <TextView
+                    android:id="@+id/tv_challenge_rules"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="26dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Đang cập nhật..."
+                    android:textSize="12sp"
+                    android:textColor="#333333" />
             </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" />
@@ -230,57 +218,175 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none">
-                    <LinearLayout
+                    android:background="@drawable/rounded_bg_gray"
+                    android:padding="12dp">
+                    <TextView
+                        android:id="@+id/tv_challenge_rewards"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <!-- Reward 1 -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="#FFD700"
-                            app:strokeWidth="1dp">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="8dp"
-                                android:gravity="center">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥇 Giải Nhất" android:textSize="10sp" android:textStyle="bold" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thưởng: +50 XP" android:textSize="9sp" android:layout_marginTop="4dp" />
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-                        <!-- Reward 2 -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="#C0C0C0"
-                            app:strokeWidth="1dp">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="8dp"
-                                android:gravity="center">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥈 Giải Nhì" android:textSize="10sp" android:textStyle="bold" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thưởng: +30 XP" android:textSize="9sp" android:layout_marginTop="4dp" />
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-                    </LinearLayout>
-                </HorizontalScrollView>
+                        android:text="Đang cập nhật..."
+                        android:textSize="12sp"
+                        android:textColor="#333333" />
+                </LinearLayout>
             </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" />
+            <!-- Podium Section -->
+            <LinearLayout
+                android:id="@+id/ll_podium_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:layout_gravity="center_horizontal">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/btn_star_big_on"
+                        app:tint="#F1C40F" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="BẢNG VÀNG VINH DANH"
+                        android:textColor="#F39C12"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="bottom"
+                    android:weightSum="3"
+                    android:paddingBottom="8dp">
+
+                    <!-- Top 2 (Silver) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥈" android:textSize="20sp"/>
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/iv_top2_avatar"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="4dp"
+                            android:src="@drawable/ic_default_user"
+                            app:shapeAppearanceOverlay="@style/CircleShapeOverlay"
+                            app:strokeWidth="2dp"
+                            app:strokeColor="#BDC3C7"/>
+                        <TextView
+                            android:id="@+id/tv_top2_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-" 
+                            android:textSize="12sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:layout_marginTop="4dp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/tv_top2_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="- xp"
+                            android:textColor="#A0A0A0"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Top 1 (Gold) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginBottom="16dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textSize="28sp"/>
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/iv_top1_avatar"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_marginTop="4dp"
+                            android:src="@drawable/ic_default_user"
+                            app:shapeAppearanceOverlay="@style/CircleShapeOverlay"
+                            app:strokeWidth="3dp"
+                            app:strokeColor="#F1C40F"/>
+                        <TextView
+                            android:id="@+id/tv_top1_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-" 
+                            android:textSize="14sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:layout_marginTop="4dp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/tv_top1_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="- xp"
+                            android:textColor="#F39C12"
+                            android:textSize="13sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Top 3 (Bronze) -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🥉" android:textSize="20sp"/>
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/iv_top3_avatar"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="4dp"
+                            android:src="@drawable/ic_default_user"
+                            app:shapeAppearanceOverlay="@style/CircleShapeOverlay"
+                            app:strokeWidth="2dp"
+                            app:strokeColor="#CD7F32"/>
+                        <TextView
+                            android:id="@+id/tv_top3_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-" 
+                            android:textSize="12sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:layout_marginTop="4dp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/tv_top3_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="- xp"
+                            android:textColor="#CD7F32"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <View android:id="@+id/v_podium_divider" android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:visibility="gone"/>
 
             <!-- Entry Submission List -->
             <LinearLayout
@@ -312,33 +418,11 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ll_public_submissions_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- Entry 1 -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:strokeColor="#4272D0"
-                        app:strokeWidth="1dp">
-                        <include layout="@layout/item_challenge_entry_simple" />
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Entry 2 -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:cardCornerRadius="12dp"
-                        app:strokeColor="#DDDDDD"
-                        app:strokeWidth="1dp">
-                        <include layout="@layout/item_challenge_entry_simple" android:id="@+id/entry_2_preview" />
-                    </com.google.android.material.card.MaterialCardView>
-
+                    android:orientation="vertical">
+                    <!-- Dynamic entries will be added here -->
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
@@ -354,7 +438,8 @@
                     android:textSize="11sp"
                     android:background="@drawable/rounded_blue_gradient"
                     android:paddingHorizontal="24dp"
-                    app:backgroundTint="@null" />
+                    app:backgroundTint="@null"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

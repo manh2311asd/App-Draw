@@ -9,4 +9,9 @@
 
     <style name="Theme.AppDraw.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.AppDraw.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="CircleShapeOverlay">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

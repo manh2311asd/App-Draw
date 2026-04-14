@@ -275,21 +275,35 @@ public class ProfileActivity extends AppCompatActivity {
         com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
+                .addSnapshotListener((documentSnapshot, e) -> {
+                    if (e != null || documentSnapshot == null) return;
                     if (documentSnapshot.exists()) {
                         // Tải số liệu thực tế Followers, Following, Post
                         Long followers = documentSnapshot.getLong("followersCount");
                         Long following = documentSnapshot.getLong("followingCount");
                         Long posts = documentSnapshot.getLong("postCount");
+                        String role = documentSnapshot.getString("role");
+                        
+                        long followersVal = followers != null ? Math.max(0, followers) : 0;
+                        long followingVal = following != null ? Math.max(0, following) : 0;
+                        long postsVal = posts != null ? Math.max(0, posts) : 0;
+                        
+                        android.widget.ImageView ivMentorBadge = findViewById(R.id.iv_mentor_badge);
+                        if (ivMentorBadge != null) {
+                            if ("mentor".equals(role)) {
+                                ivMentorBadge.setVisibility(View.VISIBLE);
+                            } else {
+                                ivMentorBadge.setVisibility(View.GONE);
+                            }
+                        }
                         
                         TextView tvFollowers = findViewById(R.id.tv_profile_followers);
                         TextView tvFollowing = findViewById(R.id.tv_profile_following);
                         TextView tvPosts = findViewById(R.id.tv_profile_posts);
                         
-                        if (tvFollowers != null) tvFollowers.setText(followers != null ? String.valueOf(followers) : "0");
-                        if (tvFollowing != null) tvFollowing.setText(following != null ? String.valueOf(following) : "0");
-                        if (tvPosts != null) tvPosts.setText(posts != null ? String.valueOf(posts) : "0");
+                        if (tvFollowers != null) tvFollowers.setText(String.valueOf(followersVal));
+                        if (tvFollowing != null) tvFollowing.setText(String.valueOf(followingVal));
+                        if (tvPosts != null) tvPosts.setText(String.valueOf(postsVal));
 
                         // Tải Avatar
                         String photoUrl = documentSnapshot.getString("photoUrl");
@@ -322,17 +336,24 @@ public class ProfileActivity extends AppCompatActivity {
                         TextView tvTag1 = findViewById(R.id.tv_tag_1);
                         TextView tvTag2 = findViewById(R.id.tv_tag_2);
                         TextView tvTag3 = findViewById(R.id.tv_tag_3);
+                        
+                        if (tvTag1 != null) tvTag1.setVisibility(View.GONE);
+                        if (tvTag2 != null) tvTag2.setVisibility(View.GONE);
+                        if (tvTag3 != null) tvTag3.setVisibility(View.GONE);
 
-                        if (tvTag1 != null) {
-                            if (interest != null && !interest.isEmpty()) {
-                                tvTag1.setText(interest);
+                        if (interest != null && !interest.isEmpty()) {
+                            String[] interests = interest.split(",");
+                            if (interests.length > 0 && tvTag1 != null) {
+                                tvTag1.setText(interests[0].trim());
                                 tvTag1.setVisibility(View.VISIBLE);
                             }
-                        }
-                        if (tvTag2 != null) {
-                            if (level != null && !level.isEmpty()) {
-                                tvTag2.setText(level);
+                            if (interests.length > 1 && tvTag2 != null) {
+                                tvTag2.setText(interests[1].trim());
                                 tvTag2.setVisibility(View.VISIBLE);
+                            }
+                            if (interests.length > 2 && tvTag3 != null) {
+                                tvTag3.setText(interests[2].trim());
+                                tvTag3.setVisibility(View.VISIBLE);
                             }
                         }
 
@@ -365,6 +386,14 @@ public class ProfileActivity extends AppCompatActivity {
                         if (!hasAvatar && ivAvatar != null) {
                             com.bumptech.glide.Glide.with(this).load(R.drawable.ic_default_user).circleCrop().into(ivAvatar);
                         }
+                    } else {
+                        // User deleted entirely from DB but auth session lived
+                        Toast.makeText(this, "Phiên đăng nhập không hợp lệ hoặc tài khoản đã bị xóa.", Toast.LENGTH_LONG).show();
+                        com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(ProfileActivity.this, com.example.appdraw.auth.LoginOptionsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                     }
                 });
 
@@ -389,6 +418,9 @@ public class ProfileActivity extends AppCompatActivity {
                     
                     if (postAdapter != null) postAdapter.notifyDataSetChanged();
                     renderTwitterLikePosts(allPostList);
+                    
+                    TextView tvPosts = findViewById(R.id.tv_profile_posts);
+                    if (tvPosts != null) tvPosts.setText(String.valueOf(allPostList.size()));
 
                     if (activeTab == 0 && tabArtwork != null) {
                         tabArtwork.performClick();
@@ -449,6 +481,14 @@ public class ProfileActivity extends AppCompatActivity {
                             String fullName = (String) profile.get("fullName");
                             String avatarUrl = (String) profile.get("avatarUrl");
                             if (tvName != null && fullName != null) tvName.setText(fullName);
+                            android.widget.ImageView ivMentorBadge = postView.findViewById(R.id.iv_mentor_badge);
+                            if (ivMentorBadge != null) {
+                                if ("mentor".equals(userDoc.getString("role"))) {
+                                    ivMentorBadge.setVisibility(View.VISIBLE);
+                                } else {
+                                    ivMentorBadge.setVisibility(View.GONE);
+                                }
+                            }
                             if (ivAvatar != null) {
                                 if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("data:image")) {
                                     byte[] b = android.util.Base64.decode(avatarUrl.split(",")[1], android.util.Base64.DEFAULT);

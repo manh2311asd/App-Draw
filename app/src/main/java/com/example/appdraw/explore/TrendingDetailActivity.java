@@ -20,6 +20,9 @@ public class TrendingDetailActivity extends AppCompatActivity {
             if (tvTitle != null) tvTitle.setText(title);
         }
 
-        findViewById(R.id.iv_back_trending).setOnClickListener(v -> finish());
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> finish());
+        }
     }
 }

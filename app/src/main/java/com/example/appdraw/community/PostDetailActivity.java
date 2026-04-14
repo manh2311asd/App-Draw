@@ -63,8 +63,8 @@ public class PostDetailActivity extends AppCompatActivity {
         View includedPost = findViewById(R.id.included_post);
         if (includedPost == null) return;
 
-        db.collection("Posts").document(postId).get().addOnSuccessListener(doc -> {
-            if (doc.exists()) {
+        db.collection("Posts").document(postId).addSnapshotListener((doc, e) -> {
+            if (e != null || doc == null || !doc.exists()) return;
                 Post post = doc.toObject(Post.class);
                 if (post != null) {
                     TextView tvHeader = findViewById(R.id.tv_comment_header);
@@ -74,6 +74,11 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     TextView tvContent = includedPost.findViewById(R.id.tv_post_content);
                     if (tvContent != null) tvContent.setText(post.getContent());
+
+                    TextView tvTime = includedPost.findViewById(R.id.tv_post_time);
+                    if (tvTime != null) {
+                        tvTime.setText(getTimeAgo(post.getCreatedAt()));
+                    }
 
                     ImageView ivPostImg = includedPost.findViewById(R.id.iv_post_image);
                     if (ivPostImg != null && post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
@@ -88,8 +93,41 @@ public class PostDetailActivity extends AppCompatActivity {
                         ivPostImg.setVisibility(View.GONE);
                     }
 
+                    View llLike = includedPost.findViewById(R.id.ll_like);
+                    ImageView ivLike = includedPost.findViewById(R.id.iv_like);
                     TextView tvLikeCount = includedPost.findViewById(R.id.tv_like_count);
-                    if (tvLikeCount != null) tvLikeCount.setText(String.valueOf(post.getLikesCount()));
+                    
+                    if (llLike != null && ivLike != null && tvLikeCount != null) {
+                        boolean isLiked = post.getLikedBy() != null && post.getLikedBy().contains(currentUid);
+                        tvLikeCount.setText(String.valueOf(post.getLikesCount()));
+                        if (isLiked) {
+                            ivLike.setImageResource(R.drawable.ic_heart);
+                            ivLike.setColorFilter(android.graphics.Color.parseColor("#E91E63"));
+                        } else {
+                            ivLike.setImageResource(R.drawable.ic_heart);
+                            ivLike.setColorFilter(android.graphics.Color.parseColor("#888888"));
+                        }
+                        
+                        llLike.setOnClickListener(v -> {
+                            if (currentUid == null) return;
+                            db.collection("Posts").document(post.getId())
+                                .get().addOnSuccessListener(d -> {
+                                    if (!d.exists()) return;
+                                    Post p = d.toObject(Post.class);
+                                    if (p != null) {
+                                        if (p.getLikedBy() == null) p.setLikedBy(new java.util.ArrayList<>());
+                                        if (p.getLikedBy().contains(currentUid)) {
+                                            p.getLikedBy().remove(currentUid);
+                                            p.setLikesCount(Math.max(0, p.getLikesCount() - 1));
+                                        } else {
+                                            p.getLikedBy().add(currentUid);
+                                            p.setLikesCount(p.getLikesCount() + 1);
+                                        }
+                                        d.getReference().set(p);
+                                    }
+                                });
+                        });
+                    }
 
                     TextView tvCommentCount = includedPost.findViewById(R.id.tv_comment_count);
                     if (tvCommentCount != null) tvCommentCount.setText(String.valueOf(post.getCommentsCount()));
@@ -100,7 +138,40 @@ public class PostDetailActivity extends AppCompatActivity {
                             tvFollowStatus.setVisibility(View.GONE);
                         } else {
                             tvFollowStatus.setVisibility(View.VISIBLE);
-                            tvFollowStatus.setText("Theo dõi");
+                            
+                            DocumentReference followRef = db.collection("Follows").document(currentUid + "_" + post.getUid());
+                            followRef.get().addOnSuccessListener(d -> {
+                                if (d.exists()) {
+                                    tvFollowStatus.setText("Đang theo dõi");
+                                    tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                                } else {
+                                    tvFollowStatus.setText("Theo dõi");
+                                    tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                                }
+                            });
+
+                            tvFollowStatus.setOnClickListener(v -> {
+                                tvFollowStatus.setEnabled(false);
+                                if (tvFollowStatus.getText().toString().equals("Theo dõi")) {
+                                    followRef.set(new java.util.HashMap<>()).addOnSuccessListener(aVoid -> {
+                                        tvFollowStatus.setText("Đang theo dõi");
+                                        tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                                        db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
+                                        db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
+                                        Toast.makeText(PostDetailActivity.this, "Đã theo dõi", Toast.LENGTH_SHORT).show();
+                                        tvFollowStatus.setEnabled(true);
+                                    });
+                                } else {
+                                    followRef.delete().addOnSuccessListener(aVoid -> {
+                                        tvFollowStatus.setText("Theo dõi");
+                                        tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                                        db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
+                                        db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
+                                        Toast.makeText(PostDetailActivity.this, "Bỏ theo dõi", Toast.LENGTH_SHORT).show();
+                                        tvFollowStatus.setEnabled(true);
+                                    });
+                                }
+                            });
                         }
                     }
 
@@ -113,7 +184,15 @@ public class PostDetailActivity extends AppCompatActivity {
                                 String avatarUrl = (String) profile.get("avatarUrl");
                                 TextView tvName = includedPost.findViewById(R.id.tv_user_name);
                                 ImageView ivAvatar = includedPost.findViewById(R.id.iv_user_avatar);
-                                if (tvName != null) tvName.setText(fullName);
+                                ImageView ivMentorBadge = includedPost.findViewById(R.id.iv_mentor_badge);
+                                if (tvName != null) tvName.setText(fullName != null ? fullName : "Người dùng");
+                                if (ivMentorBadge != null) {
+                                    if ("mentor".equals(userDoc.getString("role"))) {
+                                        ivMentorBadge.setVisibility(View.VISIBLE);
+                                    } else {
+                                        ivMentorBadge.setVisibility(View.GONE);
+                                    }
+                                }
                                 if (ivAvatar != null) {
                                     if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("data:image")) {
                                         byte[] b = android.util.Base64.decode(avatarUrl.split(",")[1], android.util.Base64.DEFAULT);
@@ -128,7 +207,6 @@ public class PostDetailActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }
         });
     }
 
@@ -149,14 +227,28 @@ public class PostDetailActivity extends AppCompatActivity {
                         TextView tvContent = commentView.findViewById(R.id.tv_comment_content);
                         tvContent.setText(comment.getContent());
                         
+                        TextView tvTime = commentView.findViewById(R.id.tv_comment_time);
+                        if (tvTime != null) {
+                            tvTime.setText(getTimeAgo(comment.getCreatedAt()));
+                        }
+                        
                         db.collection("Users").document(comment.getUid()).get().addOnSuccessListener(userDoc -> {
                             if (userDoc.exists() && userDoc.contains("profile")) {
                                 Map<String, Object> profile = (Map<String, Object>) userDoc.get("profile");
                                 if (profile != null) {
                                     TextView tvName = commentView.findViewById(R.id.tv_comment_name);
-                                    tvName.setText((String) profile.get("fullName"));
+                                    String fullName = (String) profile.get("fullName");
+                                    tvName.setText(fullName != null ? fullName : "Người dùng");
                                     String avatarUrl = (String) profile.get("avatarUrl");
                                     ImageView ivAvatar = commentView.findViewById(R.id.iv_comment_avatar);
+                                    ImageView ivCommentMentorBadge = commentView.findViewById(R.id.iv_comment_mentor_badge);
+                                    if (ivCommentMentorBadge != null) {
+                                        if ("mentor".equals(userDoc.getString("role"))) {
+                                            ivCommentMentorBadge.setVisibility(View.VISIBLE);
+                                        } else {
+                                            ivCommentMentorBadge.setVisibility(View.GONE);
+                                        }
+                                    }
                                     if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("data:image")) {
                                         byte[] b = android.util.Base64.decode(avatarUrl.split(",")[1], android.util.Base64.DEFAULT);
                                         Glide.with(this).load(b).circleCrop().into(ivAvatar);
@@ -201,5 +293,21 @@ public class PostDetailActivity extends AppCompatActivity {
             btnSendComment.setEnabled(true);
             Toast.makeText(this, "Lỗi gửi bình luận: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private String getTimeAgo(long time) {
+        if (time < 1000000000000L) time *= 1000;
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) return "Vừa xong";
+
+        final long diff = now - time;
+        if (diff < 60 * 1000) return "Vừa xong";
+        else if (diff < 60 * 60 * 1000) return diff / (60 * 1000) + " phút trước";
+        else if (diff < 24 * 60 * 60 * 1000) return diff / (60 * 60 * 1000) + " giờ trước";
+        else if (diff < 30L * 24 * 60 * 60 * 1000) return diff / (24 * 60 * 60 * 1000) + " ngày trước";
+        else {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            return sdf.format(new java.util.Date(time));
+        }
     }
 }

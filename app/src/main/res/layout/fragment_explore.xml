@@ -218,12 +218,10 @@
             android:scrollbars="none"
             android:clipToPadding="false">
             <LinearLayout
+                android:id="@+id/ll_categories_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <include layout="@layout/item_explore_category" android:id="@+id/topic_1"/>
-                <include layout="@layout/item_explore_category" android:id="@+id/topic_2"/>
-                <include layout="@layout/item_explore_category" android:id="@+id/topic_3"/>
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -257,12 +255,10 @@
             android:scrollbars="none"
             android:clipToPadding="false">
             <LinearLayout
+                android:id="@+id/ll_mentors_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <include layout="@layout/item_artist" android:id="@+id/artist_1"/>
-                <include layout="@layout/item_artist" android:id="@+id/artist_2"/>
-                <include layout="@layout/item_artist" android:id="@+id/artist_3"/>
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -296,11 +292,10 @@
             android:scrollbars="none"
             android:clipToPadding="false">
             <LinearLayout
+                android:id="@+id/ll_trending_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <include layout="@layout/item_trending" android:id="@+id/trending_1"/>
-                <include layout="@layout/item_trending" android:id="@+id/trending_2"/>
             </LinearLayout>
         </HorizontalScrollView>
 

@@ -42,7 +42,9 @@ public class ExploreFragment extends Fragment {
             });
         }
 
-        setupDummyData(view);
+        setupDynamicCategories(view);
+        setupTrendingData(view);
+        setupDynamicMentors(view);
 
         return view;
     }
@@ -59,106 +61,221 @@ public class ExploreFragment extends Fragment {
         if (chipLevel != null) chipLevel.setOnClickListener(v -> Toast.makeText(getContext(), "Chọn Level", Toast.LENGTH_SHORT).show());
     }
 
-    private void setupDummyData(View view) {
-        // Topic 1
-        View topic1 = view.findViewById(R.id.topic_1);
-        if (topic1 != null) {
-            String title = "Dành cho người mới bắt đầu";
-            ((ImageView) topic1.findViewById(R.id.iv_category)).setImageResource(R.drawable.ve_hoa_mau_nuoc);
-            ((TextView) topic1.findViewById(R.id.tv_category_name)).setText(title);
-            ((TextView) topic1.findViewById(R.id.tv_category_count)).setText("7 bài học");
-            
-            topic1.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), LessonListActivity.class);
-                intent.putExtra("TITLE", title);
-                startActivity(intent);
-            });
-        }
-
-        // Topic 2
-        View topic2 = view.findViewById(R.id.topic_2);
-        if (topic2 != null) {
-            String title = "Nghệ thuật gấp giấy Origami";
-            ((ImageView) topic2.findViewById(R.id.iv_category)).setImageResource(R.drawable.img_origami_art);
-            ((TextView) topic2.findViewById(R.id.tv_category_name)).setText(title);
-            ((TextView) topic2.findViewById(R.id.tv_category_count)).setText("8 bài học");
-            
-            topic2.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), LessonListActivity.class);
-                intent.putExtra("TITLE", title);
-                startActivity(intent);
-            });
-        }
-
-        // Topic 3
-        View topic3 = view.findViewById(R.id.topic_3);
-        if (topic3 != null) {
-            String title = "Vẽ thiên nhiên";
-            ((ImageView) topic3.findViewById(R.id.iv_category)).setImageResource(R.drawable.ve_thien_nhien);
-            ((TextView) topic3.findViewById(R.id.tv_category_name)).setText(title);
-            ((TextView) topic3.findViewById(R.id.tv_category_count)).setText("15 bài học");
-            
-            topic3.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), LessonListActivity.class);
-                intent.putExtra("TITLE", title);
-                startActivity(intent);
-            });
-        }
-
-        // --- Cấu hình Nghệ sĩ nổi bật ---
-        setupArtist(view.findViewById(R.id.artist_1), "Hoàng Lam", R.drawable.nghe_si_hoang_lam, 
-            "Nghệ sĩ Hoàng Lam là một trong những họa sĩ màu nước hàng đầu với hơn 10 năm kinh nghiệm. Anh nổi tiếng với phong cách vẽ thiên nhiên đầy sống động và cảm xúc.");
+    private void setupDynamicCategories(View view) {
+        android.widget.LinearLayout container = view.findViewById(R.id.ll_categories_container);
+        if (container == null) return;
         
-        setupArtist(view.findViewById(R.id.artist_2), "Liên Ninh", R.drawable.nghe_si_lien_ninh, 
-            "Nghệ sĩ Liên Ninh chuyên về phong cách vẽ minh họa hoa lá và chân dung. Cô có cách phối màu nhẹ nhàng, thanh lịch, mang lại cảm giác bình yên.");
-        
-        setupArtist(view.findViewById(R.id.artist_3), "Donal", R.drawable.nghe_si_donal, 
-            "Donal là một nghệ sĩ trẻ tài năng với phong cách vẽ tranh kỹ thuật số độc đáo. Anh thường xuyên chia sẻ các dự án sáng tạo và kỹ thuật vẽ hiện đại.");
+        com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+        db.collection("Categories").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            boolean isCorrupted = !queryDocumentSnapshots.isEmpty() 
+                && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes") != null 
+                && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes").matches("-?\\d+");
 
-        // Trending 1
-        View trending1 = view.findViewById(R.id.trending_1);
-        if (trending1 != null) {
-            ((ImageView) trending1.findViewById(R.id.iv_trending)).setImageResource(R.drawable.tp_trending_1);
-            ((TextView) trending1.findViewById(R.id.tv_trending_title)).setText("Hoàng hôn trên biển");
-            ((TextView) trending1.findViewById(R.id.tv_trending_author)).setText("Bởi Hải Nam");
+            if (queryDocumentSnapshots.isEmpty() || isCorrupted) {
+                if (isCorrupted) {
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                        doc.getReference().delete();
+                    }
+                }
+                
+                // Auto seed default categories
+                java.util.Map<String, Object> c1 = new java.util.HashMap<>();
+                c1.put("title", "Dành cho người mới bắt đầu");
+                c1.put("courseCount", "7 bài học");
+                c1.put("imageRes", "ve_hoa_mau_nuoc");
+                
+                java.util.Map<String, Object> c2 = new java.util.HashMap<>();
+                c2.put("title", "Nghệ thuật gấp giấy Origami");
+                c2.put("courseCount", "8 bài học");
+                c2.put("imageRes", "img_origami_art");
+                
+                java.util.Map<String, Object> c3 = new java.util.HashMap<>();
+                c3.put("title", "Vẽ thiên nhiên");
+                c3.put("courseCount", "10 bài học");
+                c3.put("imageRes", "ve_thien_nhien");
+
+                java.util.Map<String, Object> c4 = new java.util.HashMap<>();
+                c4.put("title", "Khám phá màu nước");
+                c4.put("courseCount", "7 bài học");
+                c4.put("imageRes", "banner_watercolor");
+                
+                java.util.Map<String, Object> c5 = new java.util.HashMap<>();
+                c5.put("title", "Chân dung Manga");
+                c5.put("courseCount", "7 bài học");
+                c5.put("imageRes", "tp_trending_2");
+                
+                db.collection("Categories").add(c1);
+                db.collection("Categories").add(c2);
+                db.collection("Categories").add(c3);
+                db.collection("Categories").add(c4);
+                db.collection("Categories").add(c5)
+                    .addOnSuccessListener(dr -> container.postDelayed(() -> setupDynamicCategories(view), 2500)); // Re-fetch
+                return;
+            }
             
-            trending1.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), TrendingDetailActivity.class);
-                intent.putExtra("TITLE", "Hoàng hôn trên biển");
-                startActivity(intent);
-            });
-        }
-
-        // Trending 2
-        View trending2 = view.findViewById(R.id.trending_2);
-        if (trending2 != null) {
-            ((ImageView) trending2.findViewById(R.id.iv_trending)).setImageResource(R.drawable.tp_trending_2);
-            ((TextView) trending2.findViewById(R.id.tv_trending_title)).setText("Mèo con say ngủ");
-            ((TextView) trending2.findViewById(R.id.tv_trending_author)).setText("Bởi Thu Thủy");
-
-            trending2.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), TrendingDetailActivity.class);
-                intent.putExtra("TITLE", "Mèo con say ngủ");
-                startActivity(intent);
-            });
-        }
+            if (getContext() == null) return;
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            container.removeAllViews();
+            
+            for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                String title = doc.getString("title");
+                String courseCount = doc.getString("courseCount");
+                String imageResStr = doc.getString("imageRes");
+                String imageUrl = doc.getString("imageUrl");
+                
+                View categoryView = inflater.inflate(R.layout.item_explore_category, container, false);
+                TextView tvTitle = categoryView.findViewById(R.id.tv_category_name);
+                TextView tvCount = categoryView.findViewById(R.id.tv_category_count);
+                ImageView ivCat = categoryView.findViewById(R.id.iv_category);
+                
+                if (tvTitle != null) tvTitle.setText(title);
+                if (tvCount != null) tvCount.setText(courseCount != null ? courseCount : "0 bài học");
+                if (ivCat != null) {
+                    if (imageResStr != null && !imageResStr.isEmpty() && !imageResStr.matches("-?\\d+")) {
+                        try {
+                            int resId = getResources().getIdentifier(imageResStr, "drawable", getContext().getPackageName());
+                            if(resId != 0) ivCat.setImageResource(resId);
+                        } catch (Exception e){}
+                    } else if (imageUrl != null && !imageUrl.isEmpty()) {
+                        com.bumptech.glide.Glide.with(this).load(imageUrl).centerCrop().into(ivCat);
+                    }
+                }
+                
+                categoryView.setOnClickListener(v -> {
+                    Intent intent = new Intent(getActivity(), LessonListActivity.class);
+                    intent.putExtra("TITLE", title);
+                    startActivity(intent);
+                });
+                
+                container.addView(categoryView);
+            }
+        });
     }
 
-    private void setupArtist(View artistView, String name, int imageRes, String bio) {
-        if (artistView == null) return;
+    private void setupTrendingData(View view) {
+        android.widget.LinearLayout container = view.findViewById(R.id.ll_trending_container);
+        if (container == null) return;
         
-        ImageView ivArtist = artistView.findViewById(R.id.iv_artist);
-        TextView tvName = artistView.findViewById(R.id.tv_artist_name);
-        
-        if (ivArtist != null) ivArtist.setImageResource(imageRes);
-        if (tvName != null) tvName.setText(name);
-        
-        artistView.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ArtistDetailActivity.class);
-            intent.putExtra("ARTIST_NAME", name);
-            intent.putExtra("ARTIST_IMAGE", imageRes);
-            intent.putExtra("ARTIST_BIO", bio);
-            startActivity(intent);
+        com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+        db.collection("TrendingArtworks").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            boolean isCorrupted = !queryDocumentSnapshots.isEmpty() 
+                && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes") != null 
+                && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes").matches("-?\\d+");
+
+            if (queryDocumentSnapshots.isEmpty() || isCorrupted) {
+                if (isCorrupted) {
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                        doc.getReference().delete();
+                    }
+                }
+                
+                // Auto seed 5 default trending artworks
+                String[] titles = {"Ánh trăng Cyberpunk", "Thành phố sương mù", "Thiếu nữ Á Đông", "Rừng đom đóm", "Nghệ thuật Trừu tượng"};
+                String[] authors = {"Bởi Hải Nam", "Bởi Thu Thủy", "Bởi Minh Khang", "Bởi Nhật Anh", "Bởi Tuấn Vũ"};
+                String[] likes = {"12.5k", "8.2k", "15.1k", "9.7k", "6.4k"};
+                String[] images = {"tp_trending_1", "tp_trending_2", "ve_thien_nhien", "banner_watercolor", "ve_hoa_mau_nuoc"};
+                
+                for (int i=0; i<titles.length; i++) {
+                    java.util.Map<String, Object> t = new java.util.HashMap<>();
+                    t.put("title", titles[i]);
+                    t.put("author", authors[i]);
+                    t.put("likesCount", likes[i]);
+                    t.put("imageRes", images[i]);
+                    db.collection("TrendingArtworks").add(t);
+                }
+                
+                // Cần delay nhẹ đợi Firebase save
+                container.postDelayed(() -> setupTrendingData(view), 2500);
+                return;
+            }
+            
+            if (getContext() == null) return;
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            container.removeAllViews();
+            
+            for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                String title = doc.getString("title");
+                String author = doc.getString("author");
+                String likesCount = doc.getString("likesCount");
+                String imageResStr = doc.getString("imageRes");
+                String imageUrl = doc.getString("imageUrl");
+                
+                View artworkView = inflater.inflate(R.layout.item_trending_artwork, container, false);
+                TextView tvTitle = artworkView.findViewById(R.id.tv_trending_title);
+                TextView tvAuthor = artworkView.findViewById(R.id.tv_trending_author);
+                TextView tvLikes = artworkView.findViewById(R.id.tv_likes_count);
+                ImageView ivArt = artworkView.findViewById(R.id.iv_trending_art);
+                
+                if (tvTitle != null) tvTitle.setText(title);
+                if (tvAuthor != null) tvAuthor.setText(author);
+                if (tvLikes != null) tvLikes.setText(likesCount != null ? likesCount : "1k");
+                if (ivArt != null) {
+                    if (imageResStr != null && !imageResStr.isEmpty() && !imageResStr.matches("-?\\d+")) {
+                        try {
+                            int resId = getResources().getIdentifier(imageResStr, "drawable", getContext().getPackageName());
+                            if(resId != 0) ivArt.setImageResource(resId);
+                        } catch (Exception e){}
+                    } else if (imageUrl != null && !imageUrl.isEmpty()) {
+                        com.bumptech.glide.Glide.with(this).load(imageUrl).centerCrop().into(ivArt);
+                    }
+                }
+                
+                artworkView.setOnClickListener(v -> {
+                    Intent intent = new Intent(getActivity(), TrendingDetailActivity.class);
+                    intent.putExtra("TITLE", title);
+                    startActivity(intent);
+                });
+                
+                container.addView(artworkView);
+            }
         });
+    }
+
+    private void setupDynamicMentors(View view) {
+        android.widget.LinearLayout container = view.findViewById(R.id.ll_mentors_container);
+        if (container == null) return;
+        
+        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            .collection("Users")
+            .whereEqualTo("role", "mentor")
+            .limit(5)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (getContext() == null) return;
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                
+                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                    java.util.Map<String, Object> profile = (java.util.Map<String, Object>) doc.get("profile");
+                    if (profile == null) continue;
+                    
+                    String name = (String) profile.get("fullName");
+                    String bio = (String) profile.get("bio");
+                    String avatarUrl = (String) profile.get("avatarUrl");
+                    String artistId = doc.getId();
+                    
+                    View artistView = inflater.inflate(R.layout.item_artist, container, false);
+                    TextView tvName = artistView.findViewById(R.id.tv_artist_name);
+                    ImageView ivArtist = artistView.findViewById(R.id.iv_artist);
+                    ImageView ivVerified = artistView.findViewById(R.id.iv_verified);
+                    
+                    if (tvName != null) tvName.setText(name != null ? name : "Chuyên gia");
+                    if (ivVerified != null) ivVerified.setVisibility(View.VISIBLE); // Hiển thị tích xanh
+                    
+                    if (ivArtist != null && avatarUrl != null && !avatarUrl.isEmpty()) {
+                        com.bumptech.glide.Glide.with(this).load(avatarUrl).circleCrop().into(ivArtist);
+                    }
+                    
+                    artistView.setOnClickListener(v -> {
+                        Intent intent = new Intent(getActivity(), ArtistDetailActivity.class);
+                        intent.putExtra("ARTIST_ID", artistId);
+                        intent.putExtra("ARTIST_NAME", name);
+                        intent.putExtra("ARTIST_BIO", bio);
+                        intent.putExtra("ARTIST_AVATAR", avatarUrl);
+                        startActivity(intent);
+                    });
+                    
+                    container.addView(artistView);
+                }
+            });
     }
 }

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_bg_white"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="&lt; Cài đặt bút"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:paddingBottom="12dp"/>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginBottom="12dp"/>
+
+    <GridLayout
+        android:id="@+id/brushGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="2"
+        android:alignmentMode="alignBounds"
+        android:useDefaultMargins="true">
+
+        <LinearLayout android:id="@+id/brushPencil" android:tag="PENCIL" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_pencil" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bút chì" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushWatercolor" android:tag="WATERCOLOR" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_watercolor" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bút lông" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushCrayon" android:tag="CRAYON" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_crayon" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bút sáp" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushInk" android:tag="INK" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_ink" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bút mực" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushMarker" android:tag="MARKER" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_marker" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Đánh dấu" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushAirbrush" android:tag="AIRBRUSH" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_airbrush" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Xịt sơn" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushCalligraphy" android:tag="CALLIGRAPHY" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_calligraphy" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thư pháp" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/brushOil" android:tag="OIL" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_brush_item" android:clickable="true">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_brush_oil" app:tint="#333333"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bút dầu" android:textSize="11sp" android:layout_marginTop="4dp" android:textColor="#333333"/>
+        </LinearLayout>
+    </GridLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginTop="8dp" android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Độ cứng"
+        android:textSize="14sp"
+        android:textColor="#333333"/>
+        
+    <LinearLayout
+        android:id="@+id/hardnessGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+        
+        <TextView android:id="@+id/btnHardnessSoft" android:tag="SOFT" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Mềm" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_toggle_item" android:layout_marginEnd="4dp" android:textSize="12sp" android:textColor="#757575" android:clickable="true"/>
+        <TextView android:id="@+id/btnHardnessMedium" android:tag="MEDIUM" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Trung bình" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_toggle_item" android:layout_marginEnd="4dp" android:textSize="12sp" android:textColor="#757575" android:clickable="true"/>
+        <TextView android:id="@+id/btnHardnessHard" android:tag="HARD" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Cứng" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_toggle_item" android:textSize="12sp" android:textColor="#757575" android:clickable="true"/>
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginTop="12dp" android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Độ mờ"
+        android:textSize="14sp"
+        android:textColor="#333333"/>
+
+    <SeekBar
+        android:id="@+id/seekOpacityPen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:progressTint="#4A90E2"
+        android:thumbTint="#4A90E2"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/btnCancelPen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="X"
+            android:backgroundTint="#FFFFFF"
+            android:textColor="#333333"
+            android:layout_marginEnd="8dp"
+            app:cornerRadius="16dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+        <Button
+            android:id="@+id/btnSavePen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Lưu"
+            android:backgroundTint="#4A90E2"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="8dp"
+            app:cornerRadius="16dp"/>
+    </LinearLayout>
+
+</LinearLayout>

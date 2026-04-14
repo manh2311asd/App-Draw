@@ -45,8 +45,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                android:paddingVertical="12dp"
-                android:background="#F0F0F0"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical">
                 <TextView
                     android:id="@+id/tv_comment_header"
@@ -61,7 +61,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nổi bật ▼"
-                    android:textColor="#333333"
+                    android:textColor="#555555"
                     android:textSize="14sp"/>
             </LinearLayout>
 
@@ -83,31 +83,29 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="#FFFFFF"
-        android:padding="12dp"
-        android:elevation="8dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:elevation="12dp"
         android:gravity="center_vertical">
         <EditText
             android:id="@+id/et_comment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Viết bình luận ..."
-            android:background="@drawable/rounded_bg_gray"
+            android:hint="Viết bình luận..."
+            android:background="@drawable/bg_pill_gray"
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
-            android:textSize="15sp"/>
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="12dp"
-            android:src="@android:drawable/ic_menu_add"
-            app:tint="#888888"/>
+            android:textSize="14sp"
+            android:textColorHint="#888888"
+            android:backgroundTint="#F0F2F5"/>
         <ImageView
             android:id="@+id/btn_send_comment"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="12dp"
             android:src="@android:drawable/ic_menu_send"
+            android:padding="6dp"
             app:tint="#4272D0"/>
     </LinearLayout>
 

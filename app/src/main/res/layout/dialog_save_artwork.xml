@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_bg_white">
+
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lưu Tác Phẩm"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp"
+        android:textColor="#202124"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên tác phẩm"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#5F6368"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/et_artwork_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Ví dụ: Hoàng hôn trên núi"
+        android:background="@drawable/rounded_bg_white_border"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        android:singleLine="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trạng thái"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#5F6368"
+        android:layout_marginTop="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/rg_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/rb_draft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đang làm"
+            android:buttonTint="#F0B259"
+            android:textColor="#F0B259"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/rb_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:buttonTint="#2ECC71"
+            android:textColor="#2ECC71"
+            android:text="Đã hoàn thành"/>
+    </RadioGroup>
+
+    <!-- Project Selection Container -->
+    <LinearLayout
+        android:id="@+id/layout_project_selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn Dự Án lưu trữ"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#5F6368"
+            android:layout_marginBottom="8dp"/>
+
+        <Spinner
+            android:id="@+id/spinner_projects"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_bg_white_border"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+    <!-- New Project Name Input Container -->
+    <LinearLayout
+        android:id="@+id/layout_new_project_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên dự án mới"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#5F6368"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/et_new_project_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Nhập tên dự án mới..."
+            android:background="@drawable/rounded_bg_white_border"
+            android:paddingHorizontal="16dp"
+            android:textSize="14sp"
+            android:singleLine="true"/>
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm_save_artwork"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Xác nhận lưu"
+        android:backgroundTint="#4272D0"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:layout_marginTop="24dp"
+        app:cornerRadius="12dp"/>
+
+</LinearLayout>

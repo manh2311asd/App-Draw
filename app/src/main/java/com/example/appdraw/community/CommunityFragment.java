@@ -77,6 +77,12 @@ public class CommunityFragment extends Fragment {
                             tvContent.setText(post.getContent());
                         }
 
+                        // Load time
+                        TextView tvTime = postView.findViewById(R.id.tv_post_time);
+                        if (tvTime != null) {
+                            tvTime.setText(getTimeAgo(post.getCreatedAt()));
+                        }
+
                         // Process Follow Button based on Ownership
                         TextView tvFollowStatus = postView.findViewById(R.id.tv_follow_status);
                         if (tvFollowStatus != null) {
@@ -84,7 +90,41 @@ public class CommunityFragment extends Fragment {
                                 tvFollowStatus.setVisibility(View.GONE);
                             } else {
                                 tvFollowStatus.setVisibility(View.VISIBLE);
-                                tvFollowStatus.setText("Theo dõi");
+                                
+                                // Kiem tra trang thai follow ban dau
+                                com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+                                com.google.firebase.firestore.DocumentReference followRef = db.collection("Follows").document(currentUid + "_" + post.getUid());
+                                followRef.addSnapshotListener((d, e) -> {
+                                    if (e != null) return;
+                                    if (d != null && d.exists()) {
+                                        tvFollowStatus.setText("Đang theo dõi");
+                                        tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                                        tvFollowStatus.setTag(true);
+                                    } else {
+                                        tvFollowStatus.setText("Theo dõi");
+                                        tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                                        tvFollowStatus.setTag(false);
+                                    }
+                                    tvFollowStatus.setEnabled(true);
+                                });
+
+                                tvFollowStatus.setOnClickListener(v -> {
+                                    tvFollowStatus.setEnabled(false);
+                                    boolean isFollowing = tvFollowStatus.getTag() != null && (boolean)tvFollowStatus.getTag();
+                                    if (!isFollowing) {
+                                        followRef.set(new java.util.HashMap<>()).addOnSuccessListener(aVoid -> {
+                                            db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
+                                            db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
+                                            Toast.makeText(getContext(), "Đã theo dõi", Toast.LENGTH_SHORT).show();
+                                        });
+                                    } else {
+                                        followRef.delete().addOnSuccessListener(aVoid -> {
+                                            db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
+                                            db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
+                                            Toast.makeText(getContext(), "Bỏ theo dõi", Toast.LENGTH_SHORT).show();
+                                        });
+                                    }
+                                });
                             }
                         }
 
@@ -104,7 +144,15 @@ public class CommunityFragment extends Fragment {
                                         String avatarUrl = (String) profile.get("avatarUrl");
                                         TextView tvName = postView.findViewById(R.id.tv_user_name);
                                         ImageView ivAvatar = postView.findViewById(R.id.iv_user_avatar);
-                                        if (tvName != null) tvName.setText(fullName);
+                                        ImageView ivMentorBadge = postView.findViewById(R.id.iv_mentor_badge);
+                                        if (tvName != null) tvName.setText(fullName != null ? fullName : "Người dùng");
+                                        if (ivMentorBadge != null) {
+                                            if ("mentor".equals(userDoc.getString("role"))) {
+                                                ivMentorBadge.setVisibility(View.VISIBLE);
+                                            } else {
+                                                ivMentorBadge.setVisibility(View.GONE);
+                                            }
+                                        }
                                         if (ivAvatar != null) {
                                             if (avatarUrl != null && !avatarUrl.isEmpty() && avatarUrl.startsWith("data:image")) {
                                                 byte[] b = android.util.Base64.decode(avatarUrl.split(",")[1], android.util.Base64.DEFAULT);
@@ -181,9 +229,14 @@ public class CommunityFragment extends Fragment {
                         View userHeader = postView.findViewById(R.id.ll_user_header);
                         if (userHeader != null) {
                             userHeader.setOnClickListener(v -> {
-                                Intent intent = new Intent(getActivity(), OtherUserProfileActivity.class);
-                                intent.putExtra("USER_ID", post.getUid());
-                                startActivity(intent);
+                                if (post.getUid() != null && post.getUid().equals(currentUid)) {
+                                    Intent intent = new Intent(getActivity(), com.example.appdraw.ProfileActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Intent intent = new Intent(getActivity(), OtherUserProfileActivity.class);
+                                    intent.putExtra("USER_ID", post.getUid());
+                                    startActivity(intent);
+                                }
                             });
                         }
 
@@ -200,5 +253,21 @@ public class CommunityFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private String getTimeAgo(long time) {
+        if (time < 1000000000000L) time *= 1000;
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) return "Vừa xong";
+
+        final long diff = now - time;
+        if (diff < 60 * 1000) return "Vừa xong";
+        else if (diff < 60 * 60 * 1000) return diff / (60 * 1000) + " phút trước";
+        else if (diff < 24 * 60 * 60 * 1000) return diff / (60 * 60 * 1000) + " giờ trước";
+        else if (diff < 30L * 24 * 60 * 60 * 1000) return diff / (24 * 60 * 60 * 1000) + " ngày trước";
+        else {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            return sdf.format(new java.util.Date(time));
+        }
     }
 }
