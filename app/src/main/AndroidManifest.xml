@@ -123,7 +123,10 @@
             android:name=".community.CreateEventActivity"
             android:exported="false" />
         <activity
-            android:name=".LiveStreamActivity"
+            android:name=".live.LiveActivity"
+            android:exported="false" />
+        <activity
+            android:name=".live.LiveListActivity"
             android:exported="false" />
         <activity
             android:name=".explore.ArtistDetailActivity"

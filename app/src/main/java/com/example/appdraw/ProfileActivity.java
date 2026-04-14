@@ -107,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity {
         View llLiveStatus = findViewById(R.id.ll_live_status);
         if (llLiveStatus != null) {
             llLiveStatus.setOnClickListener(v -> {
-                Intent intent = new Intent(ProfileActivity.this, LiveStreamActivity.class);
+                Intent intent = new Intent(ProfileActivity.this, com.example.appdraw.live.LiveListActivity.class);
                 startActivity(intent);
             });
         }
@@ -155,8 +155,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (btnGoLive != null) {
             btnGoLive.setVisibility(View.VISIBLE);
             btnGoLive.setOnClickListener(v -> {
-                Intent intent = new Intent(ProfileActivity.this, LiveStreamActivity.class);
-                intent.putExtra("IS_HOST", true);
+                Intent intent = new Intent(ProfileActivity.this, com.example.appdraw.live.LiveListActivity.class);
                 startActivity(intent);
             });
         }

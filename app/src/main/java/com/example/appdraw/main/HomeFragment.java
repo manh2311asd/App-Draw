@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Map;
 
-import com.example.appdraw.LiveStreamActivity;
 import com.example.appdraw.NotificationsActivity;
 import com.example.appdraw.ProfileActivity;
 import com.example.appdraw.R;
@@ -116,6 +115,15 @@ public class HomeFragment extends Fragment {
             });
         }
 
+        // Nút Livestream
+        View btnLivestream = view.findViewById(R.id.btn_livestream);
+        if (btnLivestream != null) {
+            btnLivestream.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), com.example.appdraw.live.LiveListActivity.class);
+                startActivity(intent);
+            });
+        }
+
         // Nút tìm kiếm
         View btnSearch = view.findViewById(R.id.btn_search);
         if (btnSearch != null) {
@@ -197,7 +205,7 @@ public class HomeFragment extends Fragment {
         if (container == null) return;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("SuggestedLessons").get().addOnSuccessListener(queryDocumentSnapshots -> {
+        db.collection("SuggestedLessons").orderBy("title").get().addOnSuccessListener(queryDocumentSnapshots -> {
             boolean isCorrupted = !queryDocumentSnapshots.isEmpty() 
                 && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes") != null 
                 && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes").matches("-?\\d+");

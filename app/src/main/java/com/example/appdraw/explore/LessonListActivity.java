@@ -42,7 +42,8 @@ public class LessonListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        loadAllLessons();
+        // Xóa loadAllLessons() trong onCreate vì onResume() sẽ chạy ngay sau đó, 
+        // tránh đúp truy vấn gây race-condition.
     }
 
     private void loadAllLessons() {
@@ -55,7 +56,7 @@ public class LessonListActivity extends AppCompatActivity {
 
         com.google.firebase.firestore.Query query;
         if ("Bài học gợi ý".equals(titleHeader)) {
-            query = db.collection("SuggestedLessons");
+            query = db.collection("SuggestedLessons").orderBy("title");
         } else {
             query = db.collection("Lessons").whereEqualTo("category", titleHeader);
         }
@@ -73,7 +74,9 @@ public class LessonListActivity extends AppCompatActivity {
                                       t.contains("Nâng cao " + finalTitleHeader) ||
                                       t.contains("Kiểm tra cuối khóa " + finalTitleHeader) ||
                                       t.equals("Bài 1: Khởi động với Dành cho người mới bắt đầu") ||
-                                      t.startsWith("Bài "))) {
+                                      t.matches("^Bài \\d+:.*") ||
+                                      t.equals("Bài tập ôn luyện") ||
+                                      t.contains("/"))) {
                         needsReseed = true;
                         break;
                     }
@@ -129,7 +132,7 @@ public class LessonListActivity extends AppCompatActivity {
                     rb.setRating(randomRating);
                 }
 
-                if (uid != null && title != null) {
+                if (uid != null && title != null && !title.contains("/")) {
                     db.collection("Users").document(uid).collection("lessonProgress").document(title)
                             .get().addOnSuccessListener(progDoc -> {
                                 if (progDoc.exists()) {
@@ -210,7 +213,7 @@ public class LessonListActivity extends AppCompatActivity {
                 titles = new String[]{
                         "Core tỷ lệ khuôn mặt",
                         "Vẽ mắt Manga mượt mà",
-                        "Kiểu tóc nam/nữ cơ bản",
+                        "Kiểu tóc nam và nữ cơ bản",
                         "Mảng biểu cảm vui buồn",
                         "Góc nghiêng thần thánh",
                         "Phác họa nhân vật nữ",
@@ -238,28 +241,28 @@ public class LessonListActivity extends AppCompatActivity {
                         "Kỹ thuật đan nét cọ",
                         "Vẽ tĩnh vật quả táo",
                         "Xây dựng khối 3D",
-                        "Bài tập ôn luyện"
+                        "Luyện tập tổng hợp"
                 };
             }
 
-            for (String title : titles) {
+            for (int i = 0; i < titles.length; i++) {
+                String title = titles[i];
                 java.util.Map<String, Object> data = new java.util.HashMap<>();
                 data.put("title", title);
                 data.put("authorName", author);
                 data.put("imageRes", imageRes);
                 data.put("category", category);
-                db.collection("Lessons").add(data);
+                
+                // Mấu chốt chặn lặp dữ liệu: Dùng document ID cố định theo Hash để ép ghi đè thay vì tạo mới.
+                String safeDocId = "lesson_" + Math.abs(category.hashCode()) + "_" + i;
+                db.collection("Lessons").document(safeDocId).set(data);
             }
 
-            android.widget.LinearLayout container = findViewById(R.id.lesson_container);
-            if (container != null) {
-                container.postDelayed(() -> {
-                    isSeeding = false;
-                    loadAllLessons();
-                }, 2500);
-            } else {
+            // Gọi tải lại dữ liệu đảm bảo không trễ UI
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                 isSeeding = false;
-            }
+                loadAllLessons();
+            }, 1000);
         });
     }
 

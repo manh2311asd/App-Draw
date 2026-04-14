@@ -157,7 +157,7 @@ public class ExploreFragment extends Fragment {
         if (container == null) return;
         
         com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
-        db.collection("TrendingArtworks").get().addOnSuccessListener(queryDocumentSnapshots -> {
+        db.collection("TrendingArtworks").orderBy("title").get().addOnSuccessListener(queryDocumentSnapshots -> {
             boolean isCorrupted = !queryDocumentSnapshots.isEmpty() 
                 && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes") != null 
                 && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes").matches("-?\\d+");
