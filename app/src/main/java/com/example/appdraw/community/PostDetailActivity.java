@@ -153,7 +153,11 @@ public class PostDetailActivity extends AppCompatActivity {
                             tvFollowStatus.setOnClickListener(v -> {
                                 tvFollowStatus.setEnabled(false);
                                 if (tvFollowStatus.getText().toString().equals("Theo dõi")) {
-                                    followRef.set(new java.util.HashMap<>()).addOnSuccessListener(aVoid -> {
+                                    java.util.Map<String, Object> data = new java.util.HashMap<>();
+                                    data.put("follower", currentUid);
+                                    data.put("following", post.getUid());
+                                    data.put("timestamp", System.currentTimeMillis());
+                                    followRef.set(data).addOnSuccessListener(aVoid -> {
                                         tvFollowStatus.setText("Đang theo dõi");
                                         tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
                                         db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));

@@ -122,6 +122,61 @@ public class SubmissionDetailActivity extends AppCompatActivity {
                 }
             }
 
+            android.widget.LinearLayout llFeedbacks = includedView.findViewById(R.id.ll_public_feedbacks);
+            if (llFeedbacks != null) {
+                llFeedbacks.removeAllViews();
+                java.util.List<Map<String, Object>> grades = (java.util.List<Map<String, Object>>) doc.get("grades");
+                
+                if (grades != null && !grades.isEmpty()) {
+                    llFeedbacks.setVisibility(View.VISIBLE);
+                    TextView tvFbTitle = new TextView(this);
+                    tvFbTitle.setText("Góc nhận xét của Mentor:");
+                    tvFbTitle.setTextColor(Color.parseColor("#E67E22"));
+                    tvFbTitle.setTextSize(13);
+                    tvFbTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+                    tvFbTitle.setPadding(0, 0, 0, 4);
+                    llFeedbacks.addView(tvFbTitle);
+                    
+                    for (Map<String, Object> g : grades) {
+                        String mName = (String) g.get("mentorName");
+                        Number mScore = (Number) g.get("score");
+                        String mFeedback = (String) g.get("feedback");
+                        
+                        TextView tvFb = new TextView(this);
+                        tvFb.setText("• " + mName + " (" + (mScore != null ? mScore.intValue() : 0) + " điểm): \"" + mFeedback + "\"");
+                        tvFb.setTextColor(Color.parseColor("#444444"));
+                        tvFb.setTextSize(13);
+                        tvFb.setPadding(0, 2, 0, 6);
+                        
+                        llFeedbacks.addView(tvFb);
+                    }
+                } else if ("GRADED".equals(status)) {
+                    // Fallback tương thích dữ liệu cũ
+                    String existingFeedback = doc.getString("feedback");
+                    if (existingFeedback != null && !existingFeedback.isEmpty()) {
+                        llFeedbacks.setVisibility(View.VISIBLE);
+                        TextView tvFbTitle = new TextView(this);
+                        tvFbTitle.setText("Khuyến nghị từ Mentor:");
+                        tvFbTitle.setTextColor(Color.parseColor("#E67E22"));
+                        tvFbTitle.setTextSize(13);
+                        tvFbTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+                        tvFbTitle.setPadding(0, 0, 0, 4);
+                        llFeedbacks.addView(tvFbTitle);
+                        
+                        TextView tvFb = new TextView(this);
+                        tvFb.setText("\"" + existingFeedback + "\"");
+                        tvFb.setTextColor(Color.parseColor("#444444"));
+                        tvFb.setTextSize(13);
+                        tvFb.setPadding(0, 2, 0, 6);
+                        llFeedbacks.addView(tvFb);
+                    } else {
+                        llFeedbacks.setVisibility(View.GONE);
+                    }
+                } else {
+                    llFeedbacks.setVisibility(View.GONE);
+                }
+            }
+
             // Comment count inside card
             TextView tvInnerCommentCount = includedView.findViewById(R.id.tv_public_comment_count);
             if (tvInnerCommentCount != null) tvInnerCommentCount.setText(String.valueOf(commentsCount));

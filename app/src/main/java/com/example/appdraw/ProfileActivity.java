@@ -275,17 +275,13 @@ public class ProfileActivity extends AppCompatActivity {
         com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
-                .addSnapshotListener((documentSnapshot, e) -> {
+                .addSnapshotListener(this, (documentSnapshot, e) -> {
                     if (e != null || documentSnapshot == null) return;
                     if (documentSnapshot.exists()) {
                         // Tải số liệu thực tế Followers, Following, Post
-                        Long followers = documentSnapshot.getLong("followersCount");
-                        Long following = documentSnapshot.getLong("followingCount");
                         Long posts = documentSnapshot.getLong("postCount");
                         String role = documentSnapshot.getString("role");
                         
-                        long followersVal = followers != null ? Math.max(0, followers) : 0;
-                        long followingVal = following != null ? Math.max(0, following) : 0;
                         long postsVal = posts != null ? Math.max(0, posts) : 0;
                         
                         android.widget.ImageView ivMentorBadge = findViewById(R.id.iv_mentor_badge);
@@ -301,9 +297,26 @@ public class ProfileActivity extends AppCompatActivity {
                         TextView tvFollowing = findViewById(R.id.tv_profile_following);
                         TextView tvPosts = findViewById(R.id.tv_profile_posts);
                         
-                        if (tvFollowers != null) tvFollowers.setText(String.valueOf(followersVal));
-                        if (tvFollowing != null) tvFollowing.setText(String.valueOf(followingVal));
                         if (tvPosts != null) tvPosts.setText(String.valueOf(postsVal));
+                        
+                        // Fetch followers logically by counting 'Follows' sub-documents natively
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                            .collection("Follows")
+                            .whereEqualTo("following", user.getUid())
+                            .count()
+                            .get(com.google.firebase.firestore.AggregateSource.SERVER)
+                            .addOnSuccessListener(task -> {
+                                if (tvFollowers != null) tvFollowers.setText(String.valueOf(task.getCount()));
+                            });
+
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                            .collection("Follows")
+                            .whereEqualTo("follower", user.getUid())
+                            .count()
+                            .get(com.google.firebase.firestore.AggregateSource.SERVER)
+                            .addOnSuccessListener(task -> {
+                                if (tvFollowing != null) tvFollowing.setText(String.valueOf(task.getCount()));
+                            });
 
                         // Tải Avatar
                         String photoUrl = documentSnapshot.getString("photoUrl");
@@ -400,7 +413,7 @@ public class ProfileActivity extends AppCompatActivity {
             // Tải danh sách Posts có hình ảnh giống Twitter Media
             com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Posts")
                 .whereEqualTo("uid", user.getUid())
-                .addSnapshotListener((value, error) -> {
+                .addSnapshotListener(this, (value, error) -> {
                     if (error != null) return;
                     postList.clear();
                     allPostList.clear();

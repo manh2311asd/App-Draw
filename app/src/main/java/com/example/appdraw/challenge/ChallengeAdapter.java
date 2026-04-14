@@ -24,14 +24,16 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
     private final Context context;
     private final List<DocumentSnapshot> challengeList;
     private boolean isMentor = false;
+    private String mentorName = null;
 
     public ChallengeAdapter(Context context, List<DocumentSnapshot> challengeList) {
         this.context = context;
         this.challengeList = challengeList;
     }
 
-    public void setMentor(boolean mentor) {
+    public void setMentor(boolean mentor, String mentorName) {
         isMentor = mentor;
+        this.mentorName = mentorName;
         notifyDataSetChanged();
     }
 
@@ -52,7 +54,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
         String imageUrl = doc.getString("imageUrl");
         String imageRes = doc.getString("imageRes");
 
-        if (title != null) holder.tvTitle.setText(title);
+        if (title != null) holder.tvTitle.setText("Thử thách: " + title);
         if (dateStr != null) holder.tvDeadline.setText("Thời gian: " + dateStr);
         if (participantsCount != null) holder.tvParticipants.setText(participantsCount);
 
@@ -78,31 +80,34 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
 
         com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
         String authorId = doc.getString("authorId");
-        
+        String author = doc.getString("author");
+
         holder.btnSecondary.setVisibility(View.GONE);
         holder.btnSecondary.setOnClickListener(null);
 
         Long endTimeMillis = doc.getLong("endTimeMillis");
         boolean isEnded = (endTimeMillis != null && endTimeMillis < System.currentTimeMillis());
 
+        boolean isAuthor = false;
+        if (user != null && authorId != null && authorId.equals(user.getUid())) {
+            isAuthor = true;
+        } else if (authorId == null && author != null && mentorName != null && author.equals(mentorName)) {
+            isAuthor = true;
+        }
+
         if (isEnded) {
             holder.btnAction.setText("Xem kết quả");
             holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#9E9E9E")));
-        } else if (user != null && authorId != null && authorId.equals(user.getUid())) {
+        } else if (isAuthor) {
             holder.btnAction.setText("Quản lý");
-            holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+            holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2D5A9E")));
         } else {
             holder.btnAction.setText("Tham gia");
             holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2D5A9E")));
             if (isMentor) {
-                holder.btnSecondary.setVisibility(View.VISIBLE);
-                holder.btnSecondary.setText("Chấm chéo");
-                holder.btnSecondary.setOnClickListener(v -> {
-                    android.widget.Toast.makeText(context, "Hỗ trợ chấm bài được ghim!", android.widget.Toast.LENGTH_SHORT).show();
-                    // Optional: intent to grading activity
-                });
-                holder.btnAction.setText("Nộp mẫu");
-                holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#FF9800")));
+                holder.btnSecondary.setVisibility(View.GONE);
+                holder.btnAction.setText("Chấm điểm bài");
+                holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
             } else if (user != null) {
                 String challengeTitle = doc.getString("title");
                 if (challengeTitle != null) {

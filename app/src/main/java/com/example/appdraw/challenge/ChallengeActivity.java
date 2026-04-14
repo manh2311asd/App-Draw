@@ -49,12 +49,18 @@ public class ChallengeActivity extends AppCompatActivity {
             db.collection("Users").document(user.getUid()).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     boolean isMentorUser = false;
+                    String mentorNameStr = null;
                     if (documentSnapshot.exists()) {
                         String role = documentSnapshot.getString("role");
                         isMentorUser = "mentor".equalsIgnoreCase(role);
+                        
+                        java.util.Map<String, Object> profile = (java.util.Map<String, Object>) documentSnapshot.get("profile");
+                        if (profile != null && profile.containsKey("fullName")) {
+                            mentorNameStr = "Mentor: " + profile.get("fullName");
+                        }
                     }
                     if (challengeAdapter != null) {
-                        challengeAdapter.setMentor(isMentorUser);
+                        challengeAdapter.setMentor(isMentorUser, mentorNameStr);
                     }
                     
                     android.view.View btnAddChallenge = findViewById(R.id.btn_add_challenge);

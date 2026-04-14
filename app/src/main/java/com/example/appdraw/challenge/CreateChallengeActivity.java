@@ -126,6 +126,18 @@ public class CreateChallengeActivity extends AppCompatActivity {
                 String rewards = edtRewards != null ? edtRewards.getText().toString().trim() : "";
                 
                 String finalTitle = title;
+
+                long now = System.currentTimeMillis();
+                // Cho phép độ trễ 10 phút trong lúc người dùng điền form
+                if (calStart.getTimeInMillis() < now - 10 * 60 * 1000) {
+                    Toast.makeText(this, "Thời gian bắt đầu không được ở trong quá khứ!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (calEnd.getTimeInMillis() <= calStart.getTimeInMillis()) {
+                    Toast.makeText(this, "Hạn deadline phải lớn hơn thời gian bắt đầu!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user == null) {
                     Toast.makeText(this, "Yêu cầu đăng nhập!", Toast.LENGTH_SHORT).show();
@@ -162,8 +174,24 @@ public class CreateChallengeActivity extends AppCompatActivity {
                                 } else {
                                     bitmap = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), selectedLocalUri);
                                 }
+                                
+                                // Banner aspect ratio optimization and scaling
+                                int currentWidth = bitmap.getWidth();
+                                int currentHeight = bitmap.getHeight();
+                                int maxWidth = 800;
+                                int maxHeight = 600;
+                                
+                                float scale = Math.min(((float)maxWidth / currentWidth), ((float)maxHeight / currentHeight));
+                                
+                                android.graphics.Bitmap scaledBitmap = bitmap;
+                                if (scale < 1) {
+                                    int newWidth = Math.round(currentWidth * scale);
+                                    int newHeight = Math.round(currentHeight * scale);
+                                    scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+                                }
+
                                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, buffer);
+                                scaledBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, buffer);
                                 byte[] fileBytes = buffer.toByteArray();
                                 String base64Image = android.util.Base64.encodeToString(fileBytes, android.util.Base64.DEFAULT);
                                 finalImageUrl = "data:image/jpeg;base64," + base64Image;

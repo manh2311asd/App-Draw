@@ -342,24 +342,22 @@ public class HomeFragment extends Fragment {
             if (error != null || queryDocumentSnapshots == null) return;
 
             if (queryDocumentSnapshots.isEmpty()) {
-                // Auto seed challenges
-                String[] titles = {"Vẽ cây ngày trái đất", "14 ngày ký họa phong cảnh", "Thử thách Anime 30 ngày"};
-                String[] authors = {"Mentor: Linh Trần", "Mentor: Thùy Chi", "Mentor: Hoàng Lam"};
-                String[] dates = {"12/04 - 19/04", "01/05 - 14/05", "10/05 - 10/06"};
-                String[] participants = {"256 đã tham gia", "1.2k đã tham gia", "840 đã tham gia"};
-                int[] images = {R.drawable.img_challenge_tree, R.drawable.ve_thien_nhien, R.drawable.tp_trending_2};
-
-                for (int i = 0; i < titles.length; i++) {
-                    java.util.Map<String, Object> data = new java.util.HashMap<>();
-                    data.put("title", titles[i]);
-                    data.put("author", authors[i]);
-                    data.put("dateStr", dates[i]);
-                    data.put("participantsCount", participants[i]);
-                    data.put("imageRes", String.valueOf(images[i]));
-                    db.collection("Challenges").add(data);
+                if (getContext() != null) {
+                    container.removeAllViews();
+                    TextView tvEmpty = new TextView(getContext());
+                    tvEmpty.setText("Chưa có thử thách nào diễn ra.");
+                    tvEmpty.setPadding(32, 32, 32, 32);
+                    container.addView(tvEmpty);
                 }
-                container.postDelayed(() -> setupChallenges(view), 2000);
                 return;
+            } else {
+                // Tự động quét và xoá 3 bài rác cũ khỏi Server
+                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                    String t = doc.getString("title");
+                    if ("Vẽ cây ngày trái đất".equals(t) || "14 ngày ký họa phong cảnh".equals(t) || "Thử thách Anime 30 ngày".equals(t)) {
+                        doc.getReference().delete();
+                    }
+                }
             }
 
             if (getContext() == null) return;
@@ -391,7 +389,7 @@ public class HomeFragment extends Fragment {
                 ImageView ivImage = cardView.findViewById(R.id.iv_challenge_image);
                 MaterialButton btnJoin = cardView.findViewById(R.id.btnJoinChallenge);
 
-                if (tvTitle != null) tvTitle.setText(title);
+                if (tvTitle != null) tvTitle.setText("Thử thách: " + title);
                 if (tvAuthor != null) tvAuthor.setText(author);
                 if (tvDate != null) tvDate.setText(dateStr);
                 if (tvParticipants != null) tvParticipants.setText(participantsCount);
@@ -404,12 +402,35 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
+                String authorId = doc.getString("authorId");
+                
                 // Check role and status locally
                 if (uid != null) {
                     db.collection("Users").document(uid).get().addOnSuccessListener(userDoc -> {
                         String role = userDoc.getString("role");
+                        
+                        String mentorName = "Mentor";
+                        if (userDoc.exists()) {
+                            java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
+                            if (profile != null && profile.containsKey("fullName")) {
+                                mentorName = "Mentor: " + profile.get("fullName");
+                            }
+                        }
+
                         if ("mentor".equals(role)) {
-                            if (btnJoin != null) btnJoin.setText("Quản lý");
+                            if (btnJoin != null) {
+                                boolean isAuthor = false;
+                                if (uid.equals(authorId)) isAuthor = true;
+                                else if (authorId == null && author != null && author.equals(mentorName)) isAuthor = true; // Fallback cho bài cũ
+
+                                if (isAuthor) {
+                                    btnJoin.setText("Quản lý");
+                                    btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2D5A9E")));
+                                } else {
+                                    btnJoin.setText("Chấm điểm bài");
+                                    btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+                                }
+                            }
                         } else {
                             // Check if joined
                             db.collection("Users").document(uid).collection("joinedChallenges").document(title)

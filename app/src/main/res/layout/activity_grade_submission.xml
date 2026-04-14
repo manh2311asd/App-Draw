@@ -40,9 +40,14 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/ll_grade_student_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="16dp">
                 
@@ -95,6 +100,27 @@
                 android:padding="16dp"
                 android:text="Mô tả của học viên..."
                 android:textColor="#333333" />
+
+            <LinearLayout
+                android:id="@+id/ll_previous_feedbacks_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CÁC MENTOR KHÁC ĐÃ CHẤM"
+                    android:textColor="#1A1A1A"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:id="@+id/ll_previous_mentor_feedbacks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"

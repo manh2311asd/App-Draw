@@ -45,6 +45,7 @@ public class CommunityFragment extends Fragment {
                 .collection("Posts")
                 .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
+                    if (!isAdded() || getContext() == null) return;
                     if (error != null) return;
                     postContainer.removeAllViews();
                     if (value == null) return;
@@ -112,16 +113,20 @@ public class CommunityFragment extends Fragment {
                                     tvFollowStatus.setEnabled(false);
                                     boolean isFollowing = tvFollowStatus.getTag() != null && (boolean)tvFollowStatus.getTag();
                                     if (!isFollowing) {
-                                        followRef.set(new java.util.HashMap<>()).addOnSuccessListener(aVoid -> {
+                                        java.util.Map<String, Object> data = new java.util.HashMap<>();
+                                    data.put("follower", currentUid);
+                                    data.put("following", post.getUid());
+                                    data.put("timestamp", System.currentTimeMillis());
+                                    followRef.set(data).addOnSuccessListener(aVoid -> {
                                             db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
                                             db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
-                                            Toast.makeText(getContext(), "Đã theo dõi", Toast.LENGTH_SHORT).show();
+                                            showToast("Đã theo dõi");
                                         });
                                     } else {
                                         followRef.delete().addOnSuccessListener(aVoid -> {
                                             db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
                                             db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
-                                            Toast.makeText(getContext(), "Bỏ theo dõi", Toast.LENGTH_SHORT).show();
+                                            showToast("Bỏ theo dõi");
                                         });
                                     }
                                 });
@@ -137,6 +142,7 @@ public class CommunityFragment extends Fragment {
                         // Fetching author data
                         com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Users").document(post.getUid())
                             .get().addOnSuccessListener(userDoc -> {
+                                if (!isAdded() || getContext() == null) return;
                                 if (userDoc.exists() && userDoc.contains("profile")) {
                                     java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
                                     if (profile != null) {
@@ -184,7 +190,7 @@ public class CommunityFragment extends Fragment {
 
                             llLike.setOnClickListener(v -> {
                                 if (currentUid == null) {
-                                    Toast.makeText(getContext(), "Vui lòng đăng nhập!", Toast.LENGTH_SHORT).show();
+                                    showToast("Vui lòng đăng nhập!");
                                     return;
                                 }
                                 com.google.firebase.firestore.DocumentReference postRef = doc.getReference();
@@ -202,7 +208,7 @@ public class CommunityFragment extends Fragment {
                                         transaction.set(postRef, p);
                                     }
                                     return null;
-                                }).addOnFailureListener(e -> Toast.makeText(getContext(), "Lỗi mạng", Toast.LENGTH_SHORT).show());
+                                }).addOnFailureListener(e -> showToast("Lỗi mạng"));
                             });
                         }
 
@@ -268,6 +274,12 @@ public class CommunityFragment extends Fragment {
         else {
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
             return sdf.format(new java.util.Date(time));
+        }
+    }
+
+    private void showToast(String msg) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
         }
     }
 }

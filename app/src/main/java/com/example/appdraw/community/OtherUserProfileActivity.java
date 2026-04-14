@@ -76,7 +76,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
             llLiveStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
             if (currentUid != null) {
                 com.google.firebase.firestore.DocumentReference followRef = db.collection("Follows").document(currentUid + "_" + userId);
-                followRef.addSnapshotListener((doc, e) -> {
+                followRef.addSnapshotListener(this, (doc, e) -> {
                     if (e != null) return;
                     if (doc != null && doc.exists()) {
                         isFollowing = true;
@@ -93,7 +93,11 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                 llLiveStatus.setOnClickListener(v -> {
                     llLiveStatus.setEnabled(false);
                     if (!isFollowing) {
-                        followRef.set(new java.util.HashMap<>()).addOnSuccessListener(aVoid -> {
+                        java.util.Map<String, Object> data = new java.util.HashMap<>();
+                        data.put("follower", currentUid);
+                        data.put("following", userId);
+                        data.put("timestamp", System.currentTimeMillis());
+                        followRef.set(data).addOnSuccessListener(aVoid -> {
                             db.collection("Users").document(userId).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
                             db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
                             Toast.makeText(this, "Đã theo dõi", Toast.LENGTH_SHORT).show();
@@ -111,15 +115,11 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         } // Close if
 
         // Load User Info
-        db.collection("Users").document(userId).addSnapshotListener((doc, e) -> {
+        db.collection("Users").document(userId).addSnapshotListener(this, (doc, e) -> {
             if (e != null || doc == null || !doc.exists()) return;
-            Long followers = doc.getLong("followersCount");
-            Long following = doc.getLong("followingCount");
             Long posts = doc.getLong("postCount");
             String role = doc.getString("role");
             
-            long followersVal = followers != null ? Math.max(0, followers) : 0;
-            long followingVal = following != null ? Math.max(0, following) : 0;
             long postsVal = posts != null ? Math.max(0, posts) : 0;
             
             ImageView ivMentorBadge = findViewById(R.id.iv_mentor_badge);
@@ -131,8 +131,26 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                 }
             }
             
-            if (tvFollowers != null) tvFollowers.setText(String.valueOf(followersVal));
-            if (tvFollowing != null) tvFollowing.setText(String.valueOf(followingVal));
+            if (tvPosts != null) tvPosts.setText(String.valueOf(postsVal));
+
+            // Fetch followers logically by counting 'Follows' sub-documents natively
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("Follows")
+                .whereEqualTo("following", userId)
+                .count()
+                .get(com.google.firebase.firestore.AggregateSource.SERVER)
+                .addOnSuccessListener(task -> {
+                    if (tvFollowers != null) tvFollowers.setText(String.valueOf(task.getCount()));
+                });
+
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("Follows")
+                .whereEqualTo("follower", userId)
+                .count()
+                .get(com.google.firebase.firestore.AggregateSource.SERVER)
+                .addOnSuccessListener(task -> {
+                    if (tvFollowing != null) tvFollowing.setText(String.valueOf(task.getCount()));
+                });
             if (tvPosts != null) tvPosts.setText(String.valueOf(postsVal));
 
                 if (doc.contains("profile")) {
@@ -207,7 +225,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         
         db.collection("Posts")
             .whereEqualTo("uid", userId)
-            .addSnapshotListener((value, error) -> {
+            .addSnapshotListener(this, (value, error) -> {
                 if (error != null) return;
                 postList.clear();
                 allPostList.clear();

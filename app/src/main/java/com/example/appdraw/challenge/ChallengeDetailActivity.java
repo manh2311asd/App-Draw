@@ -40,10 +40,14 @@ public class ChallengeDetailActivity extends AppCompatActivity {
         db.collection("Challenges").whereEqualTo("title", title).get().addOnSuccessListener(shots -> {
             boolean isEnded = false;
             if (!shots.isEmpty()) {
-                Long endTime = shots.getDocuments().get(0).getLong("endTimeMillis");
+                com.google.firebase.firestore.DocumentSnapshot doc = shots.getDocuments().get(0);
+                Long endTime = doc.getLong("endTimeMillis");
                 if (endTime != null && System.currentTimeMillis() > endTime) {
                     isEnded = true;
                 }
+                String authorId = doc.getString("authorId");
+                String author = doc.getString("author");
+                setupMoreMenu(doc.getId(), authorId, author);
             }
             checkUserChallengeState(title, isEnded);
             loadPublicSubmissions(title, isEnded);
@@ -51,6 +55,66 @@ public class ChallengeDetailActivity extends AppCompatActivity {
             checkUserChallengeState(title, false);
             loadPublicSubmissions(title, false);
         });
+    }
+
+    private void setupMoreMenu(String challengeId, String authorId, String author) {
+        android.widget.ImageView ivMore = findViewById(R.id.iv_challenge_more);
+        if (ivMore == null) return;
+        
+        com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+        
+        boolean isAuthor = false;
+        if (authorId != null && authorId.equals(user.getUid())) {
+            isAuthor = true;
+        } else if (authorId == null && author != null) {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            db.collection("Users").document(user.getUid()).get().addOnSuccessListener(userDoc -> {
+                if (userDoc.exists()) {
+                    java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
+                    if (profile != null && profile.containsKey("fullName")) {
+                        String mentorName = "Mentor: " + profile.get("fullName");
+                        if (author.equals(mentorName)) {
+                            ivMore.setVisibility(android.view.View.VISIBLE);
+                            ivMore.setOnClickListener(v -> showMoreMenu(v, challengeId));
+                        }
+                    }
+                }
+            });
+            return;
+        }
+        
+        if (isAuthor) {
+            ivMore.setVisibility(android.view.View.VISIBLE);
+            ivMore.setOnClickListener(v -> showMoreMenu(v, challengeId));
+        }
+    }
+
+    private void showMoreMenu(android.view.View view, String challengeId) {
+        android.widget.PopupMenu popup = new android.widget.PopupMenu(this, view);
+        popup.getMenu().add(0, 1, 0, "Chỉnh sửa");
+        popup.getMenu().add(0, 2, 1, "Xóa thử thách");
+        
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == 1) {
+                android.widget.Toast.makeText(this, "Tính năng chỉnh sửa đang phát triển, sắp ra mắt!", android.widget.Toast.LENGTH_SHORT).show();
+            } else if (item.getItemId() == 2) {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Xóa thử thách")
+                    .setMessage("Bạn có chắc chắn muốn xóa thử thách này không?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Challenges").document(challengeId).delete()
+                            .addOnSuccessListener(aVoid -> {
+                                android.widget.Toast.makeText(this, "Đã xóa thử thách", android.widget.Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+            }
+            return true;
+        });
+        popup.show();
     }
 
     private void checkUserChallengeState(String title, boolean isEnded) {
@@ -113,16 +177,16 @@ public class ChallengeDetailActivity extends AppCompatActivity {
                                 btnSubmit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.LTGRAY));
                             } else if ("GRADED".equals(status)) {
                                 Number score = doc.getDouble("score");
-                                String feedback = doc.getString("feedback");
-                                tvSubmissionStatus.setText("Điểm: " + (score != null ? score : 0) + "/100 XP - Nhận xét: " + feedback);
+                                tvSubmissionStatus.setText("Điểm: " + (score != null ? score : 0) + "/100 XP - Nhấn để xem chi tiết");
                                 tvSubmissionStatus.setTextColor(android.graphics.Color.parseColor("#2ECC71"));
                                 if (tvSubmissionStatusInfo != null) tvSubmissionStatusInfo.setText("Tuyệt vời! Bài của bạn đã có điểm.");
                                 btnSubmit.setText("XEM ĐIỂM CHI TIẾT");
                                 btnSubmit.setEnabled(true);
                                 btnSubmit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2ECC71")));
                                 btnSubmit.setOnClickListener(v -> {
-                                    // Open graded dialog or activity
-                                    android.widget.Toast.makeText(this, "Điểm của bạn: " + score + "\n" + feedback, android.widget.Toast.LENGTH_LONG).show();
+                                    android.content.Intent intent = new android.content.Intent(this, UserScoreDetailActivity.class);
+                                    intent.putExtra("CHALLENGE_TITLE", title);
+                                    startActivity(intent);
                                 });
                             }
                         } else {

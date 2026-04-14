@@ -116,6 +116,9 @@
             android:name=".challenge.GradeSubmissionActivity"
             android:exported="false" />
         <activity
+            android:name=".challenge.UserScoreDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".event.CreateEventActivity"
             android:exported="false" />
         <activity
