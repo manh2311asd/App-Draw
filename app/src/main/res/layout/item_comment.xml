@@ -77,13 +77,17 @@
                 android:textSize="12sp"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/tv_comment_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="Thích"
                 android:textColor="#65676B"
                 android:textSize="12sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -30,14 +30,95 @@ public class ChallengeActivity extends AppCompatActivity {
     private androidx.recyclerview.widget.RecyclerView rvChallenges;
     private ChallengeAdapter challengeAdapter;
     private java.util.List<com.google.firebase.firestore.DocumentSnapshot> challengeList = new java.util.ArrayList<>();
+    private java.util.List<com.google.firebase.firestore.DocumentSnapshot> allChallengeList = new java.util.ArrayList<>();
+    private com.facebook.shimmer.ShimmerFrameLayout shimmerContainer;
+    private android.widget.LinearLayout llEmptyState;
 
     private void setupData() {
         rvChallenges = findViewById(R.id.rv_challenges);
+        shimmerContainer = findViewById(R.id.shimmer_view_container);
+        llEmptyState = findViewById(R.id.ll_empty_state);
+        
+        if (shimmerContainer != null) {
+            shimmerContainer.setVisibility(android.view.View.VISIBLE);
+            shimmerContainer.startShimmer();
+        }
+        if (rvChallenges != null) rvChallenges.setVisibility(android.view.View.GONE);
+        if (llEmptyState != null) llEmptyState.setVisibility(android.view.View.GONE);
+
         if (rvChallenges != null) {
             rvChallenges.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
             challengeAdapter = new ChallengeAdapter(this, challengeList);
             rvChallenges.setAdapter(challengeAdapter);
+            
+            setupTabs();
             loadChallengesFromFirestore();
+        }
+    }
+
+    private void setupTabs() {
+        com.google.android.material.tabs.TabLayout tabLayout = findViewById(R.id.tab_layout_challenge);
+        if (tabLayout != null) {
+            tabLayout.addOnTabSelectedListener(new com.google.android.material.tabs.TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(com.google.android.material.tabs.TabLayout.Tab tab) {
+                    filterListByTab(tab.getPosition());
+                }
+                @Override
+                public void onTabUnselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
+                @Override
+                public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
+            });
+        }
+    }
+    
+    private void filterListByTab(int tabIndex) {
+        if (allChallengeList.isEmpty()) return;
+        
+        challengeList.clear();
+        long now = System.currentTimeMillis();
+        long oneWeek = 7L * 24 * 60 * 60 * 1000;
+        long oneMonth = 30L * 24 * 60 * 60 * 1000;
+
+        for (com.google.firebase.firestore.DocumentSnapshot doc : allChallengeList) {
+            Long endTime = doc.getLong("endTimeMillis");
+            if (endTime == null) endTime = Long.MAX_VALUE;
+            
+            if (tabIndex == 0) { // Tất cả
+                challengeList.add(doc);
+            } else if (tabIndex == 1) { // Tuần này
+                if (endTime > now && (endTime - now) <= oneWeek) {
+                    challengeList.add(doc);
+                }
+            } else if (tabIndex == 2) { // Tháng này
+                if (endTime > now && (endTime - now) <= oneMonth) {
+                    challengeList.add(doc);
+                }
+            } else if (tabIndex == 3) { // Đã kết thúc
+                if (endTime <= now) {
+                    challengeList.add(doc);
+                }
+            } else if (tabIndex == 4) { // Chấm điểm
+                challengeList.add(doc); // Or keep specific logic for grading
+            }
+        }
+        
+        updateUIState();
+    }
+    
+    private void updateUIState() {
+        if (shimmerContainer != null) {
+            shimmerContainer.stopShimmer();
+            shimmerContainer.setVisibility(android.view.View.GONE);
+        }
+        
+        if (challengeList.isEmpty()) {
+            if (rvChallenges != null) rvChallenges.setVisibility(android.view.View.GONE);
+            if (llEmptyState != null) llEmptyState.setVisibility(android.view.View.VISIBLE);
+        } else {
+            if (rvChallenges != null) rvChallenges.setVisibility(android.view.View.VISIBLE);
+            if (llEmptyState != null) llEmptyState.setVisibility(android.view.View.GONE);
+            if (challengeAdapter != null) challengeAdapter.notifyDataSetChanged();
         }
     }
 
@@ -69,8 +150,8 @@ public class ChallengeActivity extends AppCompatActivity {
                     }
                     
                     com.google.android.material.tabs.TabLayout tabLayout = findViewById(R.id.tab_layout_challenge);
-                    if (tabLayout != null && !isMentorUser && tabLayout.getTabCount() >= 4) {
-                        tabLayout.removeTabAt(3);
+                    if (tabLayout != null && !isMentorUser && tabLayout.getTabCount() >= 5) {
+                        tabLayout.removeTabAt(4);
                     }
 
                     fetchChallengesData(db);
@@ -83,7 +164,7 @@ public class ChallengeActivity extends AppCompatActivity {
             if (btnAddChallenge != null) btnAddChallenge.setVisibility(android.view.View.GONE);
             
             com.google.android.material.tabs.TabLayout tabLayout = findViewById(R.id.tab_layout_challenge);
-            if (tabLayout != null && tabLayout.getTabCount() >= 4) tabLayout.removeTabAt(3);
+            if (tabLayout != null && tabLayout.getTabCount() >= 5) tabLayout.removeTabAt(4);
         }
     }
 
@@ -91,7 +172,7 @@ public class ChallengeActivity extends AppCompatActivity {
         db.collection("Challenges")
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
-                challengeList.clear();
+                allChallengeList.clear();
                 
                 java.util.List<com.google.firebase.firestore.DocumentSnapshot> docs = new java.util.ArrayList<>(queryDocumentSnapshots.getDocuments());
                 docs.sort((doc1, doc2) -> {
@@ -109,13 +190,14 @@ public class ChallengeActivity extends AppCompatActivity {
                     return end1.compareTo(end2);
                 });
                 
-                challengeList.addAll(docs);
+                allChallengeList.addAll(docs);
                 
-                if (challengeAdapter != null) {
-                    challengeAdapter.notifyDataSetChanged();
-                }
+                com.google.android.material.tabs.TabLayout tabLayout = findViewById(R.id.tab_layout_challenge);
+                int selectedTab = tabLayout != null ? tabLayout.getSelectedTabPosition() : 0;
+                filterListByTab(selectedTab);
             })
             .addOnFailureListener(e -> {
+                updateUIState();
                 android.widget.Toast.makeText(this, "Lỗi khi tải thử thách", android.widget.Toast.LENGTH_SHORT).show();
             });
     }

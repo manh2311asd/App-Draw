@@ -52,6 +52,78 @@
         </com.google.android.material.card.MaterialCardView>
     </RelativeLayout>
 
+    <!-- Filters -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:background="#FFFFFF"
+        android:paddingBottom="8dp"
+        android:elevation="4dp"
+        android:clipToPadding="false">
+        <LinearLayout
+            android:id="@+id/ll_filter_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+            
+            <TextView
+                android:id="@+id/tv_filter_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tất cả"
+                android:background="@drawable/rounded_bg_gray"
+                android:backgroundTint="#4272D0"
+                android:textColor="#FFFFFF"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+                
+            <TextView
+                android:id="@+id/tv_filter_watercolor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Màu nước"
+                android:background="@drawable/rounded_bg_gray"
+                android:textColor="#333333"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+                
+            <TextView
+                android:id="@+id/tv_filter_sketch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phác thảo"
+                android:background="@drawable/rounded_bg_gray"
+                android:textColor="#333333"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+                
+            <TextView
+                android:id="@+id/tv_filter_handmade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thủ công"
+                android:background="@drawable/rounded_bg_gray"
+                android:textColor="#333333"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+                
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <!-- Post Feed -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

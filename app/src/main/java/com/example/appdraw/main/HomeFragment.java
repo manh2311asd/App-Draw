@@ -186,6 +186,14 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            setupChallenges(getView());
+        }
+    }
+
     private void setupSuggestedLessons(View view) {
         android.widget.LinearLayout container = view.findViewById(R.id.ll_suggested_lessons_container);
         if (container == null) return;
@@ -432,12 +440,18 @@ public class HomeFragment extends Fragment {
                                 }
                             }
                         } else {
-                            // Check if joined
+                            // Check if joined or submitted
                             db.collection("Users").document(uid).collection("joinedChallenges").document(title)
                                 .get().addOnSuccessListener(chalDoc -> {
                                     if (chalDoc.exists() && btnJoin != null) {
-                                        btnJoin.setText("Tiếp tục");
-                                        btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E67E22"))); // Orange
+                                        String status = chalDoc.getString("status");
+                                        if ("SUBMITTED".equals(status) || "GRADED".equals(status)) {
+                                            btnJoin.setText("Đã nộp");
+                                            btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50"))); // Green
+                                        } else {
+                                            btnJoin.setText("Tiếp tục");
+                                            btnJoin.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E67E22"))); // Orange
+                                        }
                                     }
                                 });
                         }

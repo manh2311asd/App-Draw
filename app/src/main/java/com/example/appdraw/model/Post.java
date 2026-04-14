@@ -13,17 +13,21 @@ public class Post {
     private long likesCount;
     private long commentsCount;
     private List<String> likedBy = new ArrayList<>();
+    private boolean isPublic;
+    private boolean allowComment;
     private long createdAt;
 
     public Post() {}
 
-    public Post(String id, String uid, String content, String imageUrl, String category, List<String> topics, long createdAt) {
+    public Post(String id, String uid, String content, String imageUrl, String category, List<String> topics, boolean isPublic, boolean allowComment, long createdAt) {
         this.id = id;
         this.uid = uid;
         this.content = content;
         this.imageUrl = imageUrl;
         this.category = category;
         this.topics = topics != null ? topics : new ArrayList<>();
+        this.isPublic = isPublic;
+        this.allowComment = allowComment;
         this.likesCount = 0;
         this.commentsCount = 0;
         this.likedBy = new ArrayList<>();
@@ -59,4 +63,10 @@ public class Post {
 
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public boolean isPublic() { return isPublic; }
+    public void setPublic(boolean aPublic) { isPublic = aPublic; }
+
+    public boolean isAllowComment() { return allowComment; }
+    public void setAllowComment(boolean allowComment) { this.allowComment = allowComment; }
 }

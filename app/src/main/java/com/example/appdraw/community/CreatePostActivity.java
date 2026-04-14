@@ -39,6 +39,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private String currentUid;
+    private java.util.List<String> selectedTopics = new java.util.ArrayList<>();
 
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -93,8 +94,45 @@ public class CreatePostActivity extends AppCompatActivity {
 
         btnRemoveImage.setOnClickListener(v -> removeImage());
 
+        setupTopicFilters();
+
         MaterialButton btnPublish = findViewById(R.id.btn_publish);
         btnPublish.setOnClickListener(v -> publishPost());
+    }
+
+    private void setupTopicFilters() {
+        int colorSelectedBg = android.graphics.Color.parseColor("#4272D0");
+        int colorSelectedText = android.graphics.Color.WHITE;
+        
+        int[] tvIds = new int[]{R.id.tv_topic_watercolor, R.id.tv_topic_sketch, R.id.tv_topic_handmade, R.id.tv_topic_more};
+        
+        for (int id : tvIds) {
+            android.widget.TextView tv = findViewById(id);
+            if (tv != null) {
+                // Save original colors
+                final android.content.res.ColorStateList oriText = tv.getTextColors();
+                final android.graphics.drawable.Drawable oriBg = tv.getBackground();
+                final android.content.res.ColorStateList oriBgTint = tv.getBackgroundTintList();
+                tv.setTag(false); // Initially false
+
+                tv.setOnClickListener(v -> {
+                    boolean isSelected = (boolean) tv.getTag();
+                    if (!isSelected) {
+                        tv.setTag(true);
+                        tv.setBackgroundResource(R.drawable.rounded_bg_gray);
+                        tv.setBackgroundTintList(android.content.res.ColorStateList.valueOf(colorSelectedBg));
+                        tv.setTextColor(colorSelectedText);
+                        selectedTopics.add(tv.getText().toString());
+                    } else {
+                        tv.setTag(false);
+                        tv.setBackground(oriBg);
+                        tv.setBackgroundTintList(oriBgTint);
+                        tv.setTextColor(oriText);
+                        selectedTopics.remove(tv.getText().toString());
+                    }
+                });
+            }
+        }
     }
 
     private void showSelectedImage(String uri) {
@@ -177,10 +215,8 @@ public class CreatePostActivity extends AppCompatActivity {
         boolean allowComment = swComment != null && swComment.isChecked();
 
         String docId = db.collection("Posts").document().getId();
-        Post post = new Post(docId, currentUid, content, finalImageUrl, category, new ArrayList<>(), System.currentTimeMillis());
-        // For our logic, if share=false, it still creates but won't show on community feed (we can add field isPublic if needed, for simplicity we trust 'share' implies isPublic. Let's not add too many fields unless breaking).
-        // Let's add allowComments to model if needed, but the model has commentsCount.
-        // It's mostly UI for Mockup fidelity. Let's just save.
+        Post post = new Post(docId, currentUid, content, finalImageUrl, category, selectedTopics, share, allowComment, System.currentTimeMillis());
+        // share = isPublic. If false, it's hidden from community feed.
 
         db.collection("Posts").document(docId).set(post)
                 .addOnSuccessListener(aVoid -> {

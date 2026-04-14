@@ -222,6 +222,7 @@
                     android:orientation="horizontal">
                     
                     <TextView
+                        android:id="@+id/tv_topic_watercolor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Màu nước"
@@ -229,9 +230,12 @@
                         android:backgroundTint="#EEF7E8"
                         android:textColor="#7DA95B"
                         android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"/>
+                        android:paddingVertical="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                         
                     <TextView
+                        android:id="@+id/tv_topic_sketch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Phác thảo"
@@ -240,9 +244,12 @@
                         android:backgroundTint="#FDEBEB"
                         android:textColor="#E37A7A"
                         android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"/>
+                        android:paddingVertical="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                         
                     <TextView
+                        android:id="@+id/tv_topic_handmade"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thủ công"
@@ -251,9 +258,12 @@
                         android:backgroundTint="#EBF5EC"
                         android:textColor="#69A873"
                         android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"/>
+                        android:paddingVertical="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
 
                     <TextView
+                        android:id="@+id/tv_topic_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thêm"
@@ -262,50 +272,15 @@
                         android:backgroundTint="#F8EAF6"
                         android:textColor="#B36AB8"
                         android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"/>
+                        android:paddingVertical="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                 </LinearLayout>
             </HorizontalScrollView>
 
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginTop="16dp"/>
 
-            <!-- Attached Lesson -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/rounded_bg_gray"
-                android:backgroundTint="#EBF2FA"
-                android:padding="12dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_learning"
-                    app:tint="#202124"/>
-                    
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Gắn bài học (Tùy chọn)"
-                        android:textStyle="bold"
-                        android:textColor="#333333"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Chọn bài học ..."
-                        android:textColor="#6096F6"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginTop="16dp"/>
+            <!-- Removed Attached Lesson section -->
 
             <!-- Switches -->
             <LinearLayout

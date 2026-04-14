@@ -30,6 +30,11 @@ public class ArtistDetailActivity extends AppCompatActivity {
     private MaterialButton btnFollow;
     private TextView tvFollowersCount;
 
+    private com.example.appdraw.community.PostMediaAdapter postAdapter;
+    private java.util.List<com.example.appdraw.model.Post> artworkList = new java.util.ArrayList<>();
+    private androidx.recyclerview.widget.RecyclerView rvArtworks;
+    private LinearLayout llEmptyArtworks;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +83,21 @@ public class ArtistDetailActivity extends AppCompatActivity {
             });
         }
 
+        // Setup Artworks Grid
+        rvArtworks = findViewById(R.id.rv_artist_artworks);
+        llEmptyArtworks = findViewById(R.id.ll_empty_artist_artworks);
+        if (rvArtworks != null) {
+            rvArtworks.setLayoutManager(new androidx.recyclerview.widget.StaggeredGridLayoutManager(2, androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL));
+            postAdapter = new com.example.appdraw.community.PostMediaAdapter(artworkList, post -> {
+                android.content.Intent intent = new android.content.Intent(this, com.example.appdraw.community.PostDetailActivity.class);
+                intent.putExtra("POST_ID", post.getId());
+                startActivity(intent);
+            });
+            rvArtworks.setAdapter(postAdapter);
+            
+            fetchArtistPosts();
+        }
+
         // Setup Follow System
         btnFollow = findViewById(R.id.btn_follow);
         tvFollowersCount = findViewById(R.id.tv_followers_count);
@@ -97,7 +117,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
     }
 
     private void checkFollowStatus() {
-        db.collection("Users").document(artistId).collection("followers").document(currentUid)
+        db.collection("Follows").document(currentUid + "_" + artistId)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
@@ -108,23 +128,22 @@ public class ArtistDetailActivity extends AppCompatActivity {
     }
 
     private void getFollowersCount() {
-        db.collection("Users").document(artistId).collection("followers")
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                int count = queryDocumentSnapshots.size();
-                tvFollowersCount.setText(count + " người theo dõi");
+        db.collection("Follows")
+            .whereEqualTo("following", artistId)
+            .count()
+            .get(com.google.firebase.firestore.AggregateSource.SERVER)
+            .addOnSuccessListener(task -> {
+                tvFollowersCount.setText(task.getCount() + " người theo dõi");
             });
     }
 
     private void toggleFollow() {
         btnFollow.setEnabled(false); // disable while processing
-        DocumentReference artistFollowerRef = db.collection("Users").document(artistId).collection("followers").document(currentUid);
-        DocumentReference myFollowingRef = db.collection("Users").document(currentUid).collection("following").document(artistId);
+        DocumentReference followRef = db.collection("Follows").document(currentUid + "_" + artistId);
 
         if (isFollowing) {
             // Unfollow
-            artistFollowerRef.delete().addOnSuccessListener(aVoid -> {
-                myFollowingRef.delete();
+            followRef.delete().addOnSuccessListener(aVoid -> {
                 isFollowing = false;
                 updateFollowButtonUI();
                 getFollowersCount();
@@ -132,8 +151,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
             }).addOnFailureListener(e -> btnFollow.setEnabled(true));
         } else {
             // Follow
-            artistFollowerRef.set(new HashMap<>()).addOnSuccessListener(aVoid -> {
-                myFollowingRef.set(new HashMap<>());
+            java.util.Map<String, Object> followData = new java.util.HashMap<>();
+            followData.put("follower", currentUid);
+            followData.put("following", artistId);
+            followData.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
+            
+            followRef.set(followData).addOnSuccessListener(aVoid -> {
                 isFollowing = true;
                 updateFollowButtonUI();
                 getFollowersCount();
@@ -152,5 +175,31 @@ public class ArtistDetailActivity extends AppCompatActivity {
             btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF4272D0)); // Primary Blue
             btnFollow.setTextColor(0xFFFFFFFF);
         }
+    }
+
+    private void fetchArtistPosts() {
+        if (artistId == null) return;
+        db.collection("Posts").whereEqualTo("uid", artistId).get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                artworkList.clear();
+                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                    com.example.appdraw.model.Post post = doc.toObject(com.example.appdraw.model.Post.class);
+                    if (post != null && post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
+                        artworkList.add(post);
+                    }
+                }
+                
+                // Sắp xếp mới nhất lên đầu
+                artworkList.sort((p1, p2) -> Long.compare(p2.getCreatedAt(), p1.getCreatedAt()));
+                
+                if (artworkList.isEmpty()) {
+                    if (rvArtworks != null) rvArtworks.setVisibility(View.GONE);
+                    if (llEmptyArtworks != null) llEmptyArtworks.setVisibility(View.VISIBLE);
+                } else {
+                    if (rvArtworks != null) rvArtworks.setVisibility(View.VISIBLE);
+                    if (llEmptyArtworks != null) llEmptyArtworks.setVisibility(View.GONE);
+                    if (postAdapter != null) postAdapter.notifyDataSetChanged();
+                }
+            });
     }
 }
