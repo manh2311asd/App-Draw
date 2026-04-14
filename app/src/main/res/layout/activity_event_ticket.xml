@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/backgroud_app_draw">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:paddingHorizontal="16dp"
+        android:background="#00FFFFFF">
+        
+        <ImageView
+            android:id="@+id/btn_back_ticket"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back"
+            android:padding="4dp"
+            android:clickable="true"
+            android:focusable="true"/>
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Xem vé"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+            
+        <ImageView
+            android:id="@+id/btn_share_ticket"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_menu_share"
+            app:tint="#333333"
+            android:padding="4dp"
+            android:clickable="true"
+            android:focusable="true"/>
+    </RelativeLayout>
+
+    <!-- Ticket View -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="16dp">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:gravity="center_horizontal">
+        
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="24dp"
+                android:paddingBottom="32dp"
+                android:paddingHorizontal="24dp"
+                android:gravity="center_horizontal"
+                android:background="#FFFFFF">
+
+                <TextView
+                    android:id="@+id/tv_ticket_event_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lớp làm gốm thủ công"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#222222"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/rounded_bg_gray"
+                    android:backgroundTint="#D1E0F5"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:id="@+id/tv_ticket_format"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Offline"
+                            android:textSize="11sp"
+                            android:textColor="#555555"
+                            android:textStyle="bold"
+                            android:background="@drawable/rounded_bg_white"
+                            android:backgroundTint="#DCDCDC"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:layout_marginEnd="8dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Đã đăng kí"
+                            android:textSize="11sp"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:background="@drawable/rounded_bg_white"
+                            android:backgroundTint="#4CAF50"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_time"
+                            app:tint="#444444"
+                            android:layout_marginEnd="8dp"/>
+                        <TextView
+                            android:id="@+id/tv_ticket_time"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="7:00 - 9:00 - Thứ 5, 25 Th9"
+                            android:textSize="13sp"
+                            android:textColor="#444444"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="top">
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="#444444"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginTop="2dp"/>
+                        <TextView
+                            android:id="@+id/tv_ticket_location"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Handmade Studio, 123 Hoàn Kiếm, Hà Nội"
+                            android:textSize="13sp"
+                            android:textColor="#444444"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#BBDDFF"
+                    android:layout_marginVertical="20dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_qr_code"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@android:drawable/ic_dialog_info"
+                    android:scaleType="fitCenter"/>
+
+                <TextView
+                    android:id="@+id/tv_ticket_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mã vé : ABC1234"
+                    android:textSize="12sp"
+                    android:textColor="#555555"
+                    android:layout_marginTop="8dp"/>
+
+                <LinearLayout
+                    android:id="@+id/btn_view_map"
+                    android:layout_width="200dp"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/rounded_bg_blue"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true">
+                    
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_menu_mapmode"
+                        app:tint="#FFFFFF"
+                        android:layout_marginEnd="8dp"/>
+                        
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xem bản đồ"
+                        android:textSize="14sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_join_zoom"
+                    android:layout_width="200dp"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/rounded_bg_blue"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_menu_share"
+                        app:tint="#FFFFFF"
+                        android:layout_marginEnd="8dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vào phòng Zoom"
+                        android:textSize="14sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_remind_me"
+                    android:layout_width="200dp"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/rounded_bg_gray"
+                    android:backgroundTint="#FFFFFF"
+                    android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
+                    
+                    <ImageView
+                        android:id="@+id/iv_remind_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_popup_reminder"
+                        app:tint="#333333"
+                        android:layout_marginEnd="8dp"/>
+                        
+                    <TextView
+                        android:id="@+id/tv_remind_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nhắc tôi"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Footer Reminder Info -->
+        <TextView
+            android:id="@+id/tv_ticket_footer_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="* Vui lòng đến sớm 10 phút để check-in"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:layout_marginTop="24dp"
+            android:gravity="center"/>
+            
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_dialog_email"
+                app:tint="#4272D0"
+                android:layout_marginEnd="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Liên hệ BTC"
+                android:textSize="13sp"
+                android:textColor="#555555"/>
+        </LinearLayout>
+        
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

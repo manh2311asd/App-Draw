@@ -150,6 +150,16 @@ public class ProfileActivity extends AppCompatActivity {
         if (btnSettings != null) {
             btnSettings.setOnClickListener(v -> showSettingsDialog());
         }
+
+        android.widget.ImageView btnGoLive = findViewById(R.id.btn_go_live);
+        if (btnGoLive != null) {
+            btnGoLive.setVisibility(View.VISIBLE);
+            btnGoLive.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfileActivity.this, LiveStreamActivity.class);
+                intent.putExtra("IS_HOST", true);
+                startActivity(intent);
+            });
+        }
     }
 
     private void setupTabs() {
@@ -476,6 +486,11 @@ public class ProfileActivity extends AppCompatActivity {
             TextView tvContent = postView.findViewById(R.id.tv_post_content);
             if (tvContent != null) tvContent.setText(post.getContent());
 
+            TextView tvTime = postView.findViewById(R.id.tv_post_time);
+            if (tvTime != null) {
+                tvTime.setText(getTimeAgo(post.getCreatedAt()));
+            }
+
             TextView tvFollowStatus = postView.findViewById(R.id.tv_follow_status);
             if (tvFollowStatus != null) tvFollowStatus.setVisibility(View.GONE); // Hide "Theo dõi" in self profile
 
@@ -558,6 +573,22 @@ public class ProfileActivity extends AppCompatActivity {
                 });
             }
             llProfilePosts.addView(postView);
+        }
+    }
+
+    private String getTimeAgo(long time) {
+        if (time < 1000000000000L) time *= 1000;
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) return "Vừa xong";
+
+        final long diff = now - time;
+        if (diff < 60 * 1000) return "Vừa xong";
+        else if (diff < 60 * 60 * 1000) return diff / (60 * 1000) + " phút trước";
+        else if (diff < 24 * 60 * 60 * 1000) return diff / (60 * 60 * 1000) + " giờ trước";
+        else if (diff < 30L * 24 * 60 * 60 * 1000) return diff / (24 * 60 * 60 * 1000) + " ngày trước";
+        else {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            return sdf.format(new java.util.Date(time));
         }
     }
 }

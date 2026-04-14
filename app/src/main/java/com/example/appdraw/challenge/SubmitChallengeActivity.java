@@ -116,20 +116,30 @@ public class SubmitChallengeActivity extends AppCompatActivity {
 
                     String finalImageUrl = "";
                     try {
-                        Bitmap bitmap;
-                        if (Build.VERSION.SDK_INT >= 28) {
-                            ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver(), selectedImageUri);
-                            bitmap = ImageDecoder.decodeBitmap(source);
-                        } else {
-                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                        
+                        // Resize ảnh để tránh tràn RAM (OOM) và vượt giới hạn dòng 1MB của Firestore
+                        int MAX_SIZE = 1200;
+                        int width = bitmap.getWidth();
+                        int height = bitmap.getHeight();
+                        if (width > MAX_SIZE || height > MAX_SIZE) {
+                            float ratio = Math.min((float) MAX_SIZE / width, (float) MAX_SIZE / height);
+                            width = Math.round((float) ratio * width);
+                            height = Math.round((float) ratio * height);
+                            bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
                         }
+
                         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                        // Nén JPEG chất lượng 70%
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, buffer);
                         byte[] fileBytes = buffer.toByteArray();
                         String base64Image = Base64.encodeToString(fileBytes, Base64.DEFAULT);
                         finalImageUrl = "data:image/jpeg;base64," + base64Image;
                     } catch (Exception e) {
                         e.printStackTrace();
+                        Toast.makeText(this, "Lỗi khi xử lý ảnh, vui lòng thử ảnh khác nhỏ hơn!", Toast.LENGTH_SHORT).show();
+                        btnSubmit.setEnabled(true);
+                        return; // Ngăn chặn việc gửi lên Firestore nếu không có ảnh
                     }
 
                     Map<String, Object> submissionData = new HashMap<>();

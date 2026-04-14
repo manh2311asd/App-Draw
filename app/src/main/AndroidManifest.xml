@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -75,20 +81,15 @@
             android:name=".explore.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".event.CalendarActivity"
+            android:name=".community.EventScheduleActivity"
             android:exported="false" />
         <activity
-            android:name=".event.EventRegistrationSuccessActivity"
-            android:exported="false" />
-        <activity
-            android:name=".event.TicketActivity"
+            android:name=".community.EventTicketActivity"
             android:exported="false" />
         <activity
             android:name=".community.OtherUserProfileActivity"
             android:exported="false" />
-        <activity
-            android:name=".event.EventListActivity"
-            android:exported="false" />
+
         <activity
             android:name=".CreateProjectActivity"
             android:exported="false" />
@@ -119,7 +120,7 @@
             android:name=".challenge.UserScoreDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".event.CreateEventActivity"
+            android:name=".community.CreateEventActivity"
             android:exported="false" />
         <activity
             android:name=".LiveStreamActivity"

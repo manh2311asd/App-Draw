@@ -101,6 +101,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                             db.collection("Users").document(userId).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
                             db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
                             Toast.makeText(this, "Đã theo dõi", Toast.LENGTH_SHORT).show();
+                            com.example.appdraw.utils.NotificationHelper.sendNotification(userId, "FOLLOW", "đánh giá cao tác phẩm và bắt đầu theo dõi bạn.", currentUid);
                         });
                     } else {
                         followRef.delete().addOnSuccessListener(aVoid -> {

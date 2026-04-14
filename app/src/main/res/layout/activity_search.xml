@@ -61,12 +61,15 @@
                 android:background="@null"
                 android:hint="Tìm kiếm..."
                 android:inputType="text"
+                android:imeOptions="actionSearch"
                 android:textSize="14sp" />
 
             <ImageView
+                android:id="@+id/iv_clear_text"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@android:drawable/ic_btn_speak_now"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="gone"
                 app:tint="#888888" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -95,6 +98,7 @@
                 android:scrollbars="none">
 
                 <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_categories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:singleLine="true">
@@ -142,6 +146,7 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_trending"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -177,33 +182,36 @@
                     android:text="Vẽ hoa" />
             </com.google.android.material.chip.ChipGroup>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ll_history_header"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Lịch sử tìm kiếm"
-                android:textColor="#333333"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp">
+                
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Lịch sử tìm kiếm"
+                    android:textColor="#333333"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_clear_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xóa"
+                    android:textColor="#888888"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vẽ phong cảnh" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vẽ chân dung" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Origami cho bé" />
+                <!-- Chips will be added dynamically -->
             </com.google.android.material.chip.ChipGroup>
 
             <TextView
@@ -221,6 +229,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_suggestion_1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -260,9 +269,11 @@
                     android:layout_height="1dp" />
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_suggestion_2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginStart="12dp"
                     app:cardCornerRadius="12dp">
 
                     <LinearLayout

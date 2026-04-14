@@ -67,6 +67,18 @@ public class PostDetailActivity extends AppCompatActivity {
             if (e != null || doc == null || !doc.exists()) return;
                 Post post = doc.toObject(Post.class);
                 if (post != null) {
+                    if (!post.isAllowComment()) {
+                        etComment.setEnabled(false);
+                        etComment.setHint("Tác giả đã tắt bình luận");
+                        btnSendComment.setEnabled(false);
+                        btnSendComment.setAlpha(0.5f);
+                    } else {
+                        etComment.setEnabled(true);
+                        etComment.setHint("Thêm bình luận...");
+                        btnSendComment.setEnabled(true);
+                        btnSendComment.setAlpha(1.0f);
+                    }
+
                     TextView tvHeader = findViewById(R.id.tv_comment_header);
                     if (tvHeader != null) {
                         tvHeader.setText("Bình luận(" + post.getCommentsCount() + ")");
@@ -122,6 +134,9 @@ public class PostDetailActivity extends AppCompatActivity {
                                         } else {
                                             p.getLikedBy().add(currentUid);
                                             p.setLikesCount(p.getLikesCount() + 1);
+                                            if (!p.getUid().equals(currentUid)) {
+                                                com.example.appdraw.utils.NotificationHelper.sendNotification(p.getUid(), "LIKE", "đã thích bài viết của bạn.", p.getId());
+                                            }
                                         }
                                         d.getReference().set(p);
                                     }
@@ -261,9 +276,77 @@ public class PostDetailActivity extends AppCompatActivity {
                                     } else {
                                         Glide.with(this).load(R.drawable.ic_default_user).circleCrop().into(ivAvatar);
                                     }
+                                    
+                                    View.OnClickListener goProfile = v -> {
+                                        android.content.Intent intent = new android.content.Intent(PostDetailActivity.this, OtherUserProfileActivity.class);
+                                        intent.putExtra("IS_OTHER_USER", true);
+                                        intent.putExtra("USER_ID", comment.getUid());
+                                        intent.putExtra("USER_NAME", fullName != null ? fullName : "Người dùng");
+                                        startActivity(intent);
+                                    };
+                                    tvName.setOnClickListener(goProfile);
+                                    ivAvatar.setOnClickListener(goProfile);
                                 }
                             }
                         });
+                        
+                        TextView tvLike = commentView.findViewById(R.id.tv_comment_like);
+                        if (tvLike != null) {
+                            com.google.firebase.firestore.DocumentReference likeRef = db.collection("Posts")
+                                .document(postId).collection("Comments")
+                                .document(comment.getId()).collection("Likes").document(currentUid);
+                            
+                            likeRef.get().addOnSuccessListener(d -> {
+                                if (d.exists()) {
+                                    tvLike.setTextColor(android.graphics.Color.parseColor("#4272D0"));
+                                    tvLike.setTag(true);
+                                } else {
+                                    tvLike.setTextColor(android.graphics.Color.parseColor("#65676B"));
+                                    tvLike.setTag(false);
+                                }
+                            });
+
+                            com.google.firebase.firestore.CollectionReference likesCol = db.collection("Posts")
+                                .document(postId).collection("Comments")
+                                .document(comment.getId()).collection("Likes");
+                            
+                            likesCol.count().get(com.google.firebase.firestore.AggregateSource.SERVER).addOnSuccessListener(t -> {
+                                long count = t.getCount();
+                                if (count > 0) tvLike.setText("Thích (" + count + ")");
+                                else tvLike.setText("Thích");
+                            });
+
+                            tvLike.setOnClickListener(v -> {
+                                boolean isLiked = tvLike.getTag() != null && (boolean) tvLike.getTag();
+                                tvLike.setEnabled(false);
+                                if (isLiked) {
+                                    likeRef.delete().addOnSuccessListener(a -> {
+                                        tvLike.setTag(false);
+                                        tvLike.setTextColor(android.graphics.Color.parseColor("#65676B"));
+                                        likesCol.count().get(com.google.firebase.firestore.AggregateSource.SERVER).addOnSuccessListener(t -> {
+                                            long count = t.getCount();
+                                            if (count > 0) tvLike.setText("Thích (" + count + ")");
+                                            else tvLike.setText("Thích");
+                                        });
+                                        tvLike.setEnabled(true);
+                                    }).addOnFailureListener(e -> tvLike.setEnabled(true));
+                                } else {
+                                    java.util.Map<String, Object> data = new java.util.HashMap<>();
+                                    data.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
+                                    likeRef.set(data).addOnSuccessListener(a -> {
+                                        tvLike.setTag(true);
+                                        tvLike.setTextColor(android.graphics.Color.parseColor("#4272D0"));
+                                        likesCol.count().get(com.google.firebase.firestore.AggregateSource.SERVER).addOnSuccessListener(t -> {
+                                            long count = t.getCount();
+                                            if (count > 0) tvLike.setText("Thích (" + count + ")");
+                                            else tvLike.setText("Thích");
+                                        });
+                                        tvLike.setEnabled(true);
+                                    }).addOnFailureListener(e -> tvLike.setEnabled(true));
+                                }
+                            });
+                        }
+
                         llCommentsContainer.addView(commentView);
                     }
                 }
@@ -287,11 +370,15 @@ public class PostDetailActivity extends AppCompatActivity {
                 post.setCommentsCount(post.getCommentsCount() + 1);
                 transaction.set(postRef, post);
                 transaction.set(postRef.collection("Comments").document(commentId), comment);
+                return post.getUid();
             }
             return null;
-        }).addOnSuccessListener(aVoid -> {
+        }).addOnSuccessListener(result -> {
             etComment.setText("");
             btnSendComment.setEnabled(true);
+            if (result != null && !result.toString().equals(currentUid)) {
+                com.example.appdraw.utils.NotificationHelper.sendNotification(result.toString(), "COMMENT", "đã bình luận về bài viết của bạn.", postId);
+            }
             Toast.makeText(this, "Đã gửi bình luận", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e -> {
             btnSendComment.setEnabled(true);

@@ -223,125 +223,35 @@
                     android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- View container for dynamic Lịch của bạn -->
+            <LinearLayout
+                android:id="@+id/ll_my_schedule_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="6dp"
-                app:strokeWidth="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:background="@drawable/bg_gradient_calendar">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-                                <View
-                                    android:layout_width="8dp"
-                                    android:layout_height="8dp"
-                                    android:background="@drawable/circle_red_live"
-                                    android:layout_marginEnd="6dp"/>
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="SẮP DIỄN RA"
-                                    android:textSize="11sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#E53935"
-                                    android:letterSpacing="0.1"/>
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="19:30 Live: Màu nước cơ bản"
-                                android:textSize="16sp"
-                                android:textColor="#1A237E"
-                                android:textStyle="bold"
-                                android:layout_marginTop="6dp"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Với nghệ sĩ Hoàng Lam"
-                                android:textSize="12sp"
-                                android:textColor="#5C6BC0"
-                                android:layout_marginTop="2dp"/>
-                        </LinearLayout>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_join_live"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:text="Tham gia"
-                            android:textSize="12sp"
-                            android:textAllCaps="false"
-                            android:textColor="#FFFFFF"
-                            app:backgroundTint="#E53935"
-                            app:cornerRadius="20dp"
-                            app:elevation="4dp"/>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#20000000"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ngày mai"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            android:textColor="#F57C00"
-                            android:background="#FFF3E0"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="4dp"/>
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Workshop: Làm gốm mini"
-                            android:textSize="14sp"
-                            android:textColor="#263238"
-                            android:layout_marginStart="12dp"
-                            android:fontFamily="sans-serif-medium"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Đăng ký"
-                            android:textSize="13sp"
-                            android:textColor="#F57C00"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+                
+                <TextView
+                     android:id="@+id/tv_empty_schedule"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:text="Khơi nguồn sáng tạo trong bạn..."
+                     android:gravity="center"
+                     android:textSize="14sp"
+                     android:textColor="#888888"
+                     android:padding="24dp"
+                     android:visibility="visible"/>
+                     
+                <!-- Will add a dynamic FrameLayout or place the adapter here -->
+                <androidx.recyclerview.widget.RecyclerView
+                     android:id="@+id/rv_home_my_schedule"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:clipToPadding="false"
+                     android:overScrollMode="never"
+                     android:nestedScrollingEnabled="false"
+                     android:visibility="gone"/>
+            </LinearLayout>
 
             <!-- Bài học gợi ý Section -->
             <LinearLayout
@@ -442,22 +352,15 @@
                     android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
-            <HorizontalScrollView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_home_explore_events"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:scrollbars="none"
                 android:clipToPadding="false"
-                android:paddingEnd="16dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <include android:id="@+id/layout_event_1" layout="@layout/item_event_preview"/>
-                    <include android:id="@+id/layout_event_2" layout="@layout/item_event_preview" />
-                    <include layout="@layout/item_event_preview" />
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:paddingEnd="16dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <View android:layout_width="match_parent" android:layout_height="100dp"/>
         </LinearLayout>

@@ -172,9 +172,14 @@ public class ChallengeDetailActivity extends AppCompatActivity {
                                 tvSubmissionStatus.setText("Bài của bạn : Đang chờ chấm");
                                 tvSubmissionStatus.setTextColor(android.graphics.Color.parseColor("#4272D0"));
                                 if (tvSubmissionStatusInfo != null) tvSubmissionStatusInfo.setText("Bài của bạn : Đã nộp. Đang chờ kết quả");
-                                btnSubmit.setText("ĐÃ NỘP BÀI");
-                                btnSubmit.setEnabled(false);
-                                btnSubmit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.LTGRAY));
+                                btnSubmit.setText("ĐÃ NỘP - XEM BÀI");
+                                btnSubmit.setEnabled(true);
+                                btnSubmit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                                btnSubmit.setOnClickListener(v -> {
+                                    android.content.Intent intent = new android.content.Intent(this, UserScoreDetailActivity.class);
+                                    intent.putExtra("CHALLENGE_TITLE", title);
+                                    startActivity(intent);
+                                });
                             } else if ("GRADED".equals(status)) {
                                 Number score = doc.getDouble("score");
                                 tvSubmissionStatus.setText("Điểm: " + (score != null ? score : 0) + "/100 XP - Nhấn để xem chi tiết");

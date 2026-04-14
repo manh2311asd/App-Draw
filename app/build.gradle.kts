@@ -49,8 +49,14 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
     
+    // Shimmer Effect
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+    
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // ZegoCloud Live Streaming UIKit
+    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_live_streaming_android:+")
 }
 
 tasks.register("testClasses") {

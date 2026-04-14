@@ -37,6 +37,20 @@
                     android:textStyle="bold" />
                     
                 <ImageView
+                    android:id="@+id/btn_go_live"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_video"
+                    app:tint="#1A1A1A"
+                    android:padding="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"/>
+
+                <ImageView
                     android:id="@+id/btn_profile_settings"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
