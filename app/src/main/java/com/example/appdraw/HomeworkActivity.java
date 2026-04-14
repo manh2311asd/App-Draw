@@ -19,7 +19,7 @@ public class HomeworkActivity extends AppCompatActivity {
     private ImageView ivUploadedImage;
     private LinearLayout llUploadPlaceholder;
     private boolean isImageUploaded = false;
-    
+
     private String lessonTitle;
     private com.google.firebase.firestore.FirebaseFirestore db;
     private String uid;
@@ -79,11 +79,11 @@ public class HomeworkActivity extends AppCompatActivity {
                     isImageUploaded = true;
                     Toast.makeText(this, "Đã tải ảnh lên thành công!", Toast.LENGTH_SHORT).show();
                 }
-            }
-    );
+            });
 
     private void fetchProgressFromFirestore() {
-        if ("guest".equals(uid)) return;
+        if ("guest".equals(uid))
+            return;
         db.collection("Users").document(uid).collection("lessonProgress").document(lessonTitle)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -93,26 +93,49 @@ public class HomeworkActivity extends AppCompatActivity {
                             String base64Url = documentSnapshot.getString("imageUrl");
                             if (base64Url != null && base64Url.startsWith("data:image")) {
                                 String cleanBase64 = base64Url.substring(base64Url.indexOf(",") + 1);
-                                byte[] decodedString = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT);
-                                android.graphics.Bitmap decodedByte = android.graphics.BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                byte[] decodedString = android.util.Base64.decode(cleanBase64,
+                                        android.util.Base64.DEFAULT);
+                                android.graphics.Bitmap decodedByte = android.graphics.BitmapFactory
+                                        .decodeByteArray(decodedString, 0, decodedString.length);
                                 ivUploadedImage.setImageBitmap(decodedByte);
-                                
+
                                 // Tạo local cache URI để có thể Share bài
-                                String path = android.provider.MediaStore.Images.Media.insertImage(getContentResolver(), decodedByte, "Homework_" + System.currentTimeMillis(), null);
-                                if (path != null) selectedImageUri = android.net.Uri.parse(path);
+                                String path = android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
+                                        decodedByte, "Homework_" + System.currentTimeMillis(), null);
+                                if (path != null)
+                                    selectedImageUri = android.net.Uri.parse(path);
                             } else {
                                 ivUploadedImage.setImageResource(R.drawable.ve_hoa_mau_nuoc); // Fallback
                             }
-                            
+
                             ivUploadedImage.setVisibility(View.VISIBLE);
                             llUploadPlaceholder.setVisibility(View.GONE);
                             isImageUploaded = true;
-                            
+
                             Button btnSubmit = findViewById(R.id.btn_submit_homework);
                             btnSubmit.setText("Cập nhật bài nộp");
-                            btnSubmit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2ECC71)); // Xanh lá
-                            
-                            // findViewById(R.id.card_upload).setClickable(false); // Cho phép nộp lại ảnh mới
+                            btnSubmit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2ECC71)); // Xanh
+                                                                                                                     // lá
+
+                            // Show Grade
+                            findViewById(R.id.card_grade_result).setVisibility(View.VISIBLE);
+                            TextView tvScore = findViewById(R.id.tv_homework_score);
+                            TextView tvFeedback = findViewById(R.id.tv_homework_feedback);
+
+                            int hash = Math.abs((uid + lessonTitle).hashCode());
+                            float mockScore = 8.0f + (hash % 20) / 10.0f; // 8.0 to 9.9
+                            tvScore.setText(String.format(java.util.Locale.getDefault(), "%.1f / 10", mockScore));
+
+                            String[] feeds = {
+                                    "Nét vẽ rất tự nhiên và loang màu mượt mà. Tuyệt vời!",
+                                    "Bố cục hoàn hảo, bạn đã nắm bắt được trọng tâm bài học.",
+                                    "Màu sắc rất có hồn, bạn đang tiến bộ rất nhanh đấy!",
+                                    "Chú ý một chút ở kỹ thuật đi nét mỏng, còn lại rất xuất sắc!"
+                            };
+                            tvFeedback.setText("Nhận xét từ Giảng viên: " + feeds[hash % feeds.length]);
+
+                            // findViewById(R.id.card_upload).setClickable(false); // Cho phép nộp lại ảnh
+                            // mới
                         }
                     }
                 });
@@ -128,17 +151,19 @@ public class HomeworkActivity extends AppCompatActivity {
                 try {
                     android.graphics.Bitmap bitmap;
                     if (android.os.Build.VERSION.SDK_INT >= 28) {
-                        android.graphics.ImageDecoder.Source source = android.graphics.ImageDecoder.createSource(getContentResolver(), selectedImageUri);
+                        android.graphics.ImageDecoder.Source source = android.graphics.ImageDecoder
+                                .createSource(getContentResolver(), selectedImageUri);
                         bitmap = android.graphics.ImageDecoder.decodeBitmap(source);
                     } else {
-                        bitmap = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                        bitmap = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(),
+                                selectedImageUri);
                     }
                     java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
                     bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, buffer);
                     byte[] fileBytes = buffer.toByteArray();
                     String base64Image = android.util.Base64.encodeToString(fileBytes, android.util.Base64.DEFAULT);
                     String finalImageUrl = "data:image/jpeg;base64," + base64Image;
-                    
+
                     data.put("imageUrl", finalImageUrl);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -150,7 +175,8 @@ public class HomeworkActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (!task.isSuccessful()) {
                             // Cập nhật đè nếu chưa tồn tại
-                            db.collection("Users").document(uid).collection("lessonProgress").document(lessonTitle).set(data);
+                            db.collection("Users").document(uid).collection("lessonProgress").document(lessonTitle)
+                                    .set(data);
                         }
                     });
         }
@@ -164,18 +190,21 @@ public class HomeworkActivity extends AppCompatActivity {
     }
 
     private void showSubmissionChoiceBottomSheet() {
-        com.google.android.material.bottomsheet.BottomSheetDialog bottomSheetDialog = new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+        com.google.android.material.bottomsheet.BottomSheetDialog bottomSheetDialog = new com.google.android.material.bottomsheet.BottomSheetDialog(
+                this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_submission_choice, null);
         bottomSheetDialog.setContentView(dialogView);
 
         dialogView.findViewById(R.id.card_draw_canvas).setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
             // Mở công cụ vẽ
-            android.content.Intent intent = new android.content.Intent(HomeworkActivity.this, com.example.appdraw.drawing.DrawingActivity.class);
+            android.content.Intent intent = new android.content.Intent(HomeworkActivity.this,
+                    com.example.appdraw.drawing.DrawingActivity.class);
             startActivity(intent);
-            
+
             // MOCK:
-            Toast.makeText(this, "Canvas đã lưu! Vui lòng dùng 'Tải ảnh thiết bị' để cập nhật bức vẽ của bạn.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Canvas đã lưu! Vui lòng dùng 'Tải ảnh thiết bị' để cập nhật bức vẽ của bạn.",
+                    Toast.LENGTH_LONG).show();
         });
 
         dialogView.findViewById(R.id.card_upload_photo).setOnClickListener(v -> {
@@ -197,24 +226,30 @@ public class HomeworkActivity extends AppCompatActivity {
         Button btnMain = dialog.findViewById(R.id.btn_do_homework_now);
         Button btnClose = dialog.findViewById(R.id.btn_later);
 
-        if (tvTitle != null) tvTitle.setText("Nộp bài thành công!");
-        if (tvSubTitle != null) tvSubTitle.setText("Bài vẽ của bạn đã được gửi đi.\nHãy chia sẻ với Cộng đồng nào!");
-        if (btnMain != null) btnMain.setText("Chia sẻ tác phẩm");
-        
+        if (tvTitle != null)
+            tvTitle.setText("Nộp bài thành công!");
+        if (tvSubTitle != null)
+            tvSubTitle.setText("Bài vẽ của bạn đã được gửi đi.\nHãy chia sẻ với Cộng đồng nào!");
+        if (btnMain != null)
+            btnMain.setText("Chia sẻ tác phẩm");
+
         btnMain.setOnClickListener(v -> {
             dialog.dismiss();
-            android.content.Intent intent = new android.content.Intent(HomeworkActivity.this, com.example.appdraw.community.CreatePostActivity.class);
-            intent.putExtra("PREFILL_TEXT", "#" + lessonTitle.replaceAll("\\s+","") + " \nĐây là tác phẩm bài tập của mình. Mọi người nhận xét giúp nhé!");
+            android.content.Intent intent = new android.content.Intent(HomeworkActivity.this,
+                    com.example.appdraw.community.CreatePostActivity.class);
+            intent.putExtra("PREFILL_TEXT", "#" + lessonTitle.replaceAll("\\s+", "")
+                    + " \nĐây là tác phẩm bài tập của mình. Mọi người nhận xét giúp nhé!");
             if (isImageUploaded) {
                 if (selectedImageUri != null) {
                     intent.putExtra("PREFILL_IMAGE_URI", selectedImageUri.toString());
                 } else {
-                    android.net.Uri imageUri = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.ve_hoa_mau_nuoc);
+                    android.net.Uri imageUri = android.net.Uri
+                            .parse("android.resource://" + getPackageName() + "/" + R.drawable.ve_hoa_mau_nuoc);
                     intent.putExtra("PREFILL_IMAGE_URI", imageUri.toString());
                 }
             }
             startActivity(intent);
-            finish(); 
+            finish();
         });
 
         btnClose.setOnClickListener(v -> {

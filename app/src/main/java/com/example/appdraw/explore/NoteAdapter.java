@@ -6,14 +6,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.appdraw.R;
 import com.example.appdraw.model.Note;
-
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
-
     private List<Note> noteList;
     private OnNoteClickListener listener;
 
@@ -39,21 +36,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         holder.tvTime.setText(note.getTimestampFormatted());
         holder.tvStep.setText("Bước " + note.getStepIndex());
         holder.tvContent.setText(note.getContent());
-
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onNoteClick(note);
+            if (listener != null)
+                listener.onNoteClick(note);
         });
     }
 
     @Override
     public int getItemCount() {
-        return noteList != null ? noteList.size() : 0;
+        return noteList.size();
     }
 
     static class NoteViewHolder extends RecyclerView.ViewHolder {
         TextView tvTime, tvStep, tvContent;
 
-        public NoteViewHolder(@NonNull View itemView) {
+        NoteViewHolder(View itemView) {
             super(itemView);
             tvTime = itemView.findViewById(R.id.tv_note_time);
             tvStep = itemView.findViewById(R.id.tv_note_step);

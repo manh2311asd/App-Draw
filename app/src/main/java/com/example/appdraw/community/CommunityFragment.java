@@ -34,14 +34,8 @@ public class CommunityFragment extends Fragment {
         this.cachedInflater = inflater;
         setupFilters(view);
 
-        // --- Notifications ---
-        View btnNotifications = view.findViewById(R.id.btn_notifications_community);
-        if (btnNotifications != null) {
-            btnNotifications.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), NotificationsActivity.class);
-                startActivity(intent);
-            });
-        }
+
+
 
 
 

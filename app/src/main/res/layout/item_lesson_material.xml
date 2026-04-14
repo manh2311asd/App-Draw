@@ -8,17 +8,35 @@
     android:gravity="center">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_material_card"
         android:layout_width="80dp"
         android:layout_height="80dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
-        app:strokeWidth="0dp">
+        app:strokeWidth="0dp"
+        app:strokeColor="#4CAF50">
         <ImageView
             android:id="@+id/iv_material"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/banner_watercolor"/>
+            
+        <View
+            android:id="@+id/view_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#804CAF50"
+            android:visibility="gone"/>
+            
+        <ImageView
+            android:id="@+id/iv_check"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/checkbox_on_background"
+            app:tint="@color/white"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
     </com.google.android.material.card.MaterialCardView>
 
     <TextView

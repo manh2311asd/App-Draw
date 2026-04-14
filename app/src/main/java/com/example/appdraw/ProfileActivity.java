@@ -103,14 +103,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
 
-        // Xử lý nút Trực tiếp
-        View llLiveStatus = findViewById(R.id.ll_live_status);
-        if (llLiveStatus != null) {
-            llLiveStatus.setOnClickListener(v -> {
-                Intent intent = new Intent(ProfileActivity.this, com.example.appdraw.live.LiveListActivity.class);
-                startActivity(intent);
-            });
-        }
+
     }
 
     private void initViews() {
@@ -151,14 +144,7 @@ public class ProfileActivity extends AppCompatActivity {
             btnSettings.setOnClickListener(v -> showSettingsDialog());
         }
 
-        android.widget.ImageView btnGoLive = findViewById(R.id.btn_go_live);
-        if (btnGoLive != null) {
-            btnGoLive.setVisibility(View.VISIBLE);
-            btnGoLive.setOnClickListener(v -> {
-                Intent intent = new Intent(ProfileActivity.this, com.example.appdraw.live.LiveListActivity.class);
-                startActivity(intent);
-            });
-        }
+
     }
 
     private void setupTabs() {

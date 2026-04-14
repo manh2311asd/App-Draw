@@ -52,68 +52,60 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         TextView tvOtherName = findViewById(R.id.tv_profile_name);
         ImageView ivAvatar = findViewById(R.id.iv_profile_avatar);
         TextView tvBio = findViewById(R.id.tv_profile_bio);
-        LinearLayout llLiveStatus = findViewById(R.id.ll_live_status);
-        
+        com.google.android.material.button.MaterialButton btnFollow = findViewById(R.id.btn_follow);
+
         TextView tvFollowers = findViewById(R.id.tv_profile_followers);
         TextView tvFollowing = findViewById(R.id.tv_profile_following);
         TextView tvPosts = findViewById(R.id.tv_profile_posts);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        
-        // Transform the "Live" chip into a Follow Button
-        if (llLiveStatus != null) {
-            if (userId.equals(currentUid)) {
-                llLiveStatus.setVisibility(android.view.View.GONE);
-            } else {
-                llLiveStatus.setVisibility(android.view.View.VISIBLE);
-                llLiveStatus.removeAllViews();
-                TextView tvFollow = new TextView(this);
-            tvFollow.setText("+ Theo dõi");
-            tvFollow.setTextColor(android.graphics.Color.WHITE);
-            tvFollow.setTextSize(12);
-            tvFollow.setTypeface(null, android.graphics.Typeface.BOLD);
-            llLiveStatus.addView(tvFollow);
-            llLiveStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
-            if (currentUid != null) {
-                com.google.firebase.firestore.DocumentReference followRef = db.collection("Follows").document(currentUid + "_" + userId);
-                followRef.addSnapshotListener(this, (doc, e) -> {
-                    if (e != null) return;
-                    if (doc != null && doc.exists()) {
-                        isFollowing = true;
-                        tvFollow.setText("Đang theo dõi");
-                        llLiveStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
-                    } else {
-                        isFollowing = false;
-                        tvFollow.setText("+ Theo dõi");
-                        llLiveStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
-                    }
-                    llLiveStatus.setEnabled(true);
-                });
 
-                llLiveStatus.setOnClickListener(v -> {
-                    llLiveStatus.setEnabled(false);
-                    if (!isFollowing) {
-                        java.util.Map<String, Object> data = new java.util.HashMap<>();
-                        data.put("follower", currentUid);
-                        data.put("following", userId);
-                        data.put("timestamp", System.currentTimeMillis());
-                        followRef.set(data).addOnSuccessListener(aVoid -> {
-                            db.collection("Users").document(userId).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
-                            db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
-                            Toast.makeText(this, "Đã theo dõi", Toast.LENGTH_SHORT).show();
-                            com.example.appdraw.utils.NotificationHelper.sendNotification(userId, "FOLLOW", "đánh giá cao tác phẩm và bắt đầu theo dõi bạn.", currentUid);
-                        });
-                    } else {
-                        followRef.delete().addOnSuccessListener(aVoid -> {
-                            db.collection("Users").document(userId).update("followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
-                            db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
-                            Toast.makeText(this, "Bỏ theo dõi", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
+        // Setup Follow Button
+        if (btnFollow != null) {
+            if (userId.equals(currentUid)) {
+                btnFollow.setVisibility(android.view.View.GONE);
+            } else {
+                btnFollow.setVisibility(android.view.View.VISIBLE);
+                if (currentUid != null) {
+                    com.google.firebase.firestore.DocumentReference followRef = db.collection("Follows").document(currentUid + "_" + userId);
+                    followRef.addSnapshotListener(this, (doc, e) -> {
+                        if (e != null) return;
+                        if (doc != null && doc.exists()) {
+                            isFollowing = true;
+                            btnFollow.setText("Đang theo dõi");
+                            btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                        } else {
+                            isFollowing = false;
+                            btnFollow.setText("+ Theo dõi");
+                            btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                        }
+                        btnFollow.setEnabled(true);
+                    });
+
+                    btnFollow.setOnClickListener(v -> {
+                        btnFollow.setEnabled(false);
+                        if (!isFollowing) {
+                            java.util.Map<String, Object> data = new java.util.HashMap<>();
+                            data.put("follower", currentUid);
+                            data.put("following", userId);
+                            data.put("timestamp", System.currentTimeMillis());
+                            followRef.set(data).addOnSuccessListener(aVoid -> {
+                                db.collection("Users").document(userId).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
+                                db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
+                                Toast.makeText(this, "Đã theo dõi", Toast.LENGTH_SHORT).show();
+                                com.example.appdraw.utils.NotificationHelper.sendNotification(userId, "FOLLOW", "đánh giá cao tác phẩm và bắt đầu theo dõi bạn.", currentUid);
+                            });
+                        } else {
+                            followRef.delete().addOnSuccessListener(aVoid -> {
+                                db.collection("Users").document(userId).update("followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
+                                db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
+                                Toast.makeText(this, "Bỏ theo dõi", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                }
             }
-            } // Close else
-        } // Close if
+        }
 
         // Load User Info
         db.collection("Users").document(userId).addSnapshotListener(this, (doc, e) -> {

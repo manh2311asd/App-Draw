@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.net.Uri;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.widget.Toast;
 import com.example.appdraw.HomeworkActivity;
 import com.example.appdraw.R;
 
@@ -33,6 +34,8 @@ public class LessonDetailActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String uid;
     private String lessonTitle;
+    private String lessonCategory;
+    private String lessonAuthor;
 
     private LinearLayout llStepProgress;
     private LinearLayout llStepActions;
@@ -43,8 +46,8 @@ public class LessonDetailActivity extends AppCompatActivity {
     private ProgressBar pbLessonProgress;
     private TextView tvStepIndicator;
 
-    private ImageView[] stepChecks = new ImageView[4];
-    private TextView[] stepTexts = new TextView[4];
+    private java.util.List<ImageView> stepChecks = new java.util.ArrayList<>();
+    private java.util.List<TextView> stepTexts = new java.util.ArrayList<>();
 
     private VideoView videoView;
     private FrameLayout flVideoThumbnail;
@@ -54,7 +57,7 @@ public class LessonDetailActivity extends AppCompatActivity {
 
     private com.example.appdraw.model.Lesson currentLesson;
     private java.util.List<String> dynamicVideoUrls = new java.util.ArrayList<>();
-    
+
     // Notes variables
     private java.util.List<com.example.appdraw.model.Note> noteList = new java.util.ArrayList<>();
     private NoteAdapter noteAdapter;
@@ -65,7 +68,10 @@ public class LessonDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lesson_detail);
 
         lessonTitle = getIntent().getStringExtra("LESSON_TITLE");
-        if (lessonTitle == null) lessonTitle = "Unknown Lesson";
+        if (lessonTitle == null)
+            lessonTitle = "Unknown Lesson";
+
+        lessonCategory = getIntent().getStringExtra("CATEGORY");
 
         db = FirebaseFirestore.getInstance();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -91,27 +97,24 @@ public class LessonDetailActivity extends AppCompatActivity {
         pbLessonProgress = findViewById(R.id.pb_lesson_progress);
         tvStepIndicator = findViewById(R.id.tv_step_indicator);
 
-        stepChecks[0] = findViewById(R.id.iv_step1_check);
-        stepChecks[1] = findViewById(R.id.iv_step2_check);
-        stepChecks[2] = findViewById(R.id.iv_step3_check);
-        stepChecks[3] = findViewById(R.id.iv_step4_check);
-
-        stepTexts[0] = findViewById(R.id.tv_step1_text);
-        stepTexts[1] = findViewById(R.id.tv_step2_text);
-        stepTexts[2] = findViewById(R.id.tv_step3_text);
-        stepTexts[3] = findViewById(R.id.tv_step4_text);
+        // Static steps removed, handled dynamically in renderLessonData
 
         if (lessonTitle != null) {
             tvToolbarTitle.setText(lessonTitle);
             ((TextView) findViewById(R.id.tv_lesson_detail_title)).setText(lessonTitle);
         }
 
+        ImageView ivSave = findViewById(R.id.iv_save_lesson);
+        if (ivSave != null) {
+            ivSave.setOnClickListener(v -> toggleSaveLesson());
+        }
+
         findViewById(R.id.btn_checklist).setOnClickListener(v -> showChecklistDialog());
-        findViewById(R.id.btn_notes).setOnClickListener(v -> showNotesBottomSheet());
 
         videoView = findViewById(R.id.video_view);
         flVideoThumbnail = findViewById(R.id.fl_video_thumbnail);
         ivPlayButton = findViewById(R.id.iv_play_button);
+        ivPlayButton.setVisibility(View.GONE);
         pbVideoLoading = findViewById(R.id.pb_video_loading);
 
         mediaController = new MediaController(this);
@@ -119,14 +122,12 @@ public class LessonDetailActivity extends AppCompatActivity {
         videoView.setMediaController(mediaController);
 
         ivPlayButton.setOnClickListener(v -> {
-            if (currentStep == 0) currentStep = 1;
+            if (currentStep == 0)
+                currentStep = 1;
             handleStepClick(currentStep); // Start current step
         });
 
-        findViewById(R.id.ll_step1).setOnClickListener(v -> handleStepClick(1));
-        findViewById(R.id.ll_step2).setOnClickListener(v -> handleStepClick(2));
-        findViewById(R.id.ll_step3).setOnClickListener(v -> handleStepClick(3));
-        findViewById(R.id.ll_step4).setOnClickListener(v -> handleStepClick(4));
+        // Dynamic steps will be assigned listeners in renderLessonData
 
         View btnDownload = findViewById(R.id.btn_download_materials);
         if (btnDownload != null) {
@@ -134,13 +135,14 @@ public class LessonDetailActivity extends AppCompatActivity {
         }
 
         fetchLessonData();
+        checkSavedState();
 
         btnMainAction.setOnClickListener(v -> {
             if ("COMPLETED".equals(lessonStatus)) {
                 openHomework();
             } else if ("WAITING_FOR_HOMEWORK".equals(lessonStatus)) {
                 openHomework();
-            } else if (currentStep < 4) {
+            } else if (currentStep < stepChecks.size()) {
                 currentStep++;
                 lessonStatus = "IN_PROGRESS";
                 saveProgressToFirestore();
@@ -160,6 +162,59 @@ public class LessonDetailActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isLessonSaved = false;
+
+    private void checkSavedState() {
+        if ("guest".equals(uid))
+            return;
+        db.collection("Users").document(uid).collection("savedLessons").document(lessonTitle)
+                .get().addOnSuccessListener(doc -> {
+                    isLessonSaved = doc.exists();
+                    updateSaveIcon();
+                });
+    }
+
+    private void toggleSaveLesson() {
+        if ("guest".equals(uid)) {
+            android.widget.Toast.makeText(this, "Vui lòng đăng nhập để lưu", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ImageView ivSave = findViewById(R.id.iv_save_lesson);
+        if (ivSave != null) {
+            ivSave.animate().scaleX(1.2f).scaleY(1.2f).setDuration(150)
+                    .withEndAction(() -> ivSave.animate().scaleX(1f).scaleY(1f).setDuration(150)).start();
+        }
+
+        if (isLessonSaved) {
+            isLessonSaved = false;
+            updateSaveIcon();
+            db.collection("Users").document(uid).collection("savedLessons").document(lessonTitle).delete();
+            android.widget.Toast.makeText(this, "Đã bỏ lưu bài học", android.widget.Toast.LENGTH_SHORT).show();
+        } else {
+            isLessonSaved = true;
+            updateSaveIcon();
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("title", lessonTitle);
+            data.put("category", lessonCategory);
+            data.put("author", lessonAuthor);
+            data.put("imageRes", getIntent().getStringExtra("IMAGE_RES"));
+            data.put("savedAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
+            db.collection("Users").document(uid).collection("savedLessons").document(lessonTitle).set(data);
+            android.widget.Toast.makeText(this, "Đã lưu vào bộ sưu tập", android.widget.Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateSaveIcon() {
+        ImageView ivSave = findViewById(R.id.iv_save_lesson);
+        if (ivSave == null)
+            return;
+        if (isLessonSaved) {
+            ivSave.setColorFilter(android.graphics.Color.parseColor("#FFC107")); // Gold Star
+        } else {
+            ivSave.setColorFilter(android.graphics.Color.parseColor("#B0BEC5")); // Gray Outline
+        }
+    }
+
     private void fetchProgressFromFirestore() {
         if ("guest".equals(uid)) {
             applyLessonStatus();
@@ -171,10 +226,12 @@ public class LessonDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         lessonStatus = documentSnapshot.getString("status");
-                        if (lessonStatus == null) lessonStatus = "NOT_STARTED";
+                        if (lessonStatus == null)
+                            lessonStatus = "NOT_STARTED";
 
                         Long stepObj = documentSnapshot.getLong("currentStep");
-                        if (stepObj != null && !"COMPLETED".equals(lessonStatus) && !"WAITING_FOR_HOMEWORK".equals(lessonStatus)) {
+                        if (stepObj != null && !"COMPLETED".equals(lessonStatus)
+                                && !"WAITING_FOR_HOMEWORK".equals(lessonStatus)) {
                             currentStep = stepObj.intValue();
                         }
                     } else {
@@ -189,7 +246,8 @@ public class LessonDetailActivity extends AppCompatActivity {
     }
 
     private void saveProgressToFirestore() {
-        if ("guest".equals(uid)) return;
+        if ("guest".equals(uid))
+            return;
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("status", lessonStatus);
         data.put("currentStep", currentStep);
@@ -211,17 +269,92 @@ public class LessonDetailActivity extends AppCompatActivity {
         }
     }
 
+    private java.util.Set<String> checkedMaterials = new java.util.HashSet<>();
+
     private void setupMaterials() {
-        if (llMaterialsContainer == null) return;
+        if ("guest".equals(uid)) {
+            setupMaterialsDynamic();
+            return;
+        }
+        db.collection("Users").document(uid).collection("lessonChecklists").document(lessonTitle)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        java.util.List<String> list = (java.util.List<String>) documentSnapshot.get("checkedItems");
+                        if (list != null) {
+                            checkedMaterials.clear();
+                            checkedMaterials.addAll(list);
+                        }
+                    }
+                    setupMaterialsDynamic();
+                })
+                .addOnFailureListener(e -> setupMaterialsDynamic());
+    }
+
+    private void setupMaterialsUI() {
+        if (llMaterialsContainer == null)
+            return;
         llMaterialsContainer.removeAllViews();
-        String[] names = {"Màu nước", "Giấy vẽ", "Cọ vẽ", "Cốc nước"};
-        int[] drawables = {R.drawable.mau_nuoc, R.drawable.giay_ve, R.drawable.co_ve, R.drawable.coc_nuoc};
+
+        String[] names;
+        int[] drawables;
+        if (lessonCategory != null && (lessonCategory.contains("bắt đầu") || lessonCategory.contains("sơ cấp"))) {
+            names = new String[] { "Giấy A4 trơn", "Bút chì HB", "Gôm tẩy" };
+            drawables = new int[] { R.drawable.giay_ve, R.drawable.co_ve, R.drawable.coc_nuoc };
+        } else if (lessonCategory != null && lessonCategory.contains("Chibi")) {
+            names = new String[] { "Bút chì kim", "Bút Line", "Màu Marker", "Giấy trơn" };
+            drawables = new int[] { R.drawable.co_ve, R.drawable.co_ve, R.drawable.mau_nuoc, R.drawable.giay_ve };
+        } else {
+            names = new String[] { "Màu nước", "Giấy vẽ", "Cọ lông mềm", "Băng dính" };
+            drawables = new int[] { R.drawable.mau_nuoc, R.drawable.giay_ve, R.drawable.co_ve, R.drawable.coc_nuoc };
+        }
+
         LayoutInflater inflater = LayoutInflater.from(this);
         for (int i = 0; i < names.length; i++) {
+            final String materialName = names[i];
             View itemView = inflater.inflate(R.layout.item_lesson_material, llMaterialsContainer, false);
-            ((TextView) itemView.findViewById(R.id.tv_material_name)).setText(names[i]);
+            ((TextView) itemView.findViewById(R.id.tv_material_name)).setText(materialName);
             ((ImageView) itemView.findViewById(R.id.iv_material)).setImageResource(drawables[i]);
+
+            com.google.android.material.card.MaterialCardView cv = itemView.findViewById(R.id.cv_material_card);
+            View overlay = itemView.findViewById(R.id.view_overlay);
+            ImageView ivCheck = itemView.findViewById(R.id.iv_check);
+
+            boolean isChecked = checkedMaterials.contains(materialName);
+            updateMaterialCheckUI(cv, overlay, ivCheck, isChecked);
+
+            itemView.setOnClickListener(v -> {
+                if ("guest".equals(uid)) {
+                    Toast.makeText(this, "Vui lòng đăng nhập để lưu dụng cụ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                boolean newChecked = !checkedMaterials.contains(materialName);
+                if (newChecked) {
+                    checkedMaterials.add(materialName);
+                } else {
+                    checkedMaterials.remove(materialName);
+                }
+                updateMaterialCheckUI(cv, overlay, ivCheck, newChecked);
+
+                db.collection("Users").document(uid).collection("lessonChecklists").document(lessonTitle)
+                        .set(java.util.Collections.singletonMap("checkedItems",
+                                new java.util.ArrayList<>(checkedMaterials)));
+            });
+
             llMaterialsContainer.addView(itemView);
+        }
+    }
+
+    private void updateMaterialCheckUI(com.google.android.material.card.MaterialCardView cv, View overlay,
+            ImageView ivCheck, boolean isChecked) {
+        if (isChecked) {
+            cv.setStrokeWidth(4);
+            overlay.setVisibility(View.VISIBLE);
+            ivCheck.setVisibility(View.VISIBLE);
+        } else {
+            cv.setStrokeWidth(0);
+            overlay.setVisibility(View.GONE);
+            ivCheck.setVisibility(View.GONE);
         }
     }
 
@@ -232,42 +365,32 @@ public class LessonDetailActivity extends AppCompatActivity {
     }
 
     private void playStepVideo(int index) {
-        if (index < 0 || index >= dynamicVideoUrls.size()) return;
-        
+        if (index < 0 || index >= dynamicVideoUrls.size())
+            return;
+
         videoView.stopPlayback();
         videoView.setVisibility(View.GONE);
         flVideoThumbnail.setVisibility(View.VISIBLE);
         ivPlayButton.setVisibility(View.GONE);
         pbVideoLoading.setVisibility(View.VISIBLE);
-        
+
         Uri videoUri = Uri.parse(dynamicVideoUrls.get(index));
         videoView.setVideoURI(videoUri);
-        
+
         videoView.setOnPreparedListener(mp -> {
             pbVideoLoading.setVisibility(View.GONE);
             flVideoThumbnail.setVisibility(View.GONE);
             videoView.setVisibility(View.VISIBLE);
             videoView.start();
         });
-        
+
         videoView.setOnErrorListener((mp, what, extra) -> {
             pbVideoLoading.setVisibility(View.GONE);
             ivPlayButton.setVisibility(View.VISIBLE);
-            android.widget.Toast.makeText(LessonDetailActivity.this, "Lỗi tải video", android.widget.Toast.LENGTH_SHORT).show();
+            android.widget.Toast.makeText(LessonDetailActivity.this, "Lỗi tải video", android.widget.Toast.LENGTH_SHORT)
+                    .show();
             return true;
         });
-    }
-
-    private void showChecklistDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Checklist Dụng Cụ");
-        String[] items = {"Màu nước nước/tuýp", "Giấy vẽ 300gsm", "Cọ vẽ nét tròn", "Cốc nước & Khăn lau thấm"};
-        boolean[] checkedItems = {false, false, false, false};
-        builder.setMultiChoiceItems(items, checkedItems, (dialog, which, isChecked) -> {
-            checkedItems[which] = isChecked;
-        });
-        builder.setPositiveButton("Xong", (dialog, which) -> dialog.dismiss());
-        builder.show();
     }
 
     private void showOverview() {
@@ -288,11 +411,11 @@ public class LessonDetailActivity extends AppCompatActivity {
         btnMainAction.setText("Làm bài tập ngay");
         btnMainAction.setBackgroundTintList(ColorStateList.valueOf(0xFFFF9800)); // Màu cam
 
-        for (int i = 0; i < 4; i++) {
-            stepChecks[i].setImageResource(R.drawable.circle_red_live);
-            stepChecks[i].setColorFilter(0xFF2ECC71); // Xanh lá
-            stepTexts[i].setTextColor(0xFF333333);
-            stepTexts[i].setTypeface(null, Typeface.NORMAL);
+        for (int i = 0; i < stepChecks.size(); i++) {
+            stepChecks.get(i).setImageResource(R.drawable.circle_red_live);
+            stepChecks.get(i).setColorFilter(0xFF2ECC71); // Xanh lá
+            stepTexts.get(i).setTextColor(0xFF333333);
+            stepTexts.get(i).setTypeface(null, Typeface.NORMAL);
         }
     }
 
@@ -301,16 +424,16 @@ public class LessonDetailActivity extends AppCompatActivity {
         llStepProgress.setVisibility(View.GONE);
         llStepActions.setVisibility(View.GONE);
         llMaterialsSection.setVisibility(View.VISIBLE);
-        
+
         btnMainAction.setText("Xem lại bài nộp");
         btnMainAction.setBackgroundTintList(ColorStateList.valueOf(0xFF2ECC71)); // Màu xanh lá
-        
+
         // Đánh dấu tất cả các bước đã hoàn thành (tích xanh)
-        for (int i = 0; i < 4; i++) {
-            stepChecks[i].setImageResource(R.drawable.circle_red_live);
-            stepChecks[i].setColorFilter(0xFF2ECC71); // Xanh lá
-            stepTexts[i].setTextColor(0xFF333333);
-            stepTexts[i].setTypeface(null, Typeface.NORMAL);
+        for (int i = 0; i < stepChecks.size(); i++) {
+            stepChecks.get(i).setImageResource(R.drawable.circle_red_live);
+            stepChecks.get(i).setColorFilter(0xFF2ECC71); // Xanh lá
+            stepTexts.get(i).setTextColor(0xFF333333);
+            stepTexts.get(i).setTypeface(null, Typeface.NORMAL);
         }
     }
 
@@ -318,33 +441,34 @@ public class LessonDetailActivity extends AppCompatActivity {
         llMaterialsSection.setVisibility(View.GONE);
         llStepProgress.setVisibility(View.VISIBLE);
         llStepActions.setVisibility(View.VISIBLE);
-        
-        tvToolbarTitle.setText("Step " + currentStep + "/4");
-        tvStepIndicator.setText("Step " + currentStep + "/4");
-        pbLessonProgress.setProgress(currentStep * 25);
-        
-        if (currentStep == 4) {
+
+        int totalSteps = stepChecks.size() > 0 ? stepChecks.size() : 4;
+        tvToolbarTitle.setText("Step " + currentStep + "/" + totalSteps);
+        tvStepIndicator.setText("Step " + currentStep + "/" + totalSteps);
+        pbLessonProgress.setProgress((int) (((float) currentStep / totalSteps) * 100));
+
+        if (currentStep >= totalSteps) {
             btnMainAction.setText("Hoàn thành bài học");
         } else {
             btnMainAction.setText("Tiếp tục bước " + (currentStep + 1));
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < stepChecks.size(); i++) {
             int stepNum = i + 1;
             if (stepNum < currentStep) {
-                stepChecks[i].setImageResource(R.drawable.circle_red_live);
-                stepChecks[i].setColorFilter(0xFF2ECC71);
-                stepTexts[i].setTextColor(0xFF888888);
+                stepChecks.get(i).setImageResource(R.drawable.circle_red_live);
+                stepChecks.get(i).setColorFilter(0xFF2ECC71);
+                stepTexts.get(i).setTextColor(0xFF888888);
             } else if (stepNum == currentStep) {
-                stepChecks[i].setImageResource(R.drawable.circle_red_live);
-                stepChecks[i].setColorFilter(0xFF4272D0);
-                stepTexts[i].setTypeface(null, Typeface.BOLD);
-                stepTexts[i].setTextColor(0xFF1A237E);
+                stepChecks.get(i).setImageResource(R.drawable.circle_red_live);
+                stepChecks.get(i).setColorFilter(0xFF4272D0);
+                stepTexts.get(i).setTypeface(null, Typeface.BOLD);
+                stepTexts.get(i).setTextColor(0xFF1A237E);
             } else {
-                stepChecks[i].setImageResource(R.drawable.ic_step_pending);
-                stepChecks[i].clearColorFilter();
-                stepTexts[i].setTypeface(null, Typeface.NORMAL);
-                stepTexts[i].setTextColor(0xFF192A56);
+                stepChecks.get(i).setImageResource(R.drawable.ic_step_pending);
+                stepChecks.get(i).clearColorFilter();
+                stepTexts.get(i).setTypeface(null, Typeface.NORMAL);
+                stepTexts.get(i).setTextColor(0xFF192A56);
             }
         }
     }
@@ -378,37 +502,92 @@ public class LessonDetailActivity extends AppCompatActivity {
     }
 
     private void fetchLessonData() {
-        db.collection("Lessons").document(lessonTitle)
+        String lessonId = getIntent().getStringExtra("LESSON_ID");
+        if (lessonId == null)
+            lessonId = lessonTitle;
+
+        db.collection("Lessons").document(lessonId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         currentLesson = documentSnapshot.toObject(com.example.appdraw.model.Lesson.class);
                         if (currentLesson != null) {
-                            renderLessonData();
+                            if (currentLesson.getSteps() == null || currentLesson.getSteps().isEmpty() ||
+                                    (currentLesson.getDescription() != null && currentLesson.getDescription().equals(
+                                            "Hướng dẫn chi tiết cách hoàn thành tác phẩm tuyệt đẹp dành cho người mới bắt đầu."))) {
+                                createDummyLessonAndRender();
+                            } else {
+                                renderLessonData();
+                            }
                         }
                     } else {
                         createDummyLessonAndRender();
                     }
                 })
-                .addOnFailureListener(e -> android.widget.Toast.makeText(this, "Lỗi tải bài học", android.widget.Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> android.widget.Toast
+                        .makeText(this, "Lỗi tải bài học", android.widget.Toast.LENGTH_SHORT).show());
     }
 
     private void createDummyLessonAndRender() {
+        String category = getIntent().getStringExtra("CATEGORY");
+        if (category == null)
+            category = "Beginner";
+
         currentLesson = new com.example.appdraw.model.Lesson();
         currentLesson.setId(lessonTitle);
         currentLesson.setTitle(lessonTitle);
-        currentLesson.setAuthor("Phong Artist");
-        currentLesson.setLevel("Beginner");
-        currentLesson.setDurationMin(25);
         currentLesson.setRating(4.5f);
-        currentLesson.setDescription("Hướng dẫn chi tiết cách hoàn thành tác phẩm tuyệt đẹp dành cho người mới bắt đầu.");
-        currentLesson.setMaterials(java.util.Arrays.asList("Màu nước", "Giấy vẽ 300gsm", "Cọ vẽ", "Cốc nước"));
-        
+        currentLesson
+                .setDescription("Hướng dẫn chi tiết cách hoàn thành tác phẩm tuyệt đẹp dành cho người mới bắt đầu.");
+
+        String intentAuthor = getIntent().getStringExtra("AUTHOR");
+
         java.util.List<com.example.appdraw.model.Lesson.Step> steps = new java.util.ArrayList<>();
-        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Chuẩn bị dụng cụ", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
-        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Phác thảo cơ bản", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
-        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Tô màu nền", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
-        steps.add(new com.example.appdraw.model.Lesson.Step("Bước 4", "Hoàn thiện chi tiết", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"));
+        java.util.List<String> materials = new java.util.ArrayList<>();
+
+        category = category.toLowerCase();
+        if (category.contains("người mới bắt đầu") || category.contains("beginner")) {
+            currentLesson.setAuthor(intentAuthor != null ? intentAuthor.replace("Bởi ", "") : "Phong Artist");
+            currentLesson.setLevel("Beginner");
+            currentLesson.setDurationMin(20);
+            materials.addAll(java.util.Arrays.asList("Bút chì HB", "Giấy A4 trơn", "Gôm tẩy"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Làm quen hình khối",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Luyện nét & đánh bóng",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Thực hành ngắn",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+        } else if (category.contains("thiên nhiên") || category.contains("màu nước")) {
+            currentLesson.setAuthor(intentAuthor != null ? intentAuthor.replace("Bởi ", "") : "Tuấn Vũ Watercolor");
+            currentLesson.setLevel("Intermediate");
+            currentLesson.setDurationMin(45);
+            materials.addAll(java.util.Arrays.asList("Màu nước", "Giấy 300gsm", "Cọ dạng tròn", "Băng dính dán"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Phác họa mảng khung cảnh",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Loang màu nền (Wet on wet)",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Chi tiết tiền cảnh",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 4", "Nhấn cường độ sáng tối",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"));
+        } else {
+            currentLesson.setAuthor(intentAuthor != null ? intentAuthor.replace("Bởi ", "") : "Hương Lan Manga");
+            currentLesson.setLevel("Advanced");
+            currentLesson.setDurationMin(60);
+            materials.addAll(java.util.Arrays.asList("Bút chì kim", "Bút Line", "Màu Marker", "Giấy trơn"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Phác khung tỷ lệ cơ thể",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Dựng khuôn mặt & hướng mắt",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Vẽ tóc & trang phục",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 4", "Đi viền nét đen (Line art)",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"));
+            steps.add(new com.example.appdraw.model.Lesson.Step("Bước 5", "Lên màu và đổ bóng hoàn thiện",
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+        }
+
+        currentLesson.setMaterials(materials);
         currentLesson.setSteps(steps);
 
         db.collection("Lessons").document(lessonTitle).set(currentLesson);
@@ -416,114 +595,210 @@ public class LessonDetailActivity extends AppCompatActivity {
     }
 
     private void renderLessonData() {
+        if (currentLesson == null)
+            return;
+
         tvToolbarTitle.setText(currentLesson.getTitle());
         ((TextView) findViewById(R.id.tv_lesson_detail_title)).setText(currentLesson.getTitle());
         TextView tvDesc = findViewById(R.id.tv_lesson_description);
-        if (tvDesc != null) tvDesc.setText(currentLesson.getDescription());
-        
-        dynamicVideoUrls.clear();
-        if (currentLesson.getSteps() != null) {
-            for (int i = 0; i < currentLesson.getSteps().size() && i < 4; i++) {
-                com.example.appdraw.model.Lesson.Step step = currentLesson.getSteps().get(i);
-                dynamicVideoUrls.add(step.getVideoUrl());
-                stepTexts[i].setText(step.getDescription());
+        if (tvDesc != null)
+            tvDesc.setText(currentLesson.getDescription());
+
+        TextView tvAuthor = findViewById(R.id.tv_lesson_author);
+        if (tvAuthor != null && currentLesson.getAuthor() != null)
+            tvAuthor.setText(currentLesson.getAuthor());
+
+        TextView tvLevel = findViewById(R.id.tv_lesson_level);
+        if (tvLevel != null && currentLesson.getLevel() != null)
+            tvLevel.setText(currentLesson.getLevel());
+
+        TextView tvDuration = findViewById(R.id.tv_lesson_duration);
+        if (tvDuration != null)
+            tvDuration.setText(currentLesson.getDurationMin() + " min");
+
+        String imgResStr = getIntent().getStringExtra("IMAGE_RES");
+        if (imgResStr != null && !imgResStr.isEmpty()) {
+            ImageView ivThumb = findViewById(R.id.iv_lesson_thumbnail);
+            if (ivThumb != null) {
+                int resId = getResources().getIdentifier(imgResStr, "drawable", getPackageName());
+                if (resId != 0)
+                    ivThumb.setImageResource(resId);
             }
         }
-        setupMaterialsDynamic();
+
+        LinearLayout llStepsContainer = findViewById(R.id.ll_dynamic_steps_container);
+        if (llStepsContainer != null)
+            llStepsContainer.removeAllViews();
+        stepChecks.clear();
+        stepTexts.clear();
+        dynamicVideoUrls.clear();
+
+        if (currentLesson.getSteps() != null && llStepsContainer != null) {
+            LayoutInflater inflater = LayoutInflater.from(this);
+            for (int i = 0; i < currentLesson.getSteps().size(); i++) {
+                com.example.appdraw.model.Lesson.Step step = currentLesson.getSteps().get(i);
+                dynamicVideoUrls.add(step.getVideoUrl());
+
+                View stepView = inflater.inflate(R.layout.item_lesson_step, llStepsContainer, false);
+                TextView tvNum = stepView.findViewById(R.id.tv_step_number);
+                TextView tvText = stepView.findViewById(R.id.tv_step_text);
+                ImageView ivCheck = stepView.findViewById(R.id.iv_step_check);
+
+                tvNum.setText(step.getTitle() != null ? step.getTitle() : "Bước " + (i + 1));
+                tvText.setText(step.getDescription());
+
+                stepChecks.add(ivCheck);
+                stepTexts.add(tvText);
+
+                final int finalI = i;
+                stepView.setOnClickListener(v -> {
+                    if ("COMPLETED".equals(lessonStatus) || "WAITING_FOR_HOMEWORK".equals(lessonStatus)) {
+                        android.widget.Toast.makeText(LessonDetailActivity.this,
+                                "Bạn không thể xem lại khi bài học đã kết thúc", android.widget.Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+                    handleStepClick(finalI + 1);
+                });
+
+                llStepsContainer.addView(stepView);
+            }
+        }
+        setupMaterials();
+    }
+
+    private int getMaterialImageResource(String name) {
+        if (name == null)
+            return R.drawable.mau_nuoc;
+        String lower = name.toLowerCase().trim();
+        if (lower.contains("bút chì hb"))
+            return R.drawable.but_chi_hb;
+        if (lower.contains("giấy a4 trơn"))
+            return R.drawable.giay_a4_tron;
+        if (lower.contains("gôm tẩy") || lower.contains("tẩy"))
+            return R.drawable.gom_tay;
+        if (lower.contains("bút chì kim"))
+            return R.drawable.but_chi_kim;
+        if (lower.contains("bút line"))
+            return R.drawable.but_line;
+        if (lower.contains("màu marker") || lower.contains("màu market"))
+            return R.drawable.mau_market;
+        if (lower.contains("giấy trơn"))
+            return R.drawable.giay_tron;
+        if (lower.contains("giấy 300gsm") || lower.contains("300gsm"))
+            return R.drawable.giay_300gsm;
+        if (lower.contains("cọ dạng tròn") || lower.contains("tròn"))
+            return R.drawable.co_dang_tron;
+        if (lower.contains("băng dính"))
+            return R.drawable.bang_dinh;
+
+        // Fallbacks for older categories
+        if (lower.contains("cọ") || lower.contains("lông mềm"))
+            return R.drawable.co_ve;
+        if (lower.contains("giấy"))
+            return R.drawable.giay_ve;
+
+        return R.drawable.mau_nuoc;
     }
 
     private void setupMaterialsDynamic() {
-        if (llMaterialsContainer == null || currentLesson == null) return;
+        if (llMaterialsContainer == null || currentLesson == null)
+            return;
         llMaterialsContainer.removeAllViews();
         java.util.List<String> materials = currentLesson.getMaterials();
-        if (materials == null) return;
-        
+        if (materials == null)
+            return;
+
         LayoutInflater inflater = LayoutInflater.from(this);
-        for (String name : materials) {
+        for (String materialName : materials) {
             View itemView = inflater.inflate(R.layout.item_lesson_material, llMaterialsContainer, false);
-            ((TextView) itemView.findViewById(R.id.tv_material_name)).setText(name);
-            ((ImageView) itemView.findViewById(R.id.iv_material)).setImageResource(R.drawable.mau_nuoc);
+            ((TextView) itemView.findViewById(R.id.tv_material_name)).setText(materialName);
+            ((ImageView) itemView.findViewById(R.id.iv_material))
+                    .setImageResource(getMaterialImageResource(materialName));
+
+            com.google.android.material.card.MaterialCardView cv = itemView.findViewById(R.id.cv_material_card);
+            View overlay = itemView.findViewById(R.id.view_overlay);
+            ImageView ivCheck = itemView.findViewById(R.id.iv_check);
+
+            boolean isChecked = checkedMaterials.contains(materialName);
+            updateMaterialCheckUI(cv, overlay, ivCheck, isChecked);
+
+            itemView.setOnClickListener(v -> {
+                if ("guest".equals(uid)) {
+                    android.widget.Toast
+                            .makeText(this, "Vui lòng đăng nhập để lưu dụng cụ", android.widget.Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+                boolean newChecked = !checkedMaterials.contains(materialName);
+                if (newChecked) {
+                    checkedMaterials.add(materialName);
+                } else {
+                    checkedMaterials.remove(materialName);
+                }
+                updateMaterialCheckUI(cv, overlay, ivCheck, newChecked);
+
+                db.collection("Users").document(uid).collection("lessonChecklists").document(lessonTitle)
+                        .set(java.util.Collections.singletonMap("checkedItems",
+                                new java.util.ArrayList<>(checkedMaterials)));
+            });
+
             llMaterialsContainer.addView(itemView);
         }
     }
 
     private void downloadMaterials() {
-        android.widget.Toast.makeText(this, "Đang tải xuống tài liệu...", android.widget.Toast.LENGTH_SHORT).show();
-        
-        String dummyPdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
-        android.app.DownloadManager.Request request = new android.app.DownloadManager.Request(Uri.parse(dummyPdfUrl));
-        request.setTitle("Tài liệu bài học - " + currentLesson.getTitle());
-        request.setDescription("Đang tải dữ liệu tham khảo...");
-        request.setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, lessonTitle + "_materials.pdf");
-        
-        android.app.DownloadManager manager = (android.app.DownloadManager) getSystemService(android.content.Context.DOWNLOAD_SERVICE);
-        if (manager != null) {
-            manager.enqueue(request);
+        android.widget.Toast.makeText(this, "Đang chuẩn bị tải ảnh bìa...", android.widget.Toast.LENGTH_SHORT).show();
+
+        String imageResStr = getIntent().getStringExtra("IMAGE_RES");
+        if (imageResStr == null || imageResStr.isEmpty()) {
+            imageResStr = "banner_watercolor";
+        }
+
+        int resId = getResources().getIdentifier(imageResStr, "drawable", getPackageName());
+        if (resId == 0) {
+            android.widget.Toast.makeText(this, "Không tìm thấy ảnh", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeResource(getResources(), resId);
+        if (bitmap == null)
+            return;
+
+        try {
+            String savedImageURL = android.provider.MediaStore.Images.Media.insertImage(
+                    getContentResolver(),
+                    bitmap,
+                    lessonTitle + "_cover",
+                    "Ảnh bìa bài học");
+
+            if (savedImageURL != null) {
+                android.widget.Toast
+                        .makeText(this, "Đã tải xuống thành công mục Album Ảnh", android.widget.Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                android.widget.Toast.makeText(this, "Lỗi tải. Hãy kiểm tra Quyền lưu trữ trong Cài đặt",
+                        android.widget.Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            android.widget.Toast.makeText(this, "Lỗi khi lưu ảnh: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
-    private void showNotesBottomSheet() {
-        com.google.android.material.bottomsheet.BottomSheetDialog bottomSheetDialog = new com.google.android.material.bottomsheet.BottomSheetDialog(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_lesson_notes, null);
-        bottomSheetDialog.setContentView(dialogView);
-
-        androidx.recyclerview.widget.RecyclerView rvNotes = dialogView.findViewById(R.id.rv_notes);
-        rvNotes.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
-        
-        noteAdapter = new NoteAdapter(noteList, note -> {
-            bottomSheetDialog.dismiss();
-            videoView.seekTo(note.getTimestampMs());
-            videoView.start();
-        });
-        rvNotes.setAdapter(noteAdapter);
-
-        fetchNotesFromFirestore(rvNotes);
-
-        android.widget.EditText etNoteInput = dialogView.findViewById(R.id.et_note_input);
-        dialogView.findViewById(R.id.btn_send_note).setOnClickListener(v -> {
-            String content = etNoteInput.getText().toString().trim();
-            if (content.isEmpty()) return;
-            
-            int currentPos = videoView.getCurrentPosition(); // in milliseconds
-            int seconds = currentPos / 1000;
-            int mins = seconds / 60;
-            int secs = seconds % 60;
-            String formattedTime = String.format("%02d:%02d", mins, secs);
-
-            com.example.appdraw.model.Note newNote = new com.example.appdraw.model.Note(
-                java.util.UUID.randomUUID().toString(), content, currentStep, currentPos, formattedTime);
-                
-            db.collection("Users").document(uid).collection("notes")
-                .document(lessonTitle).collection("userNotes").document(newNote.getId())
-                .set(newNote)
-                .addOnSuccessListener(aVoid -> {
-                    noteList.add(newNote);
-                    noteAdapter.notifyItemInserted(noteList.size() - 1);
-                    rvNotes.scrollToPosition(noteList.size() - 1);
-                    etNoteInput.setText("");
-                });
-        });
-
-        bottomSheetDialog.show();
-    }
-
-    private void fetchNotesFromFirestore(androidx.recyclerview.widget.RecyclerView rvNotes) {
-        if ("guest".equals(uid)) return;
-        db.collection("Users").document(uid).collection("notes")
-            .document(lessonTitle).collection("userNotes")
-            .orderBy("timestampMs")
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                noteList.clear();
-                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
-                    com.example.appdraw.model.Note note = doc.toObject(com.example.appdraw.model.Note.class);
-                    if (note != null) noteList.add(note);
+    private void showChecklistDialog() {
+        if (llMaterialsSection != null) {
+            if (llMaterialsSection.getVisibility() == View.GONE) {
+                llMaterialsSection.setVisibility(View.VISIBLE);
+                View parent = (View) llMaterialsSection.getParent();
+                if (parent != null && parent.getParent() instanceof androidx.core.widget.NestedScrollView) {
+                    ((androidx.core.widget.NestedScrollView) parent.getParent()).smoothScrollTo(0,
+                            llMaterialsSection.getTop() - 100);
                 }
-                noteAdapter.notifyDataSetChanged();
-                if (!noteList.isEmpty()) {
-                    rvNotes.scrollToPosition(noteList.size() - 1);
-                }
-            });
+            } else {
+                llMaterialsSection.setVisibility(View.GONE);
+            }
+        }
     }
 }

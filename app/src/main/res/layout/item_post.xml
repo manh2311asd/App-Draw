@@ -191,26 +191,7 @@
                     android:textSize="14sp"/>
             </LinearLayout>
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
-            
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_share"
-                app:tint="#636E72"
-                android:background="@drawable/rounded_bg_gray"
-                android:backgroundTint="#F2F5FA"/>
 
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:padding="8dp"
-                android:src="@android:drawable/btn_star_big_off"
-                app:tint="#636E72"
-                android:background="@drawable/rounded_bg_gray"
-                android:backgroundTint="#F2F5FA"/>
         </LinearLayout>
 
     </LinearLayout>

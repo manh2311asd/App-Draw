@@ -27,7 +27,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
         imageUrl = getIntent().getStringExtra("IMAGE_URL");
         ImageView ivFullscreen = findViewById(R.id.iv_fullscreen);
-        
+
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (imageUrl.startsWith("data:image")) {
                 byte[] decodedBytes = Base64.decode(imageUrl.split(",")[1], Base64.DEFAULT);
@@ -43,8 +43,16 @@ public class FullScreenImageActivity extends AppCompatActivity {
     }
 
     private void downloadImage() {
-        if (currentBitmap == null) {
-            Toast.makeText(this, "Không có ảnh để tải", Toast.LENGTH_SHORT).show();
+        ImageView ivFullscreen = findViewById(R.id.iv_fullscreen);
+        Bitmap bitmapToSave = currentBitmap;
+
+        if (bitmapToSave == null && ivFullscreen != null
+                && ivFullscreen.getDrawable() instanceof android.graphics.drawable.BitmapDrawable) {
+            bitmapToSave = ((android.graphics.drawable.BitmapDrawable) ivFullscreen.getDrawable()).getBitmap();
+        }
+
+        if (bitmapToSave == null) {
+            Toast.makeText(this, "Đang tải ảnh, vui lòng thử lại sau giây lát...", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
@@ -58,12 +66,14 @@ public class FullScreenImageActivity extends AppCompatActivity {
                 Uri imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 fos = getContentResolver().openOutputStream(imageUri);
             } else {
-                String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+                String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                        .toString();
                 java.io.File image = new java.io.File(imagesDir, filename);
                 fos = new java.io.FileOutputStream(image);
             }
-            currentBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            if (fos != null) fos.close();
+            bitmapToSave.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            if (fos != null)
+                fos.close();
             Toast.makeText(this, "Đã lưu ảnh vào thư viện", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi tải ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();

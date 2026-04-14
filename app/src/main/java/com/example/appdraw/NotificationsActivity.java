@@ -45,7 +45,9 @@ public class NotificationsActivity extends AppCompatActivity {
         if (auth.getCurrentUser() == null) return;
         
         String uid = auth.getUid();
-        FirebaseFirestore.getInstance().collection("Notifications")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Notifications")
                 .whereEqualTo("userId", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -60,6 +62,14 @@ public class NotificationsActivity extends AppCompatActivity {
                             }
                         }
                         adapter.notifyDataSetChanged();
+
+                        // Đánh dấu tất cả thông báo chưa đọc thành "đã đọc"
+                        for (DocumentSnapshot doc : value) {
+                            Boolean isRead = doc.getBoolean("isRead");
+                            if (isRead == null || !isRead) {
+                                doc.getReference().update("isRead", true);
+                            }
+                        }
                     }
                 });
     }

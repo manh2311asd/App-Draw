@@ -82,15 +82,38 @@ public class ChallengeActivity extends AppCompatActivity {
 
         for (com.google.firebase.firestore.DocumentSnapshot doc : allChallengeList) {
             Long endTime = doc.getLong("endTimeMillis");
-            if (endTime == null) endTime = Long.MAX_VALUE;
+
+            // Nếu không có endTimeMillis, thử parse từ dateStr (vd: "13/04 - 20/04")
+            if (endTime == null) {
+                String dateStr = doc.getString("dateStr");
+                if (dateStr != null && dateStr.contains(" - ")) {
+                    try {
+                        String endPart = dateStr.split(" - ")[1].trim(); // "20/04"
+                        String[] parts = endPart.split("/");
+                        int day = Integer.parseInt(parts[0]);
+                        int month = Integer.parseInt(parts[1]) - 1; // Calendar month 0-based
+                        java.util.Calendar cal = java.util.Calendar.getInstance();
+                        cal.set(java.util.Calendar.DAY_OF_MONTH, day);
+                        cal.set(java.util.Calendar.MONTH, month);
+                        cal.set(java.util.Calendar.HOUR_OF_DAY, 23);
+                        cal.set(java.util.Calendar.MINUTE, 59);
+                        cal.set(java.util.Calendar.SECOND, 59);
+                        endTime = cal.getTimeInMillis();
+                    } catch (Exception e) {
+                        endTime = Long.MAX_VALUE;
+                    }
+                } else {
+                    endTime = Long.MAX_VALUE;
+                }
+            }
             
             if (tabIndex == 0) { // Tất cả
                 challengeList.add(doc);
-            } else if (tabIndex == 1) { // Tuần này
+            } else if (tabIndex == 1) { // Tuần này - còn hiệu lực và kết thúc trong 7 ngày tới
                 if (endTime > now && (endTime - now) <= oneWeek) {
                     challengeList.add(doc);
                 }
-            } else if (tabIndex == 2) { // Tháng này
+            } else if (tabIndex == 2) { // Tháng này - còn hiệu lực và kết thúc trong 30 ngày tới
                 if (endTime > now && (endTime - now) <= oneMonth) {
                     challengeList.add(doc);
                 }
@@ -99,7 +122,7 @@ public class ChallengeActivity extends AppCompatActivity {
                     challengeList.add(doc);
                 }
             } else if (tabIndex == 4) { // Chấm điểm
-                challengeList.add(doc); // Or keep specific logic for grading
+                challengeList.add(doc);
             }
         }
         
