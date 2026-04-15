@@ -54,6 +54,10 @@
             android:name=".explore.MySubmissionActivity"
             android:exported="false" />
         <activity
+            android:name=".explore.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".HomeworkActivity"
             android:exported="false" />
         <activity

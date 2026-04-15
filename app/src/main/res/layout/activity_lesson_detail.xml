@@ -315,6 +315,19 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- FAB for AI Chatbot -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_chat_ai"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="160dp"
+        android:src="@drawable/ic_comment"
+        app:tint="#FFFFFF"
+        app:backgroundTint="#2196F3"
+        app:elevation="6dp" />
+
     <!-- Bottom Buttons -->
     <LinearLayout
         android:layout_width="match_parent"

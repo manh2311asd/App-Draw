@@ -58,8 +58,12 @@ public class LessonListActivity extends AppCompatActivity {
             titleHeader = "Bài học gợi ý";
 
         com.google.firebase.firestore.Query query;
+        java.util.List<String> homeSuggestedTitles = java.util.Arrays.asList(
+                "Làm quen với Brush", "Đêm trăng sáng trên đồi", "Palette pha màu cơ bản",
+                "Phác thảo khuôn mặt Chibi", "Core tỷ lệ khuôn mặt");
+
         if ("Bài học gợi ý".equals(titleHeader)) {
-            query = db.collection("SuggestedLessons").orderBy("title");
+            query = db.collection("Lessons").whereIn("title", homeSuggestedTitles);
         } else {
             query = db.collection("Lessons").whereEqualTo("category", titleHeader);
         }
@@ -94,10 +98,27 @@ public class LessonListActivity extends AppCompatActivity {
             // Patch ảnh đúng cho bài đã seed nếu cần (chạy nền, không ảnh hưởng UI)
             patchLessonImages(finalTitleHeader);
 
+            // Process and Sort documents
+            java.util.List<DocumentSnapshot> displayDocs = new java.util.ArrayList<>();
+            if ("Bài học gợi ý".equals(finalTitleHeader)) {
+                for (String t : homeSuggestedTitles) {
+                    for (DocumentSnapshot d : queryDocumentSnapshots) {
+                        if (t.equals(d.getString("title"))) {
+                            displayDocs.add(d);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                for (DocumentSnapshot d : queryDocumentSnapshots) {
+                    displayDocs.add(d);
+                }
+            }
+
             LayoutInflater inflater = LayoutInflater.from(this);
             String uid = auth.getUid();
 
-            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+            for (DocumentSnapshot doc : displayDocs) {
                 String title = doc.getString("title");
 
                 // SuggestedLessons uses "author", but Lessons uses "authorName". Let's handle

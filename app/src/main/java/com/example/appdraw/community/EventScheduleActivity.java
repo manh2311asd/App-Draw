@@ -74,6 +74,13 @@ public class EventScheduleActivity extends AppCompatActivity {
         checkMentorRole();
         fetchMyTickets();
         fetchAllEvents();
+
+        boolean openExplore = getIntent().getBooleanExtra("OPEN_EXPLORE", false);
+        if (openExplore) {
+            tvTabExplore.performClick();
+        } else {
+            tvTabSchedule.performClick();
+        }
     }
 
     private void initViews() {

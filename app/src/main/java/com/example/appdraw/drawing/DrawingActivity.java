@@ -94,6 +94,14 @@ public class DrawingActivity extends AppCompatActivity {
             btnRedo.setOnClickListener(v -> drawingView.redo());
         }
 
+        View fabChatAi = findViewById(R.id.fab_chat_ai);
+        if (fabChatAi != null) {
+            fabChatAi.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(this, com.example.appdraw.explore.ChatActivity.class);
+                startActivity(intent);
+            });
+        }
+
         android.widget.SeekBar seekSize = findViewById(R.id.seekSize);
         TextView txtSizeVal = findViewById(R.id.txtSizeVal);
         if (seekSize != null && txtSizeVal != null) {

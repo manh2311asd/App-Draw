@@ -97,6 +97,11 @@ public class LessonDetailActivity extends AppCompatActivity {
         pbLessonProgress = findViewById(R.id.pb_lesson_progress);
         tvStepIndicator = findViewById(R.id.tv_step_indicator);
 
+        findViewById(R.id.fab_chat_ai).setOnClickListener(v -> {
+            Intent intent = new Intent(LessonDetailActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+
         // Static steps removed, handled dynamically in renderLessonData
 
         if (lessonTitle != null) {

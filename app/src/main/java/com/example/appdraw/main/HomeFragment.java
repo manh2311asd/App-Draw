@@ -226,11 +226,22 @@ public class HomeFragment extends Fragment {
         // --- Sự kiện sắp tới ---
         setupHomeEvents(view);
 
-        // Xem tất cả sự kiện
+        // Xem tất cả sự kiện (Sự kiện sắp tới)
         View tvViewAllEvents = view.findViewById(R.id.tv_view_all_events);
         if (tvViewAllEvents != null) {
             tvViewAllEvents.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), EventScheduleActivity.class);
+                intent.putExtra("OPEN_EXPLORE", true);
+                startActivity(intent);
+            });
+        }
+
+        // Xem lịch (Lịch của bạn)
+        View tvViewSchedule = view.findViewById(R.id.tv_view_calendar);
+        if (tvViewSchedule != null) {
+            tvViewSchedule.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), EventScheduleActivity.class);
+                intent.putExtra("OPEN_EXPLORE", false);
                 startActivity(intent);
             });
         }
@@ -480,6 +491,26 @@ public class HomeFragment extends Fragment {
                             tvStatus.setText("Đã lưu");
                             tvStatus.setBackgroundResource(R.drawable.rounded_bg_gray);
                             tvStatus.setTextColor(android.graphics.Color.parseColor("#808080"));
+
+                            if (uid != null && title != null) {
+                                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                        .collection("Users").document(uid).collection("lessonProgress").document(title)
+                                        .get().addOnSuccessListener(progDoc -> {
+                                            if (progDoc.exists()) {
+                                                String status = progDoc.getString("status");
+                                                if ("COMPLETED".equals(status)) {
+                                                    tvStatus.setText("Hoàn thành");
+                                                    tvStatus.setBackgroundResource(R.drawable.bg_badge_completed);
+                                                    tvStatus.setTextColor(android.graphics.Color.WHITE);
+                                                } else if ("IN_PROGRESS".equals(status)
+                                                        || "WAITING_FOR_HOMEWORK".equals(status)) {
+                                                    tvStatus.setText("Đang học");
+                                                    tvStatus.setBackgroundResource(R.drawable.bg_badge_in_progress);
+                                                    tvStatus.setTextColor(android.graphics.Color.WHITE);
+                                                }
+                                            }
+                                        });
+                            }
                         }
 
                         if (tvDuration != null) {
@@ -496,13 +527,22 @@ public class HomeFragment extends Fragment {
                             }
                         }
 
+                        final String finalAuthor = author;
+                        final String finalImageResStr = imageResStr;
                         lessonView.setOnClickListener(v -> {
-                            Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
-                            intent.putExtra("LESSON_TITLE", title);
-                            intent.putExtra("CATEGORY", category);
-                            intent.putExtra("IMAGE_RES", imageResStr);
-                            intent.putExtra("LESSON_ID", doc.getId());
-                            startActivity(intent);
+                            if (tvStatus != null && "Hoàn thành".equals(tvStatus.getText().toString())) {
+                                Intent intent = new Intent(getActivity(), com.example.appdraw.explore.MySubmissionActivity.class);
+                                intent.putExtra("LESSON_TITLE", title);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
+                                intent.putExtra("LESSON_TITLE", title);
+                                intent.putExtra("CATEGORY", category);
+                                intent.putExtra("IMAGE_RES", finalImageResStr);
+                                intent.putExtra("AUTHOR", finalAuthor);
+                                intent.putExtra("LESSON_ID", doc.getId());
+                                startActivity(intent);
+                            }
                         });
 
                         container.addView(lessonView);
@@ -542,6 +582,7 @@ public class HomeFragment extends Fragment {
 
                     db.collection("Events").get().addOnSuccessListener(eventDocs -> {
                         List<Event> upcomingEvents = new ArrayList<>();
+                        List<Event> exploreEvents = new ArrayList<>();
                         long now = System.currentTimeMillis() - 24 * 60 * 60 * 1000L;
                         for (com.google.firebase.firestore.DocumentSnapshot doc : eventDocs) {
                             Event e = doc.toObject(Event.class);
@@ -556,11 +597,15 @@ public class HomeFragment extends Fragment {
                                 boolean isAuthor = e.getAuthorId() != null && e.getAuthorId().equals(user.getUid());
                                 if (hasTicket || isAuthor || "Live".equals(e.getEventType())) {
                                     upcomingEvents.add(e);
+                                } else {
+                                    exploreEvents.add(e);
                                 }
                             }
                         }
 
                         java.util.Collections.sort(upcomingEvents,
+                                (e1, e2) -> Long.compare(e1.getDateMillis(), e2.getDateMillis()));
+                        java.util.Collections.sort(exploreEvents,
                                 (e1, e2) -> Long.compare(e1.getDateMillis(), e2.getDateMillis()));
 
                         if (upcomingEvents.isEmpty()) {
@@ -574,8 +619,39 @@ public class HomeFragment extends Fragment {
                             List<Event> displayEvents = upcomingEvents.subList(0, limit);
                             rvMySchedule.setAdapter(new HomeScheduleAdapter(displayEvents, myTickets));
                         }
+
+                        if (exploreEvents.isEmpty()) {
+                            rvExploreEvents.setVisibility(View.GONE);
+                        } else {
+                            rvExploreEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                            rvExploreEvents.setVisibility(View.VISIBLE);
+                            int limit = Math.min(5, exploreEvents.size());
+                            rvExploreEvents.setAdapter(new HomeExploreEventAdapter(exploreEvents.subList(0, limit), myTickets));
+                        }
                     });
                 });
+    }
+
+    private class HomeExploreEventAdapter extends HomeScheduleAdapter {
+        HomeExploreEventAdapter(List<Event> l, List<EventTicket> myT) {
+            super(l, myT);
+        }
+
+        @NonNull
+        @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            VH holder = super.onCreateViewHolder(parent, viewType);
+            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+            if (lp != null) {
+                lp.width = (int) (300 * parent.getContext().getResources().getDisplayMetrics().density);
+                if (lp instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) lp).rightMargin = (int) (12 * parent.getContext().getResources().getDisplayMetrics().density);
+                    ((ViewGroup.MarginLayoutParams) lp).leftMargin = (int) (4 * parent.getContext().getResources().getDisplayMetrics().density);
+                }
+                holder.itemView.setLayoutParams(lp);
+            }
+            return holder;
+        }
     }
 
     private class HomeScheduleAdapter extends RecyclerView.Adapter<HomeScheduleAdapter.VH> {
