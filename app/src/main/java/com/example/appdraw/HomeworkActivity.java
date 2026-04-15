@@ -81,6 +81,31 @@ public class HomeworkActivity extends AppCompatActivity {
                 }
             });
 
+    private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> drawingLauncher = registerForActivityResult(
+            new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    String base64Url = result.getData().getStringExtra("SAVED_BASE64");
+                    if (base64Url != null && base64Url.startsWith("data:image")) {
+                        String cleanBase64 = base64Url.substring(base64Url.indexOf(",") + 1);
+                        byte[] decodedString = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT);
+                        android.graphics.Bitmap decodedByte = android.graphics.BitmapFactory
+                                .decodeByteArray(decodedString, 0, decodedString.length);
+                        ivUploadedImage.setImageBitmap(decodedByte);
+
+                        String path = android.provider.MediaStore.Images.Media.insertImage(getContentResolver(),
+                                decodedByte, "Homework_" + System.currentTimeMillis(), null);
+                        if (path != null)
+                            selectedImageUri = android.net.Uri.parse(path);
+
+                        ivUploadedImage.setVisibility(View.VISIBLE);
+                        llUploadPlaceholder.setVisibility(View.GONE);
+                        isImageUploaded = true;
+                        Toast.makeText(this, "Đã cập nhật bài vẽ!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
     private void fetchProgressFromFirestore() {
         if ("guest".equals(uid))
             return;
@@ -197,14 +222,9 @@ public class HomeworkActivity extends AppCompatActivity {
 
         dialogView.findViewById(R.id.card_draw_canvas).setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
-            // Mở công cụ vẽ
             android.content.Intent intent = new android.content.Intent(HomeworkActivity.this,
                     com.example.appdraw.drawing.DrawingActivity.class);
-            startActivity(intent);
-
-            // MOCK:
-            Toast.makeText(this, "Canvas đã lưu! Vui lòng dùng 'Tải ảnh thiết bị' để cập nhật bức vẽ của bạn.",
-                    Toast.LENGTH_LONG).show();
+            drawingLauncher.launch(intent);
         });
 
         dialogView.findViewById(R.id.card_upload_photo).setOnClickListener(v -> {

@@ -51,6 +51,9 @@
             android:name=".explore.LessonDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".explore.MySubmissionActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeworkActivity"
             android:exported="false" />
         <activity

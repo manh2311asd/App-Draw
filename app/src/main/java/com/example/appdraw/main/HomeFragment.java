@@ -393,13 +393,20 @@ public class HomeFragment extends Fragment {
                                 final String finalAuthor = author;
                                 final String finalImageResStr = imageResStr;
                                 lessonView.setOnClickListener(v -> {
-                                    Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
-                                    intent.putExtra("LESSON_TITLE", title);
-                                    intent.putExtra("CATEGORY", category);
-                                    intent.putExtra("IMAGE_RES", finalImageResStr);
-                                    intent.putExtra("AUTHOR", finalAuthor);
-                                    intent.putExtra("LESSON_ID", doc.getId());
-                                    startActivity(intent);
+                                    if ("Hoàn thành".equals(tvStatus.getText().toString())) {
+                                        Intent intent = new Intent(getActivity(),
+                                                com.example.appdraw.explore.MySubmissionActivity.class);
+                                        intent.putExtra("LESSON_TITLE", title);
+                                        startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
+                                        intent.putExtra("LESSON_TITLE", title);
+                                        intent.putExtra("CATEGORY", category);
+                                        intent.putExtra("IMAGE_RES", finalImageResStr);
+                                        intent.putExtra("AUTHOR", finalAuthor);
+                                        intent.putExtra("LESSON_ID", doc.getId());
+                                        startActivity(intent);
+                                    }
                                 });
 
                                 container.addView(lessonView);

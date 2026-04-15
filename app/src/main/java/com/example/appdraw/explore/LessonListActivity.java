@@ -268,7 +268,9 @@ public class LessonListActivity extends AppCompatActivity {
                 lessonView.setOnClickListener(v -> {
                     String currentStatus = tvStatus.getText().toString();
                     if ("Hoàn thành".equals(currentStatus)) {
-                        Toast.makeText(this, "Bạn đã hoàn thành bài học: " + title, Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, com.example.appdraw.explore.MySubmissionActivity.class);
+                        intent.putExtra("LESSON_TITLE", title);
+                        startActivity(intent);
                     } else {
                         Intent intent = new Intent(this, LessonDetailActivity.class);
                         intent.putExtra("LESSON_TITLE", title);

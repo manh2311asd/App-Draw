@@ -426,9 +426,9 @@ public class LessonDetailActivity extends AppCompatActivity {
         llMaterialsSection.setVisibility(View.VISIBLE);
 
         btnMainAction.setText("Xem lại bài nộp");
-        btnMainAction.setBackgroundTintList(ColorStateList.valueOf(0xFF2ECC71)); // Màu xanh lá
+        btnMainAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2ECC71)); // Màu xanh lá mạ
+        btnMainAction.setOnClickListener(v -> openMySubmission());
 
-        // Đánh dấu tất cả các bước đã hoàn thành (tích xanh)
         for (int i = 0; i < stepChecks.size(); i++) {
             stepChecks.get(i).setImageResource(R.drawable.circle_red_live);
             stepChecks.get(i).setColorFilter(0xFF2ECC71); // Xanh lá
@@ -496,7 +496,13 @@ public class LessonDetailActivity extends AppCompatActivity {
     }
 
     private void openHomework() {
-        Intent intent = new Intent(this, HomeworkActivity.class);
+        Intent intent = new Intent(this, com.example.appdraw.HomeworkActivity.class);
+        intent.putExtra("LESSON_TITLE", lessonTitle);
+        startActivity(intent);
+    }
+
+    private void openMySubmission() {
+        Intent intent = new Intent(this, com.example.appdraw.explore.MySubmissionActivity.class);
         intent.putExtra("LESSON_TITLE", lessonTitle);
         startActivity(intent);
     }
