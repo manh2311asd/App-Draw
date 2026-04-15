@@ -155,11 +155,13 @@ public class CommunityFragment extends Fragment {
                         if (e != null) return;
                         if (d != null && d.exists()) {
                             tvFollowStatus.setText("Đang theo dõi");
-                            tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+                            tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#EFEFEF")));
+                            tvFollowStatus.setTextColor(Color.parseColor("#1A1A1A"));
                             tvFollowStatus.setTag(true);
                         } else {
                             tvFollowStatus.setText("Theo dõi");
                             tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#4272D0")));
+                            tvFollowStatus.setTextColor(Color.WHITE);
                             tvFollowStatus.setTag(false);
                         }
                         tvFollowStatus.setEnabled(true);
@@ -177,6 +179,7 @@ public class CommunityFragment extends Fragment {
                                 db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
                                 db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
                                 showToast("Đã theo dõi");
+                                com.example.appdraw.utils.NotificationHelper.sendNotification(post.getUid(), "FOLLOW", "đánh giá cao bài viết và đã bắt đầu theo dõi bạn.", currentUid);
                             });
                         } else {
                             followRef.delete().addOnSuccessListener(aVoid -> {

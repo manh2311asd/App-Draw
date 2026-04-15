@@ -94,6 +94,8 @@ public class DrawingActivity extends AppCompatActivity {
             btnRedo.setOnClickListener(v -> drawingView.redo());
         }
 
+
+
         android.widget.SeekBar seekSize = findViewById(R.id.seekSize);
         TextView txtSizeVal = findViewById(R.id.txtSizeVal);
         if (seekSize != null && txtSizeVal != null) {
@@ -463,7 +465,7 @@ public class DrawingActivity extends AppCompatActivity {
 
         // Base colors removed from XML, so skip baseGrid
 
-        android.content.SharedPreferences prefs = getSharedPreferences("AppDrawPrefs", MODE_PRIVATE);
+        android.content.SharedPreferences prefs = getSharedPreferences("ArtCraftPrefs", MODE_PRIVATE);
         String recentStr = prefs.getString("recent_colors_new", "-11559441,-13369549,-898075,-16777216,-1509930");
         java.util.List<Integer> recentColors = new java.util.ArrayList<>();
         if (!recentStr.isEmpty()) {
@@ -596,20 +598,20 @@ public class DrawingActivity extends AppCompatActivity {
                 android.content.ContentResolver resolver = getContentResolver();
                 android.content.ContentValues contentValues = new android.content.ContentValues();
                 contentValues.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME,
-                        "AppDraw_" + System.currentTimeMillis() + ".png");
+                        "ArtCraft_" + System.currentTimeMillis() + ".png");
                 contentValues.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "image/png");
                 contentValues.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH,
-                        android.os.Environment.DIRECTORY_PICTURES + "/AppDraw");
+                        android.os.Environment.DIRECTORY_PICTURES + "/ArtCraft");
                 android.net.Uri imageUri = resolver
                         .insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
                 fos = resolver.openOutputStream(imageUri);
             } else {
                 String imagesDir = android.os.Environment
                         .getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES).toString();
-                java.io.File dir = new java.io.File(imagesDir, "AppDraw");
+                java.io.File dir = new java.io.File(imagesDir, "ArtCraft");
                 if (!dir.exists())
                     dir.mkdirs();
-                java.io.File image = new java.io.File(dir, "AppDraw_" + System.currentTimeMillis() + ".png");
+                java.io.File image = new java.io.File(dir, "ArtCraft_" + System.currentTimeMillis() + ".png");
                 fos = new java.io.FileOutputStream(image);
             }
 

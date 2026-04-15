@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="160dp"
-    android:layout_height="220dp"
+    android:layout_width="140dp"
+    android:layout_height="240dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:strokeWidth="0dp">
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#1A000000">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Artwork Image -->
         <ImageView
             android:id="@+id/iv_trending_art"
             android:layout_width="match_parent"
@@ -21,70 +21,73 @@
             android:scaleType="centerCrop"
             android:src="@drawable/tp_trending_1" />
 
-        <!-- Gradient Overlay for text readability -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="120dp"
             android:layout_gravity="bottom"
             android:background="@drawable/bg_gradient_bottom" />
 
-        <!-- Top Right Likes Badge -->
+        <!-- Like Badge with glassmorphism feel -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:layout_margin="8dp"
-            android:orientation="horizontal"
-            android:background="@drawable/rounded_bg_gray"
-            android:backgroundTint="#88000000"
-            android:paddingHorizontal="6dp"
+            android:layout_margin="10dp"
+            android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
+            android:background="@drawable/rounded_bg_glass"
+            android:orientation="horizontal"
             android:gravity="center_vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="❤️ "
-                android:textSize="10sp"/>
+            
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_heart"
+                app:tint="#FF4B4B" />
+                
             <TextView
                 android:id="@+id/tv_likes_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:text="1.2k"
                 android:textColor="#FFFFFF"
                 android:textSize="11sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Bottom Text Structure -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tv_trending_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hoàng hôn trên biển"
+                android:text="Tiêu đề tác phẩm"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:maxLines="2"
-                android:ellipsize="end" />
+                android:ellipsize="end"
+                android:shadowColor="#99000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="3" />
 
             <TextView
                 android:id="@+id/tv_trending_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Bởi Hải Nam"
-                android:textColor="#E0E0E0"
-                android:textSize="12sp"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="4dp"
+                android:text="Bởi Tác giả"
+                android:textColor="#EEEEEE"
+                android:textSize="11sp"
                 android:maxLines="1"
                 android:ellipsize="end" />
         </LinearLayout>
-
     </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

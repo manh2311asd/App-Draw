@@ -53,13 +53,12 @@
             <!-- Video Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="240dp"
+                android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="8dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="4dp"
-                app:strokeColor="#4272D0"
-                app:strokeWidth="2dp">
+                app:cardCornerRadius="24dp"
+                app:cardElevation="12dp"
+                app:strokeWidth="0dp">
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -82,7 +81,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/banner_watercolor" />
+                            android:src="@drawable/ve_thien_nhien" />
 
                         <View
                             android:layout_width="match_parent"
@@ -105,7 +104,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_gravity="center"
-                            android:indeterminateTint="#FFFFFF"
+                            android:indeterminateTint="#4272D0"
                             android:visibility="gone"/>
 
                         <ImageView
@@ -136,14 +135,14 @@
                             android:textColor="#333333"
                             android:textSize="15sp"
                             android:textStyle="bold"/>
-                        <ProgressBar
-                            android:id="@+id/pb_lesson_progress"
-                            style="@android:style/Widget.ProgressBar.Horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp"
-                            android:layout_marginTop="6dp"
-                            android:progress="25"
-                            android:progressDrawable="@drawable/rounded_blue_gradient" />
+                            <ProgressBar
+                                android:id="@+id/pb_lesson_progress"
+                                style="@android:style/Widget.ProgressBar.Horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="6dp"
+                                android:layout_marginTop="8dp"
+                                android:progress="25"
+                                android:progressDrawable="@drawable/rounded_blue_gradient" />
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -311,9 +310,38 @@
                     android:orientation="vertical">
                 </LinearLayout>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_mentor_add_step"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:text="+ THÊM BÀI HỌC VÀO KHÓA NÀY"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#4272D0"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_mentor_delete_lesson"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
+                    android:text="XÓA KHÓA HỌC NÀY"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp"
+                    app:strokeColor="#F44336"
+                    app:strokeWidth="2dp"
+                    android:textColor="#F44336"
+                    app:backgroundTint="#FFFFFF"/>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+
 
     <!-- Bottom Buttons -->
     <LinearLayout
@@ -322,7 +350,7 @@
         android:layout_gravity="bottom"
         android:background="@android:color/transparent"
         android:orientation="vertical"
-        android:paddingHorizontal="20dp"
+        android:paddingHorizontal="24dp"
         android:paddingBottom="24dp">
 
         <com.google.android.material.button.MaterialButton
@@ -333,8 +361,9 @@
             android:textAllCaps="false"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:backgroundTint="#4272D0"
-            app:cornerRadius="16dp"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#4272D0"
+            app:cornerRadius="32dp"
             app:elevation="4dp" />
 
         <LinearLayout
@@ -347,26 +376,26 @@
                 android:id="@+id/btn_download_materials"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
                 app:strokeWidth="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:background="#FFFFFF">
+                    android:background="#D1E0FF">
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@android:drawable/stat_sys_download"
-                        app:tint="#333333"/>
+                        app:tint="#4272D0"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Tải tài liệu"
-                        android:textColor="#333333"
+                        android:textColor="#4272D0"
                         android:textStyle="bold"
                         android:textSize="17sp"/>
                 </LinearLayout>

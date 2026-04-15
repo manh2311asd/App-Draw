@@ -45,6 +45,7 @@
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp">
                 <ImageView
+                    android:id="@+id/iv_homework_bg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -116,6 +117,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_homework_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -220,6 +222,7 @@
                                 android:src="@android:drawable/btn_star_big_on"
                                 app:tint="#FFC107"/>
                             <TextView
+                                android:id="@+id/tv_criteria_1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -240,6 +243,7 @@
                                 android:src="@android:drawable/btn_star_big_on"
                                 app:tint="#FFC107"/>
                             <TextView
+                                android:id="@+id/tv_criteria_2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"

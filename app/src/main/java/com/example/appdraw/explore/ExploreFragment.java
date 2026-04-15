@@ -47,6 +47,12 @@ public class ExploreFragment extends Fragment {
         setupTrendingData(view);
         setupDynamicMentors(view);
 
+        // --- View All Handlers ---
+        View tvViewAllCategories = view.findViewById(R.id.tv_view_all_categories);
+        if (tvViewAllCategories != null) {
+            tvViewAllCategories.setOnClickListener(v -> startActivity(new Intent(getActivity(), AllCategoriesActivity.class)));
+        }
+
         return view;
     }
 
@@ -186,92 +192,87 @@ public class ExploreFragment extends Fragment {
 
     private void setupTrendingData(View view) {
         android.widget.LinearLayout container = view.findViewById(R.id.ll_trending_container);
-        if (container == null)
-            return;
+        if (container == null) return;
 
-        com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore
-                .getInstance();
-        db.collection("TrendingArtworks").orderBy("title").get().addOnSuccessListener(queryDocumentSnapshots -> {
-            boolean isCorrupted = !queryDocumentSnapshots.isEmpty()
-                    && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes") != null
-                    && queryDocumentSnapshots.getDocuments().get(0).getString("imageRes").matches("-?\\d+");
-
-            if (queryDocumentSnapshots.isEmpty() || isCorrupted) {
-                if (isCorrupted) {
-                    for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
-                        doc.getReference().delete();
+        com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+        
+        // Lấy 10 bài viết để đảm bảo lọc ra được 5 bài có ảnh
+        db.collection("Posts")
+            .orderBy("likesCount", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(10)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (getContext() == null) return;
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                container.removeAllViews();
+                
+                int count = 0;
+                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (count >= 5) break; // Chỉ hiển thị 5 tác phẩm
+                    
+                    com.example.appdraw.model.Post post = doc.toObject(com.example.appdraw.model.Post.class);
+                    if (post == null) continue;
+                    
+                    String imageUrl = post.getImageUrl();
+                    // Tác phẩm trending phải có ảnh
+                    if (imageUrl == null || imageUrl.isEmpty()) continue;
+                    
+                    count++;
+                    
+                    View artworkView = inflater.inflate(R.layout.item_trending_artwork, container, false);
+                    TextView tvTitle = artworkView.findViewById(R.id.tv_trending_title);
+                    TextView tvAuthor = artworkView.findViewById(R.id.tv_trending_author);
+                    TextView tvLikes = artworkView.findViewById(R.id.tv_likes_count);
+                    ImageView ivArt = artworkView.findViewById(R.id.iv_trending_art);
+                    
+                    if (tvTitle != null) {
+                        String content = post.getContent();
+                        tvTitle.setText((content != null && !content.isEmpty()) ? content : "Không có tiêu đề");
                     }
-                }
-
-                // Auto seed 5 default trending artworks
-                String[] titles = { "Ánh trăng Cyberpunk", "Thành phố sương mù", "Thiếu nữ Á Đông", "Rừng đom đóm",
-                        "Nghệ thuật Trừu tượng" };
-                String[] authors = { "Bởi Hải Nam", "Bởi Thu Thủy", "Bởi Minh Khang", "Bởi Nhật Anh", "Bởi Tuấn Vũ" };
-                String[] likes = { "12.5k", "8.2k", "15.1k", "9.7k", "6.4k" };
-                String[] images = { "tp_trending_1", "tp_trending_2", "ve_thien_nhien", "banner_watercolor",
-                        "ve_hoa_mau_nuoc" };
-
-                for (int i = 0; i < titles.length; i++) {
-                    java.util.Map<String, Object> t = new java.util.HashMap<>();
-                    t.put("title", titles[i]);
-                    t.put("author", authors[i]);
-                    t.put("likesCount", likes[i]);
-                    t.put("imageRes", images[i]);
-                    db.collection("TrendingArtworks").add(t);
-                }
-
-                // Cần delay nhẹ đợi Firebase save
-                container.postDelayed(() -> setupTrendingData(view), 2500);
-                return;
-            }
-
-            if (getContext() == null)
-                return;
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            container.removeAllViews();
-
-            for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
-                String title = doc.getString("title");
-                String author = doc.getString("author");
-                String likesCount = doc.getString("likesCount");
-                String imageResStr = doc.getString("imageRes");
-                String imageUrl = doc.getString("imageUrl");
-
-                View artworkView = inflater.inflate(R.layout.item_trending_artwork, container, false);
-                TextView tvTitle = artworkView.findViewById(R.id.tv_trending_title);
-                TextView tvAuthor = artworkView.findViewById(R.id.tv_trending_author);
-                TextView tvLikes = artworkView.findViewById(R.id.tv_likes_count);
-                ImageView ivArt = artworkView.findViewById(R.id.iv_trending_art);
-
-                if (tvTitle != null)
-                    tvTitle.setText(title);
-                if (tvAuthor != null)
-                    tvAuthor.setText(author);
-                if (tvLikes != null)
-                    tvLikes.setText(likesCount != null ? likesCount : "1k");
-                if (ivArt != null) {
-                    if (imageResStr != null && !imageResStr.isEmpty() && !imageResStr.matches("-?\\d+")) {
-                        try {
-                            int resId = getResources().getIdentifier(imageResStr, "drawable",
-                                    getContext().getPackageName());
-                            if (resId != 0)
-                                ivArt.setImageResource(resId);
-                        } catch (Exception e) {
+                    
+                    if (tvLikes != null) {
+                        long likes = post.getLikesCount();
+                        if (likes >= 1000) {
+                            tvLikes.setText(String.format(java.util.Locale.US, "%.1fk", likes / 1000.0));
+                        } else {
+                            tvLikes.setText(String.valueOf(likes));
                         }
-                    } else if (imageUrl != null && !imageUrl.isEmpty()) {
-                        com.bumptech.glide.Glide.with(this).load(imageUrl).centerCrop().into(ivArt);
                     }
+                    
+                    if (ivArt != null) {
+                        if (imageUrl.startsWith("data:image")) {
+                            try {
+                                byte[] decodedBytes = android.util.Base64.decode(imageUrl.split(",")[1], android.util.Base64.DEFAULT);
+                                com.bumptech.glide.Glide.with(this).load(decodedBytes).centerCrop().into(ivArt);
+                            } catch (Exception e) {}
+                        } else {
+                            com.bumptech.glide.Glide.with(this).load(imageUrl).centerCrop().into(ivArt);
+                        }
+                    }
+                    
+                    // Fetch Author Name
+                    if (post.getUid() != null) {
+                        db.collection("Users").document(post.getUid()).get().addOnSuccessListener(userDoc -> {
+                            if (userDoc.exists() && userDoc.contains("profile")) {
+                                java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
+                                if (profile != null && profile.containsKey("fullName")) {
+                                    if (tvAuthor != null) tvAuthor.setText("Bởi " + profile.get("fullName"));
+                                } else {
+                                    if (tvAuthor != null) tvAuthor.setText("Bởi Người dùng");
+                                }
+                            }
+                        });
+                    }
+                    
+                    artworkView.setOnClickListener(v -> {
+                        Intent intent = new Intent(getActivity(), com.example.appdraw.community.PostDetailActivity.class);
+                        intent.putExtra("POST_ID", post.getId());
+                        startActivity(intent);
+                    });
+                    
+                    container.addView(artworkView);
                 }
-
-                artworkView.setOnClickListener(v -> {
-                    Intent intent = new Intent(getActivity(), TrendingDetailActivity.class);
-                    intent.putExtra("TITLE", title);
-                    startActivity(intent);
-                });
-
-                container.addView(artworkView);
-            }
-        });
+            });
     }
 
     private void setupDynamicMentors(View view) {

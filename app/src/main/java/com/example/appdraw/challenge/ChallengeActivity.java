@@ -52,8 +52,13 @@ public class ChallengeActivity extends AppCompatActivity {
             rvChallenges.setAdapter(challengeAdapter);
             
             setupTabs();
-            loadChallengesFromFirestore();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadChallengesFromFirestore();
     }
 
     private void setupTabs() {

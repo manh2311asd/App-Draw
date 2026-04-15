@@ -120,11 +120,11 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Khóa học"/>
+                android:text="Tác phẩm"/>
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tác phẩm"/>
+                android:text="Khóa học"/>
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -137,30 +137,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             
-            <!-- Tab Khóa học Content -->
-            <LinearLayout
-                android:id="@+id/ll_tab_lessons"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:visibility="visible">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Khóa học chưa được cập nhật."
-                    android:gravity="center"
-                    android:textColor="#999999"
-                    android:layout_marginTop="40dp"/>
-            </LinearLayout>
-
             <!-- Tab Tác phẩm Content -->
             <LinearLayout
                 android:id="@+id/ll_tab_artworks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
                 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_artist_artworks"
@@ -194,6 +177,44 @@
                         android:textSize="14sp"
                         android:layout_marginTop="16dp"/>
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- Tab Khóa học Content -->
+            <LinearLayout
+                android:id="@+id/ll_tab_lessons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_create_lesson"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="+ TẠO KHÓA HỌC MỚI"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#4272D0"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_artist_lessons_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:clipToPadding="false" />
+
+                <TextView
+                    android:id="@+id/tv_empty_lessons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Khóa học chưa được cập nhật."
+                    android:gravity="center"
+                    android:textColor="#999999"
+                    android:layout_marginTop="40dp"/>
             </LinearLayout>
         </FrameLayout>
     </androidx.core.widget.NestedScrollView>

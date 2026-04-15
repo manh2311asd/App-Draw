@@ -26,6 +26,8 @@ public class LiveActivity extends AppCompatActivity {
         ZegoUIKitPrebuiltLiveStreamingConfig config;
         if (isHost) {
             config = ZegoUIKitPrebuiltLiveStreamingConfig.host();
+            config.turnOnCameraWhenJoining = true;
+            config.turnOnMicrophoneWhenJoining = true;
         } else {
             config = ZegoUIKitPrebuiltLiveStreamingConfig.audience();
         }

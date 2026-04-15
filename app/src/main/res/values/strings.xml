@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">AppDraw</string>
+    <string name="app_name">ArtCraft</string>
+    <string-array name="lesson_levels">
+        <item>Dễ</item>
+        <item>Trung bình</item>
+        <item>Khó</item>
+        <item>Chuyên gia</item>
+    </string-array>
 </resources>

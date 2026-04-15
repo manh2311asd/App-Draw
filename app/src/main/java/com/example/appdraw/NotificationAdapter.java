@@ -88,13 +88,31 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         // Action button for Follow
         if ("FOLLOW".equals(notif.getType())) {
             holder.btnAction.setVisibility(View.VISIBLE);
-            holder.btnAction.setText("+ Theo dõi");
-            holder.btnAction.setOnClickListener(v -> {
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                if (auth.getCurrentUser() != null) {
+            holder.btnAction.setText("+ Theo dõi"); // Cấu hình ban đầu
+            holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+            holder.btnAction.setTextColor(android.graphics.Color.WHITE);
+            holder.btnAction.setEnabled(true);
+
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (auth.getCurrentUser() != null) {
+                String currentUid = auth.getUid();
+                
+                // Kiểm tra xem đã theo dõi hay chưa
+                FirebaseFirestore.getInstance().collection("Follows")
+                    .document(currentUid + "_" + notif.getSenderId())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            holder.btnAction.setText("Đang theo dõi");
+                            holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#EFEFEF")));
+                            holder.btnAction.setTextColor(android.graphics.Color.parseColor("#1A1A1A"));
+                            holder.btnAction.setEnabled(false);
+                        }
+                    });
+
+                // Sự kiện click
+                holder.btnAction.setOnClickListener(v -> {
                     holder.btnAction.setEnabled(false);
-                    String currentUid = auth.getUid();
-                    
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     Map<String, Object> data = new HashMap<>();
                     data.put("follower", currentUid);
@@ -104,11 +122,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     db.collection("Follows").document(currentUid + "_" + notif.getSenderId())
                         .set(data).addOnSuccessListener(aVoid -> {
                             holder.btnAction.setText("Đang theo dõi");
-                            holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                            holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#EFEFEF")));
+                            holder.btnAction.setTextColor(android.graphics.Color.parseColor("#1A1A1A"));
                             Toast.makeText(context, "Đã theo dõi lại", Toast.LENGTH_SHORT).show();
                         });
-                }
-            });
+                });
+            }
         } else {
             holder.btnAction.setVisibility(View.GONE);
         }

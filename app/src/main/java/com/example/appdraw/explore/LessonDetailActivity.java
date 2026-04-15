@@ -55,6 +55,9 @@ public class LessonDetailActivity extends AppCompatActivity {
     private ProgressBar pbVideoLoading;
     private MediaController mediaController;
 
+    private com.google.android.material.button.MaterialButton btnMentorAddStep;
+    private com.google.android.material.button.MaterialButton btnMentorDeleteLesson;
+
     private com.example.appdraw.model.Lesson currentLesson;
     private java.util.List<String> dynamicVideoUrls = new java.util.ArrayList<>();
 
@@ -97,6 +100,8 @@ public class LessonDetailActivity extends AppCompatActivity {
         pbLessonProgress = findViewById(R.id.pb_lesson_progress);
         tvStepIndicator = findViewById(R.id.tv_step_indicator);
 
+
+
         // Static steps removed, handled dynamically in renderLessonData
 
         if (lessonTitle != null) {
@@ -132,6 +137,38 @@ public class LessonDetailActivity extends AppCompatActivity {
         View btnDownload = findViewById(R.id.btn_download_materials);
         if (btnDownload != null) {
             btnDownload.setOnClickListener(v -> downloadMaterials());
+        }
+        
+        btnMentorAddStep = findViewById(R.id.btn_mentor_add_step);
+        btnMentorDeleteLesson = findViewById(R.id.btn_mentor_delete_lesson);
+        if (btnMentorAddStep != null) {
+            btnMentorAddStep.setOnClickListener(v -> {
+                Intent intent = new Intent(LessonDetailActivity.this, AddLessonStepActivity.class);
+                intent.putExtra("LESSON_ID", currentLesson.getId());
+                startActivity(intent);
+            });
+        }
+        
+        if (btnMentorDeleteLesson != null) {
+            btnMentorDeleteLesson.setOnClickListener(v -> {
+                String tempLessonId = getIntent().getStringExtra("LESSON_ID");
+                final String finalLessonId = (tempLessonId != null) ? tempLessonId : lessonTitle;
+                
+                new android.app.AlertDialog.Builder(this)
+                    .setTitle("Xóa Khóa Học")
+                    .setMessage("Bạn có chắc chắn muốn xóa khóa học này không? Hành động này không thể hoàn tác.")
+                    .setPositiveButton("Xóa Bỏ", (dialog, which) -> {
+                        db.collection("Lessons").document(finalLessonId).delete().addOnSuccessListener(aVoid -> {
+                            Toast.makeText(this, "Đã xóa khóa học thành công", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(this, com.example.appdraw.MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        });
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+            });
         }
 
         fetchLessonData();
@@ -369,13 +406,46 @@ public class LessonDetailActivity extends AppCompatActivity {
             return;
 
         videoView.stopPlayback();
-        videoView.setVisibility(View.GONE);
-        flVideoThumbnail.setVisibility(View.VISIBLE);
+        // REMOVED videoView.setVisibility(View.GONE); because hiding VideoView destroys its Surface
+        // which causes MediaPlayer to freeze/spin forever during prepareAsync().
+        videoView.setVisibility(View.VISIBLE);
+        flVideoThumbnail.setVisibility(View.VISIBLE); // This FrameLayout naturally overlays the VideoView
         ivPlayButton.setVisibility(View.GONE);
         pbVideoLoading.setVisibility(View.VISIBLE);
 
-        Uri videoUri = Uri.parse(dynamicVideoUrls.get(index));
-        videoView.setVideoURI(videoUri);
+        String url = dynamicVideoUrls.get(index);
+        Uri videoUri;
+        if (url != null && url.startsWith("android.resource://") && url.contains("/raw/")) {
+            String[] parts = url.split("/");
+            String resName = parts[parts.length - 1];
+            int resId = getResources().getIdentifier(resName, "raw", getPackageName());
+            if (resId != 0) {
+                videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + resId);
+            } else {
+                videoUri = Uri.parse(url);
+            }
+        } else {
+            if (url != null && (url.contains("youtube.com") || url.contains("youtu.be"))) {
+                try {
+                    android.content.Intent appIntent = new android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(appIntent);
+                } catch (Exception e) {
+                    android.widget.Toast.makeText(this, "Không thể mở Youtube", android.widget.Toast.LENGTH_SHORT).show();
+                }
+                pbVideoLoading.setVisibility(View.GONE);
+                ivPlayButton.setVisibility(View.VISIBLE);
+                return;
+            }
+            videoUri = Uri.parse(url != null ? url : "");
+        }
+        
+        if (videoUri != null && !videoUri.toString().isEmpty()) {
+            videoView.setVideoURI(videoUri);
+        } else {
+            pbVideoLoading.setVisibility(View.GONE);
+            ivPlayButton.setVisibility(View.VISIBLE);
+            return;
+        }
 
         videoView.setOnPreparedListener(mp -> {
             pbVideoLoading.setVisibility(View.GONE);
@@ -498,6 +568,7 @@ public class LessonDetailActivity extends AppCompatActivity {
     private void openHomework() {
         Intent intent = new Intent(this, com.example.appdraw.HomeworkActivity.class);
         intent.putExtra("LESSON_TITLE", lessonTitle);
+        intent.putExtra("IMAGE_RES", getIntent().getStringExtra("IMAGE_RES"));
         startActivity(intent);
     }
 
@@ -518,33 +589,36 @@ public class LessonDetailActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         currentLesson = documentSnapshot.toObject(com.example.appdraw.model.Lesson.class);
                         if (currentLesson != null) {
-                            if (currentLesson.getSteps() == null || currentLesson.getSteps().isEmpty() ||
-                                    (currentLesson.getDescription() != null && currentLesson.getDescription().equals(
-                                            "Hướng dẫn chi tiết cách hoàn thành tác phẩm tuyệt đẹp dành cho người mới bắt đầu."))) {
+                            if ((currentLesson.getSteps() == null || currentLesson.getSteps().isEmpty()) && currentLesson.getAuthorId() == null) {
                                 createDummyLessonAndRender();
                             } else {
                                 renderLessonData();
                             }
                         }
                     } else {
-                        createDummyLessonAndRender();
+                        android.widget.Toast.makeText(this, "Khóa học không tồn tại hoặc đã bị xóa", android.widget.Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 })
-                .addOnFailureListener(e -> android.widget.Toast
-                        .makeText(this, "Lỗi tải bài học", android.widget.Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    android.widget.Toast.makeText(this, "Lỗi tải bài học", android.widget.Toast.LENGTH_SHORT).show();
+                    finish();
+                });
     }
 
     private void createDummyLessonAndRender() {
+        String lessonId = getIntent().getStringExtra("LESSON_ID");
+        if (lessonId == null) lessonId = lessonTitle;
+        
         String category = getIntent().getStringExtra("CATEGORY");
         if (category == null)
             category = "Beginner";
 
-        currentLesson = new com.example.appdraw.model.Lesson();
-        currentLesson.setId(lessonTitle);
+        if (currentLesson == null) currentLesson = new com.example.appdraw.model.Lesson();
+        currentLesson.setId(lessonId);
         currentLesson.setTitle(lessonTitle);
         currentLesson.setRating(4.5f);
-        currentLesson
-                .setDescription("Hướng dẫn chi tiết cách hoàn thành tác phẩm tuyệt đẹp dành cho người mới bắt đầu.");
+        currentLesson.setDescription("Hướng dẫn chi tiết cách vẽ tác phẩm \"" + lessonTitle + "\" tuyệt đẹp dành cho người mới bắt đầu.");
 
         String intentAuthor = getIntent().getStringExtra("AUTHOR");
 
@@ -558,45 +632,44 @@ public class LessonDetailActivity extends AppCompatActivity {
             currentLesson.setDurationMin(20);
             materials.addAll(java.util.Arrays.asList("Bút chì HB", "Giấy A4 trơn", "Gôm tẩy"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Làm quen hình khối",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_1"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Luyện nét & đánh bóng",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_2"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Thực hành ngắn",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_3"));
         } else if (category.contains("thiên nhiên") || category.contains("màu nước")) {
             currentLesson.setAuthor(intentAuthor != null ? intentAuthor.replace("Bởi ", "") : "Tuấn Vũ Watercolor");
             currentLesson.setLevel("Intermediate");
             currentLesson.setDurationMin(45);
             materials.addAll(java.util.Arrays.asList("Màu nước", "Giấy 300gsm", "Cọ dạng tròn", "Băng dính dán"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Phác họa mảng khung cảnh",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_1"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Loang màu nền (Wet on wet)",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_2"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Chi tiết tiền cảnh",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_3"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 4", "Nhấn cường độ sáng tối",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_4"));
         } else {
             currentLesson.setAuthor(intentAuthor != null ? intentAuthor.replace("Bởi ", "") : "Hương Lan Manga");
             currentLesson.setLevel("Advanced");
             currentLesson.setDurationMin(60);
             materials.addAll(java.util.Arrays.asList("Bút chì kim", "Bút Line", "Màu Marker", "Giấy trơn"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 1", "Phác khung tỷ lệ cơ thể",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_1"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 2", "Dựng khuôn mặt & hướng mắt",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_2"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 3", "Vẽ tóc & trang phục",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_3"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 4", "Đi viền nét đen (Line art)",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_4"));
             steps.add(new com.example.appdraw.model.Lesson.Step("Bước 5", "Lên màu và đổ bóng hoàn thiện",
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+                    "android.resource://" + getPackageName() + "/raw/buoc_5"));
         }
 
         currentLesson.setMaterials(materials);
         currentLesson.setSteps(steps);
-
-        db.collection("Lessons").document(lessonTitle).set(currentLesson);
+        db.collection("Lessons").document(lessonId).set(currentLesson);
         renderLessonData();
     }
 
@@ -623,12 +696,32 @@ public class LessonDetailActivity extends AppCompatActivity {
             tvDuration.setText(currentLesson.getDurationMin() + " min");
 
         String imgResStr = getIntent().getStringExtra("IMAGE_RES");
+        if (lessonTitle != null && lessonTitle.equals("Core tỷ lệ khuôn mặt")) {
+            imgResStr = "core_ty_le_khuon_mat";
+        }
+        if (imgResStr == null || imgResStr.isEmpty()) {
+            if (currentLesson.getThumbnailUrl() != null && !currentLesson.getThumbnailUrl().isEmpty()) {
+                imgResStr = currentLesson.getThumbnailUrl();
+            }
+        }
+        
         if (imgResStr != null && !imgResStr.isEmpty()) {
             ImageView ivThumb = findViewById(R.id.iv_lesson_thumbnail);
             if (ivThumb != null) {
-                int resId = getResources().getIdentifier(imgResStr, "drawable", getPackageName());
-                if (resId != 0)
-                    ivThumb.setImageResource(resId);
+                if (!imgResStr.startsWith("http") && !imgResStr.startsWith("data:")) {
+                    try {
+                        int resId = getResources().getIdentifier(imgResStr, "drawable", getPackageName());
+                        if (resId != 0) ivThumb.setImageResource(resId);
+                        else ivThumb.setImageResource(R.drawable.ve_thien_nhien);
+                    } catch (Exception e) {}
+                } else if (imgResStr.startsWith("data:image")) {
+                    try {
+                        byte[] decodedBytes = android.util.Base64.decode(imgResStr.split(",")[1], android.util.Base64.DEFAULT);
+                        com.bumptech.glide.Glide.with(this).load(decodedBytes).centerCrop().into(ivThumb);
+                    } catch (Exception e) {}
+                } else {
+                    com.bumptech.glide.Glide.with(this).load(imgResStr).centerCrop().into(ivThumb);
+                }
             }
         }
 
@@ -643,7 +736,16 @@ public class LessonDetailActivity extends AppCompatActivity {
             LayoutInflater inflater = LayoutInflater.from(this);
             for (int i = 0; i < currentLesson.getSteps().size(); i++) {
                 com.example.appdraw.model.Lesson.Step step = currentLesson.getSteps().get(i);
-                dynamicVideoUrls.add(step.getVideoUrl());
+                String videoUrl = step.getVideoUrl();
+
+                if (lessonTitle != null && (lessonTitle.toLowerCase().contains("hình học") || lessonTitle.toLowerCase().contains("táo"))) {
+                    if (i == 0) videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+                    else if (i == 1) videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
+                    else if (i == 2) videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+                    else videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
+                }
+
+                dynamicVideoUrls.add(videoUrl);
 
                 View stepView = inflater.inflate(R.layout.item_lesson_step, llStepsContainer, false);
                 TextView tvNum = stepView.findViewById(R.id.tv_step_number);
@@ -670,6 +772,24 @@ public class LessonDetailActivity extends AppCompatActivity {
                 llStepsContainer.addView(stepView);
             }
         }
+        
+        // --- Mentor Feature ---
+        if (currentLesson.getAuthorId() != null && currentLesson.getAuthorId().equals(uid)) {
+            if (btnMentorAddStep != null) {
+                btnMentorAddStep.setVisibility(View.VISIBLE);
+            }
+            if (btnMentorDeleteLesson != null) {
+                btnMentorDeleteLesson.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (btnMentorAddStep != null) {
+                btnMentorAddStep.setVisibility(View.GONE);
+            }
+            if (btnMentorDeleteLesson != null) {
+                btnMentorDeleteLesson.setVisibility(View.GONE);
+            }
+        }
+        
         setupMaterials();
     }
 

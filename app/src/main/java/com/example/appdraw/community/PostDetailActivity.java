@@ -158,10 +158,12 @@ public class PostDetailActivity extends AppCompatActivity {
                             followRef.get().addOnSuccessListener(d -> {
                                 if (d.exists()) {
                                     tvFollowStatus.setText("Đang theo dõi");
-                                    tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                                    tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#EFEFEF")));
+                                    tvFollowStatus.setTextColor(android.graphics.Color.parseColor("#1A1A1A"));
                                 } else {
                                     tvFollowStatus.setText("Theo dõi");
                                     tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                                    tvFollowStatus.setTextColor(android.graphics.Color.WHITE);
                                 }
                             });
 
@@ -174,16 +176,19 @@ public class PostDetailActivity extends AppCompatActivity {
                                     data.put("timestamp", System.currentTimeMillis());
                                     followRef.set(data).addOnSuccessListener(aVoid -> {
                                         tvFollowStatus.setText("Đang theo dõi");
-                                        tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                                        tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#EFEFEF")));
+                                        tvFollowStatus.setTextColor(android.graphics.Color.parseColor("#1A1A1A"));
                                         db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(1));
                                         db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(1));
                                         Toast.makeText(PostDetailActivity.this, "Đã theo dõi", Toast.LENGTH_SHORT).show();
+                                        com.example.appdraw.utils.NotificationHelper.sendNotification(post.getUid(), "FOLLOW", "đánh giá cao bài viết và đã bắt đầu theo dõi bạn.", currentUid);
                                         tvFollowStatus.setEnabled(true);
                                     });
                                 } else {
                                     followRef.delete().addOnSuccessListener(aVoid -> {
                                         tvFollowStatus.setText("Theo dõi");
                                         tvFollowStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                                        tvFollowStatus.setTextColor(android.graphics.Color.WHITE);
                                         db.collection("Users").document(post.getUid()).update("followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
                                         db.collection("Users").document(currentUid).update("followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
                                         Toast.makeText(PostDetailActivity.this, "Bỏ theo dõi", Toast.LENGTH_SHORT).show();

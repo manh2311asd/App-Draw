@@ -49,7 +49,6 @@ public class NotificationsActivity extends AppCompatActivity {
 
         db.collection("Notifications")
                 .whereEqualTo("userId", uid)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) return;
                     if (value != null) {
@@ -61,6 +60,10 @@ public class NotificationsActivity extends AppCompatActivity {
                                 notificationList.add(notif);
                             }
                         }
+                        
+                        // Sắp xếp thủ công để tránh lỗi thiếu Index trên Firestore
+                        notificationList.sort((n1, n2) -> Long.compare(n2.getTimestamp(), n1.getTimestamp()));
+                        
                         adapter.notifyDataSetChanged();
 
                         // Đánh dấu tất cả thông báo chưa đọc thành "đã đọc"

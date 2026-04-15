@@ -18,10 +18,17 @@ public class NotificationHelper {
         
         // Fetch sender info
         db.collection("Users").document(senderId).get().addOnSuccessListener(userDoc -> {
-            if (userDoc.exists() && userDoc.contains("profile")) {
-                java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
-                String senderName = profile.containsKey("fullName") ? (String) profile.get("fullName") : "Người dùng";
-                String senderAvatar = profile.containsKey("avatarUrl") ? (String) profile.get("avatarUrl") : "";
+            if (userDoc.exists()) {
+                String senderName = "Người dùng";
+                String senderAvatar = "";
+                
+                if (userDoc.contains("profile")) {
+                    java.util.Map<String, Object> profile = (java.util.Map<String, Object>) userDoc.get("profile");
+                    if (profile != null) {
+                        senderName = profile.containsKey("fullName") ? (String) profile.get("fullName") : "Người dùng";
+                        senderAvatar = profile.containsKey("avatarUrl") ? (String) profile.get("avatarUrl") : "";
+                    }
+                }
 
                 // Create Notification
                 String notifId = db.collection("Notifications").document().getId();

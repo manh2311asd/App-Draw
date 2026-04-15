@@ -111,11 +111,38 @@ public class EventTicketActivity extends AppCompatActivity {
                     showRemindSuccessDialog();
 
                     // Optional: Push to Calendar Intent as well
+                    long beginTimeMillis = currentEvent.getDateMillis();
+                    long endTimeMillis = beginTimeMillis + 3600000; // default +1h
+                    try {
+                        java.util.Calendar cal = java.util.Calendar.getInstance();
+                        cal.setTimeInMillis(beginTimeMillis);
+                        if (currentEvent.getStartTime() != null && currentEvent.getStartTime().contains(":")) {
+                            String[] parts = currentEvent.getStartTime().split(":");
+                            cal.set(java.util.Calendar.HOUR_OF_DAY, Integer.parseInt(parts[0].trim()));
+                            cal.set(java.util.Calendar.MINUTE, Integer.parseInt(parts[1].trim()));
+                            beginTimeMillis = cal.getTimeInMillis();
+                        }
+                        
+                        java.util.Calendar calEnd = java.util.Calendar.getInstance();
+                        calEnd.setTimeInMillis(currentEvent.getDateMillis());
+                        if (currentEvent.getEndTime() != null && currentEvent.getEndTime().contains(":")) {
+                            String[] parts = currentEvent.getEndTime().split(":");
+                            calEnd.set(java.util.Calendar.HOUR_OF_DAY, Integer.parseInt(parts[0].trim()));
+                            calEnd.set(java.util.Calendar.MINUTE, Integer.parseInt(parts[1].trim()));
+                            endTimeMillis = calEnd.getTimeInMillis();
+                        } else {
+                            endTimeMillis = beginTimeMillis + 3600000;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(CalendarContract.Events.CONTENT_URI)
                             .putExtra(CalendarContract.Events.TITLE, currentEvent.getTitle())
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, currentEvent.getLocation())
-                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, currentEvent.getDateMillis())
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
                             .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
                     try {
                         startActivity(intent);

@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#F0F4FF">
 
-    <androidx.appcompat.widget.Toolbar
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_my_submission"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -54,7 +57,137 @@
                     android:src="@drawable/ve_hoa_mau_nuoc" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Chatbot section is removed as requested by the user -->
+            <!-- AI Feedback Section -->
+            <LinearLayout
+                android:id="@+id/ll_ai_feedback_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:visibility="gone">
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="8dp">
+                    
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_check_circle"
+                        app:tint="#4CAF50" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Nhận xét tự động"
+                        android:textColor="#333333"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FFCDD2"
+                    app:strokeWidth="1dp"
+                    android:backgroundTint="#FFF8F8">
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="16dp">
+                            
+                            <ImageView
+                                android:id="@+id/iv_ai_mascot"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/img_ai_mascot" />
+                            
+                            <TextView
+                                android:id="@+id/tv_ai_feedback_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="Đang phân tích bức tranh..."
+                                android:textColor="#555555"
+                                android:textSize="13sp"
+                                android:lineSpacingExtra="4dp" />
+                        </LinearLayout>
+                        
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FFCDD2" />
+                        
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="12dp"
+                            android:background="#FFF0F0">
+                            
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@android:drawable/ic_dialog_info"
+                                app:tint="#FFC107" />
+                            
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tip để cải thiện:"
+                                    android:textColor="#333333"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:id="@+id/tv_ai_tip_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Chờ xíu nhé..."
+                                    android:textColor="#555555"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pb_ai_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"
+                android:indeterminateTint="#4CAF50" />
+
+            <TextView
+                android:id="@+id/tv_ai_loading_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI đang chấm điểm..."
+                android:layout_marginTop="8dp"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:textColor="#888888" />
 
             <!-- Spacer to push buttons down if needed -->
             <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
@@ -87,4 +220,7 @@
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+    </LinearLayout>
+
+
+</FrameLayout>

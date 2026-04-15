@@ -9,4 +9,10 @@
     <color name="bg_light">#F8F9FA</color>
     <color name="banner_blue">#4A90E2</color>
     <color name="accent_orange">#F9AB00</color>
+    
+    <!-- Settings UI Colors -->
+    <color name="settings_bg_bottom_sheet">#FFFFFF</color>
+    <color name="settings_bg_card">#F3F4F6</color>
+    <color name="settings_bg_card_red">#FEF2F2</color>
+    <color name="settings_divider">#E5E7EB</color>
 </resources>

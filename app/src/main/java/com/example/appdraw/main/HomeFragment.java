@@ -43,6 +43,7 @@ import com.bumptech.glide.Glide;
 public class HomeFragment extends Fragment {
 
     private ListenerRegistration challengeListenerReg;
+    private com.google.firebase.firestore.ListenerRegistration savedLessonsListenerReg;
     private boolean reseedAttempted = false;
 
     @Nullable
@@ -58,7 +59,20 @@ public class HomeFragment extends Fragment {
 
         ImageView btnAddChallenge = view.findViewById(R.id.btn_add_challenge);
         if (btnAddChallenge != null) {
-            btnAddChallenge.setVisibility(View.GONE); // Hide completely
+            btnAddChallenge.setVisibility(View.GONE);
+            btnAddChallenge.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), com.example.appdraw.challenge.CreateChallengeActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        ImageView btnAddEvent = view.findViewById(R.id.btn_add_event);
+        if (btnAddEvent != null) {
+            btnAddEvent.setVisibility(View.GONE);
+            btnAddEvent.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), com.example.appdraw.community.CreateEventActivity.class);
+                startActivity(intent);
+            });
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -170,13 +184,13 @@ public class HomeFragment extends Fragment {
         }
 
         // Nút tìm kiếm
-        View btnSearch = view.findViewById(R.id.btn_search);
-        if (btnSearch != null) {
-            btnSearch.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivity(intent);
-            });
-        }
+        // View btnSearch = view.findViewById(R.id.btn_search);
+        // if (btnSearch != null) {
+        //     btnSearch.setOnClickListener(v -> {
+        //         Intent intent = new Intent(getActivity(), SearchActivity.class);
+        //         startActivity(intent);
+        //     });
+        // }
 
         // Bắt đầu vẽ ngay
         View btnStartDrawing = view.findViewById(R.id.btnStartDrawingFragment);
@@ -226,11 +240,22 @@ public class HomeFragment extends Fragment {
         // --- Sự kiện sắp tới ---
         setupHomeEvents(view);
 
-        // Xem tất cả sự kiện
+        // Xem tất cả sự kiện (Sự kiện sắp tới)
         View tvViewAllEvents = view.findViewById(R.id.tv_view_all_events);
         if (tvViewAllEvents != null) {
             tvViewAllEvents.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), EventScheduleActivity.class);
+                intent.putExtra("OPEN_EXPLORE", true);
+                startActivity(intent);
+            });
+        }
+
+        // Xem lịch (Lịch của bạn)
+        View tvViewSchedule = view.findViewById(R.id.tv_view_calendar);
+        if (tvViewSchedule != null) {
+            tvViewSchedule.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), EventScheduleActivity.class);
+                intent.putExtra("OPEN_EXPLORE", false);
                 startActivity(intent);
             });
         }
@@ -241,10 +266,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Chỉ reload sự kiện (dùng get() một lần), không gọi lại setupChallenges
-        // vì nó dùng addSnapshotListener và sẽ tích lũy listener nếu gọi nhiều lần
+        // Chỉ reload các phần dùng get() một lần để tránh stale UI, 
+        // riêng challenge thì dùng listener rồi nên không cần nạp lại.
         if (getView() != null) {
             setupHomeEvents(getView());
+            setupSuggestedLessons(getView());
+            setupSavedLessons(getView());
         }
     }
 
@@ -256,16 +283,18 @@ public class HomeFragment extends Fragment {
             challengeListenerReg.remove();
             challengeListenerReg = null;
         }
+        if (savedLessonsListenerReg != null) {
+            savedLessonsListenerReg.remove();
+            savedLessonsListenerReg = null;
+        }
     }
 
     private void setupSuggestedLessons(View view) {
         android.widget.LinearLayout container = view.findViewById(R.id.ll_suggested_lessons_container);
-        if (container == null)
-            return;
+        if (container == null) return;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        if (getContext() == null)
-            return;
+        if (getContext() == null) return;
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         container.removeAllViews();
@@ -273,148 +302,251 @@ public class HomeFragment extends Fragment {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String uid = (auth.getCurrentUser() != null) ? auth.getCurrentUser().getUid() : null;
 
-        java.util.List<String> suggestedTitles = java.util.Arrays.asList(
-                "Làm quen với Brush", "Đêm trăng sáng trên đồi", "Palette pha màu cơ bản",
-                "Phác thảo khuôn mặt Chibi", "Core tỷ lệ khuôn mặt");
-        db.collection("Lessons").whereIn("title", suggestedTitles).get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (String targetTitle : suggestedTitles) {
-                        for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (targetTitle.equals(doc.getString("title"))) {
-                                String title = doc.getString("title");
-                                String author = doc.getString("author");
-                                if (author == null)
-                                    author = doc.getString("authorName");
-                                String imageResStr = doc.getString("imageRes");
-                                String imageUrl = doc.getString("imageUrl");
-                                String category = doc.getString("category");
+        if (uid == null) return;
 
-                                if ("Đêm trăng sáng trên đồi".equals(title)) {
-                                    imageResStr = "dem_trang_sang_tren_doi";
-                                    author = "Thu Thủy";
-                                } else if ("Phác thảo khuôn mặt Chibi".equals(title)) {
-                                    imageResStr = "phac_thao_khuon_mat_chibi";
-                                    author = "Minh Khang";
-                                } else if ("Core tỷ lệ khuôn mặt".equals(title)) {
-                                    imageResStr = "core_ty_le_khuon_mat";
-                                    author = "Hương Lan";
-                                } else if ("Palette pha màu cơ bản".equals(title)) {
-                                    imageResStr = "palette_pha_mau_co_ban";
-                                    author = "Tuấn Vũ";
-                                } else if ("Làm quen với Brush".equals(title)) {
-                                    imageResStr = "lam_quen_voi_brush";
-                                    author = "Phong Artist";
-                                }
+        // B1: Lấy danh sách bài đã học xong
+        db.collection("Users").document(uid).collection("lessonProgress").get().addOnSuccessListener(progSnap -> {
+            java.util.Set<String> completedTitles = new java.util.HashSet<>();
+            for (com.google.firebase.firestore.DocumentSnapshot d : progSnap) {
+                if ("COMPLETED".equals(d.getString("status"))) {
+                    completedTitles.add(d.getId());
+                }
+            }
 
-                                View lessonView = inflater.inflate(R.layout.item_lesson_preview, container, false);
+            // B2: Lấy toàn bộ bài học và lọc theo chủ đề
+            db.collection("Lessons").get().addOnSuccessListener(lessonSnap -> {
+                // Sắp xếp các bài học theo thứ tự tăng dần (dựa vào Order hoặc ID)
+                java.util.List<com.google.firebase.firestore.DocumentSnapshot> allDocs = new java.util.ArrayList<>();
+                for (com.google.firebase.firestore.DocumentSnapshot d : lessonSnap) allDocs.add(d);
+                allDocs.sort((d1, d2) -> {
+                    Long c1 = d1.getLong("createdAt");
+                    Long c2 = d2.getLong("createdAt");
+                    if (c1 != null && c2 != null) return Long.compare(c1, c2);
 
-                                TextView tvTitle = lessonView.findViewById(R.id.tv_lesson_title);
-                                TextView tvAuthor = lessonView.findViewById(R.id.tv_lesson_author);
-                                ImageView ivThumb = lessonView.findViewById(R.id.iv_lesson_thumb);
-                                TextView tvStatus = lessonView.findViewById(R.id.tv_lesson_status);
-                                TextView tvDuration = lessonView.findViewById(R.id.tv_duration);
+                    String id1 = d1.getId();
+                    String id2 = d2.getId();
+                    try {
+                        int index1 = Integer.parseInt(id1.substring(id1.lastIndexOf("_") + 1));
+                        int index2 = Integer.parseInt(id2.substring(id2.lastIndexOf("_") + 1));
+                        return Integer.compare(index1, index2);
+                    } catch (Exception e) {
+                        return id1.compareTo(id2);
+                    }
+                });
 
-                                if (tvTitle != null)
-                                    tvTitle.setText(title);
-                                if (tvAuthor != null) {
-                                    if (author != null && !author.toLowerCase().startsWith("bởi")) {
-                                        tvAuthor.setText("Bởi " + author);
-                                    } else {
-                                        tvAuthor.setText(author);
-                                    }
-                                }
+                java.util.Map<String, java.util.List<com.google.firebase.firestore.DocumentSnapshot>> lessonsByCategory = new java.util.HashMap<>();
+                for (com.google.firebase.firestore.DocumentSnapshot doc : allDocs) {
+                    String cat = doc.getString("category");
+                    if (cat == null) cat = "Khác";
+                    if (!lessonsByCategory.containsKey(cat)) lessonsByCategory.put(cat, new java.util.ArrayList<>());
+                    lessonsByCategory.get(cat).add(doc);
+                }
 
-                                if (ivThumb != null) {
-                                    if (imageResStr != null && !imageResStr.isEmpty()
-                                            && !imageResStr.matches("-?\\d+")) {
-                                        try {
-                                            int resId = getResources().getIdentifier(imageResStr, "drawable",
-                                                    getContext().getPackageName());
-                                            if (resId != 0)
-                                                ivThumb.setImageResource(resId);
-                                        } catch (Exception e) {
-                                        }
-                                    } else if (imageUrl != null && !imageUrl.isEmpty()) {
-                                        Glide.with(this).load(imageUrl).centerCrop().into(ivThumb);
-                                    }
-                                }
+                // Nhóm 5 danh mục chính
+                String[] coreCategories = {
+                    "Dành cho người mới bắt đầu", 
+                    "Vẽ thiên nhiên", 
+                    "Khám phá màu nước", 
+                    "Nghệ thuật vẽ Chibi", 
+                    "Chân dung Manga"
+                };
 
-                                tvStatus.setText("Chưa học");
-                                tvStatus.setBackgroundResource(R.drawable.rounded_bg_gray);
-                                tvStatus.setTextColor(Color.parseColor("#808080"));
-
-                                android.widget.RatingBar rb = lessonView.findViewById(R.id.rating_bar);
-                                if (rb != null) {
-                                    rb.setRating(4.5f);
-                                }
-
-                                String inferredCategory = category;
-                                if (inferredCategory == null) {
-                                    if ("Làm quen với Brush".equals(title)) {
-                                        inferredCategory = "mới bắt đầu";
-                                    } else if ("Đêm trăng sáng trên đồi".equals(title)
-                                            || "Palette pha màu cơ bản".equals(title)) {
-                                        inferredCategory = "thiên nhiên";
-                                    } else {
-                                        inferredCategory = "manga";
-                                    }
-                                }
-
-                                if (tvDuration != null) {
-                                    String catCheck = inferredCategory.toLowerCase();
-                                    if (catCheck.contains("mới bắt đầu") || catCheck.contains("beginner")) {
-                                        tvDuration.setText("20 min");
-                                    } else if (catCheck.contains("thiên nhiên") || catCheck.contains("màu nước")) {
-                                        tvDuration.setText("45 min");
-                                    } else {
-                                        tvDuration.setText("60 min");
-                                    }
-                                }
-
-                                if (uid != null && title != null) {
-                                    db.collection("Users").document(uid).collection("lessonProgress").document(title)
-                                            .get().addOnSuccessListener(progDoc -> {
-                                                if (progDoc.exists()) {
-                                                    String status = progDoc.getString("status");
-                                                    if ("COMPLETED".equals(status)) {
-                                                        tvStatus.setText("Hoàn thành");
-                                                        tvStatus.setBackgroundResource(R.drawable.bg_badge_completed);
-                                                        tvStatus.setTextColor(Color.WHITE);
-                                                    } else if ("IN_PROGRESS".equals(status)
-                                                            || "WAITING_FOR_HOMEWORK".equals(status)) {
-                                                        tvStatus.setText("Đang học");
-                                                        tvStatus.setBackgroundResource(R.drawable.bg_badge_in_progress);
-                                                        tvStatus.setTextColor(Color.WHITE);
-                                                    }
-                                                }
-                                            });
-                                }
-
-                                final String finalAuthor = author;
-                                final String finalImageResStr = imageResStr;
-                                lessonView.setOnClickListener(v -> {
-                                    if ("Hoàn thành".equals(tvStatus.getText().toString())) {
-                                        Intent intent = new Intent(getActivity(),
-                                                com.example.appdraw.explore.MySubmissionActivity.class);
-                                        intent.putExtra("LESSON_TITLE", title);
-                                        startActivity(intent);
-                                    } else {
-                                        Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
-                                        intent.putExtra("LESSON_TITLE", title);
-                                        intent.putExtra("CATEGORY", category);
-                                        intent.putExtra("IMAGE_RES", finalImageResStr);
-                                        intent.putExtra("AUTHOR", finalAuthor);
-                                        intent.putExtra("LESSON_ID", doc.getId());
-                                        startActivity(intent);
-                                    }
-                                });
-
-                                container.addView(lessonView);
+                java.util.List<com.google.firebase.firestore.DocumentSnapshot> finalSuggestions = new java.util.ArrayList<>();
+                
+                // Lấy bài đầu tiên CHƯA hoàn thành của từng danh mục
+                for (String cat : coreCategories) {
+                    java.util.List<com.google.firebase.firestore.DocumentSnapshot> catLessons = lessonsByCategory.get(cat);
+                    if (catLessons != null) {
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : catLessons) {
+                            String title = doc.getString("title");
+                            if (title != null && !completedTitles.contains(title)) {
+                                finalSuggestions.add(doc);
                                 break;
                             }
                         }
                     }
-                });
+                }
+
+                // Render UI
+                for (com.google.firebase.firestore.DocumentSnapshot doc : finalSuggestions) {
+                    String title = doc.getString("title");
+                    String author = doc.getString("author");
+                    if (author == null) author = doc.getString("authorName");
+                    String imageResStr = doc.getString("imageRes");
+                    String imageUrl = doc.getString("thumbnailUrl");
+                    if (imageUrl == null || imageUrl.isEmpty()) {
+                        imageUrl = doc.getString("imageUrl");
+                    }
+                    String category = doc.getString("category");
+
+                    // Override ảnh theo title 
+                    if ("Đêm trăng sáng trên đồi".equals(title)) {
+                        imageResStr = "dem_trang_sang_tren_doi";
+                    } else if ("Khu vườn nhiệt đới".equals(title)) {
+                        imageResStr = "khu_vuon_nhiet_doi";
+                    } else if ("Thung lũng sương mù".equals(title)) {
+                        imageResStr = "thung_lung_suong_mu";
+                    } else if ("Vẽ rừng cây mùa thu".equals(title)) {
+                        imageResStr = "ve_rung_cay_mua_thu";
+                    } else if ("Tổng hợp phong cảnh".equals(title)) {
+                        imageResStr = "tong_hop_phong_canh";
+                    } else if ("Bãi biển lúc hoàng hôn".equals(title)) {
+                        imageResStr = "bai_bien_luc_hoang_hon";
+                    } else if ("Núi non trùng điệp".equals(title)) {
+                        imageResStr = "nui_non_trung_diep";
+                    } else if ("Dòng suối nhỏ trong vắt".equals(title)) {
+                        imageResStr = "dong_suoi_nho_trong_vat";
+                    } else if ("Thảo nguyên xanh mướt".equals(title)) {
+                        imageResStr = "thao_nguyen_xanh_muot";
+                    } else if ("Vẽ thác nước hùng vĩ".equals(title)) {
+                        imageResStr = "ve_thac_nuoc_hung_vi";
+                    } else if ("Làm quen với Brush".equals(title)) {
+                        imageResStr = "lam_quen_voi_brush";
+                    } else if ("Khái niệm hình học".equals(title)) {
+                        imageResStr = "khai_niem_hinh_hoc";
+                    } else if ("Đánh bóng và chiếu sáng".equals(title)) {
+                        imageResStr = "danh_bong_va_chieu_sang";
+                    } else if ("Kỹ thuật đan nét cọ".equals(title)) {
+                        imageResStr = "ki_thuat_dan_net_co";
+                    } else if ("Vẽ tĩnh vật quả táo".equals(title)) {
+                        imageResStr = "ve_tinh_vat_qua_tao";
+                    } else if ("Xây dựng khối 3D".equals(title)) {
+                        imageResStr = "xay_dung_khoi_3d";
+                    } else if ("Luyện tập tổng hợp".equals(title)) {
+                        imageResStr = "luyen_tap_tong_hop";
+                    } else if ("Palette pha màu cơ bản".equals(title)) {
+                        imageResStr = "palette_pha_mau_co_ban";
+                    } else if ("Kỹ thuật loang màu ẩm".equals(title)) {
+                        imageResStr = "ki_thuat_loang_mau_am";
+                    } else if ("Vẽ bầu trời gợn mây".equals(title)) {
+                        imageResStr = "ve_bau_troi_gon_may";
+                    } else if ("Tĩnh vật cốc cà phê".equals(title)) {
+                        imageResStr = "tinh_vat_coc_ca_phe";
+                    } else if ("Bông cẩm tú cầu".equals(title)) {
+                        imageResStr = "bong_cam_tu_cau";
+                    } else if ("Sơn thủy hữu tình".equals(title)) {
+                        imageResStr = "son_thuy_huu_tinh";
+                    } else if ("Ánh tà dương hoàng hôn".equals(title)) {
+                        imageResStr = "anh_ta_duong_hoang_hon";
+                    } else if ("Phác thảo khuôn mặt Chibi".equals(title)) {
+                        imageResStr = "phac_thao_khuon_mat_chibi";
+                    } else if ("Tỷ lệ cơ thể đầu to".equals(title)) {
+                        imageResStr = "ty_le_co_the_dau_to";
+                    } else if ("Vẽ mắt to tròn đáng yêu".equals(title)) {
+                        imageResStr = "ve_mat_to_tron_dang_yeu";
+                    } else if ("Biểu cảm khuôn mặt dễ thương".equals(title)) {
+                        imageResStr = "bieu_cam_khuon_mat_de_thuong";
+                    } else if ("Vẽ tóc bồng bềnh".equals(title)) {
+                        imageResStr = "ve_toc_bong_benh";
+                    } else if ("Phối đồ phong cách basic".equals(title)) {
+                        imageResStr = "phoi_do_phong_cach_basic";
+                    } else if ("Lên màu pastel cơ bản".equals(title)) {
+                        imageResStr = "len_mau_pastel_co_ban";
+                    } else if ("Hoàn thiện nhân vật".equals(title)) {
+                        imageResStr = "hoan_thien_nhan_vat";
+                    } else if ("Core tỷ lệ khuôn mặt".equals(title)) {
+                        imageResStr = "core_ty_le_khuon_mat";
+                    } else if ("Vẽ mắt Manga mượt mà".equals(title)) {
+                        imageResStr = "ve_mat_manga_muot_ma";
+                    } else if ("Kiểu tóc nam và nữ cơ bản".equals(title)) {
+                        imageResStr = "kieu_toc_nam_va_nu_co_ban";
+                    } else if ("Mảng biểu cảm vui buồn".equals(title)) {
+                        imageResStr = "mang_bieu_cam_vui_buon";
+                    } else if ("Góc nghiêng thần thánh".equals(title)) {
+                        imageResStr = "goc_nghieng_than_thanh";
+                    } else if ("Phác họa nhân vật nữ".equals(title)) {
+                        imageResStr = "phac_hoa_nhan_vat_nu";
+                    } else if ("Phác họa nhân vật nam".equals(title)) {
+                        imageResStr = "phac_hoa_nhan_vat_nam";
+                    }
+
+                    View lessonView = inflater.inflate(R.layout.item_lesson_preview, container, false);
+
+                    TextView tvTitle = lessonView.findViewById(R.id.tv_lesson_title);
+                    TextView tvAuthor = lessonView.findViewById(R.id.tv_lesson_author);
+                    ImageView ivThumb = lessonView.findViewById(R.id.iv_lesson_thumb);
+                    TextView tvStatus = lessonView.findViewById(R.id.tv_lesson_status);
+                    TextView tvDuration = lessonView.findViewById(R.id.tv_duration);
+
+                    if (tvTitle != null) tvTitle.setText(title);
+                    if (tvAuthor != null) {
+                        if (author != null && !author.toLowerCase().startsWith("bởi")) {
+                            tvAuthor.setText("Bởi " + author);
+                        } else {
+                            tvAuthor.setText(author);
+                        }
+                    }
+
+                    if (ivThumb != null) {
+                        if (imageResStr != null && !imageResStr.isEmpty() && !imageResStr.matches("-?\\d+")) {
+                            try {
+                                int resId = getResources().getIdentifier(imageResStr, "drawable", getContext().getPackageName());
+                                if (resId != 0) ivThumb.setImageResource(resId);
+                            } catch (Exception e) {}
+                        } else if (imageUrl != null && !imageUrl.isEmpty()) {
+                            if (imageUrl.startsWith("data:image")) {
+                                try {
+                                    byte[] imageByteArray = android.util.Base64.decode(imageUrl.split(",")[1], android.util.Base64.DEFAULT);
+                                    com.bumptech.glide.Glide.with(this).load(imageByteArray).centerCrop().into(ivThumb);
+                                } catch (Exception e) {
+                                    ivThumb.setImageResource(R.drawable.ve_hoa_mau_nuoc);
+                                }
+                            } else {
+                                com.bumptech.glide.Glide.with(this).load(imageUrl).centerCrop().into(ivThumb);
+                            }
+                        } else {
+                            ivThumb.setImageResource(R.drawable.ve_hoa_mau_nuoc);
+                        }
+                    }
+
+                    // Mặc định cho bài gợi ý là "Đang học" hoặc "Chưa học"
+                    tvStatus.setText("Gợi ý");
+                    tvStatus.setBackgroundResource(R.drawable.bg_badge_pending);
+                    tvStatus.setTextColor(Color.parseColor("#808080"));
+
+                    android.widget.RatingBar rb = lessonView.findViewById(R.id.rating_bar);
+                    if (rb != null) rb.setRating(4.5f);
+
+                    if (tvDuration != null) {
+                        Long actualDuration = doc.getLong("durationMin");
+                        if (actualDuration != null && actualDuration > 0) {
+                            tvDuration.setText(actualDuration + " min");
+                        } else {
+                            if (category != null && (category.toLowerCase().contains("mới bắt đầu"))) tvDuration.setText("20 min");
+                            else if (category != null && category.toLowerCase().contains("thiên nhiên")) tvDuration.setText("45 min");
+                            else tvDuration.setText("60 min");
+                        }
+                    }
+
+                    // Check progress để biết Đang học
+                    db.collection("Users").document(uid).collection("lessonProgress").document(title)
+                        .get().addOnSuccessListener(progDoc -> {
+                            if (progDoc.exists()) {
+                                String status = progDoc.getString("status");
+                                if ("IN_PROGRESS".equals(status) || "WAITING_FOR_HOMEWORK".equals(status)) {
+                                    tvStatus.setText("Đang học");
+                                    tvStatus.setBackgroundResource(R.drawable.bg_badge_in_progress);
+                                    tvStatus.setTextColor(Color.WHITE);
+                                }
+                            }
+                        });
+
+                    final String finalAuthor = author;
+                    final String finalImageResStr = imageResStr;
+                    lessonView.setOnClickListener(v -> {
+                        Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
+                        intent.putExtra("LESSON_TITLE", title);
+                        intent.putExtra("CATEGORY", category);
+                        intent.putExtra("IMAGE_RES", finalImageResStr);
+                        intent.putExtra("AUTHOR", finalAuthor);
+                        intent.putExtra("LESSON_ID", doc.getId());
+                        startActivity(intent);
+                    });
+
+                    container.addView(lessonView);
+                }
+            });
+        });
     }
 
     private void setupSavedLessons(View view) {
@@ -430,7 +562,11 @@ public class HomeFragment extends Fragment {
             return;
         String uid = auth.getCurrentUser().getUid();
 
-        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        if (savedLessonsListenerReg != null) {
+            savedLessonsListenerReg.remove();
+        }
+
+        savedLessonsListenerReg = com.google.firebase.firestore.FirebaseFirestore.getInstance()
                 .collection("Users").document(uid).collection("savedLessons")
                 .orderBy("savedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .limit(5)
@@ -480,6 +616,26 @@ public class HomeFragment extends Fragment {
                             tvStatus.setText("Đã lưu");
                             tvStatus.setBackgroundResource(R.drawable.rounded_bg_gray);
                             tvStatus.setTextColor(android.graphics.Color.parseColor("#808080"));
+
+                            if (uid != null && title != null) {
+                                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                        .collection("Users").document(uid).collection("lessonProgress").document(title)
+                                        .get().addOnSuccessListener(progDoc -> {
+                                            if (progDoc.exists()) {
+                                                String status = progDoc.getString("status");
+                                                if ("COMPLETED".equals(status)) {
+                                                    tvStatus.setText("Hoàn thành");
+                                                    tvStatus.setBackgroundResource(R.drawable.bg_badge_completed);
+                                                    tvStatus.setTextColor(android.graphics.Color.WHITE);
+                                                } else if ("IN_PROGRESS".equals(status)
+                                                        || "WAITING_FOR_HOMEWORK".equals(status)) {
+                                                    tvStatus.setText("Đang học");
+                                                    tvStatus.setBackgroundResource(R.drawable.bg_badge_in_progress);
+                                                    tvStatus.setTextColor(android.graphics.Color.WHITE);
+                                                }
+                                            }
+                                        });
+                            }
                         }
 
                         if (tvDuration != null) {
@@ -496,13 +652,22 @@ public class HomeFragment extends Fragment {
                             }
                         }
 
+                        final String finalAuthor = author;
+                        final String finalImageResStr = imageResStr;
                         lessonView.setOnClickListener(v -> {
-                            Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
-                            intent.putExtra("LESSON_TITLE", title);
-                            intent.putExtra("CATEGORY", category);
-                            intent.putExtra("IMAGE_RES", imageResStr);
-                            intent.putExtra("LESSON_ID", doc.getId());
-                            startActivity(intent);
+                            if (tvStatus != null && "Hoàn thành".equals(tvStatus.getText().toString())) {
+                                Intent intent = new Intent(getActivity(), com.example.appdraw.explore.MySubmissionActivity.class);
+                                intent.putExtra("LESSON_TITLE", title);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(getActivity(), LessonDetailActivity.class);
+                                intent.putExtra("LESSON_TITLE", title);
+                                intent.putExtra("CATEGORY", category);
+                                intent.putExtra("IMAGE_RES", finalImageResStr);
+                                intent.putExtra("AUTHOR", finalAuthor);
+                                intent.putExtra("LESSON_ID", doc.getId());
+                                startActivity(intent);
+                            }
                         });
 
                         container.addView(lessonView);
@@ -542,25 +707,50 @@ public class HomeFragment extends Fragment {
 
                     db.collection("Events").get().addOnSuccessListener(eventDocs -> {
                         List<Event> upcomingEvents = new ArrayList<>();
-                        long now = System.currentTimeMillis() - 24 * 60 * 60 * 1000L;
+                        List<Event> exploreEvents = new ArrayList<>();
+                        long now = System.currentTimeMillis();
                         for (com.google.firebase.firestore.DocumentSnapshot doc : eventDocs) {
                             Event e = doc.toObject(Event.class);
-                            if (e != null && e.getDateMillis() >= now) {
-                                boolean hasTicket = false;
-                                for (EventTicket t : myTickets) {
-                                    if (t.getEventId().equals(e.getId())) {
-                                        hasTicket = true;
-                                        break;
+                            if (e != null) {
+                                boolean isExpired = false;
+                                try {
+                                    if (e.getEndTime() != null && e.getEndTime().contains(":")) {
+                                        String[] parts = e.getEndTime().split(":");
+                                        int hour = Integer.parseInt(parts[0].trim());
+                                        int min = Integer.parseInt(parts[1].trim());
+                                        java.util.Calendar cal = java.util.Calendar.getInstance();
+                                        cal.setTimeInMillis(e.getDateMillis());
+                                        cal.set(java.util.Calendar.HOUR_OF_DAY, hour);
+                                        cal.set(java.util.Calendar.MINUTE, min);
+                                        if (cal.getTimeInMillis() < now) isExpired = true;
+                                    } else if (e.getDateMillis() + 24 * 60 * 60 * 1000L < now) {
+                                        isExpired = true;
                                     }
+                                } catch (Exception ex) {
+                                    if (e.getDateMillis() + 24 * 60 * 60 * 1000L < now) isExpired = true;
                                 }
-                                boolean isAuthor = e.getAuthorId() != null && e.getAuthorId().equals(user.getUid());
-                                if (hasTicket || isAuthor || "Live".equals(e.getEventType())) {
-                                    upcomingEvents.add(e);
+
+                                if (!isExpired) {
+                                    boolean hasTicket = false;
+                                    for (EventTicket t : myTickets) {
+                                        if (t.getEventId().equals(e.getId())) {
+                                            hasTicket = true;
+                                            break;
+                                        }
+                                    }
+                                    boolean isAuthor = e.getAuthorId() != null && e.getAuthorId().equals(user.getUid());
+                                    if (hasTicket || isAuthor || "Live".equals(e.getEventType())) {
+                                        upcomingEvents.add(e);
+                                    } else {
+                                        exploreEvents.add(e);
+                                    }
                                 }
                             }
                         }
 
                         java.util.Collections.sort(upcomingEvents,
+                                (e1, e2) -> Long.compare(e1.getDateMillis(), e2.getDateMillis()));
+                        java.util.Collections.sort(exploreEvents,
                                 (e1, e2) -> Long.compare(e1.getDateMillis(), e2.getDateMillis()));
 
                         if (upcomingEvents.isEmpty()) {
@@ -569,13 +759,45 @@ public class HomeFragment extends Fragment {
                             rvMySchedule.setVisibility(View.GONE);
                         } else {
                             tvEmptySchedule.setVisibility(View.GONE);
+                            rvMySchedule.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(getContext(), androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false));
                             rvMySchedule.setVisibility(View.VISIBLE);
-                            int limit = Math.min(3, upcomingEvents.size());
+                            int limit = Math.min(10, upcomingEvents.size());
                             List<Event> displayEvents = upcomingEvents.subList(0, limit);
-                            rvMySchedule.setAdapter(new HomeScheduleAdapter(displayEvents, myTickets));
+                            rvMySchedule.setAdapter(new HomeExploreEventAdapter(displayEvents, myTickets));
+                        }
+
+                        if (exploreEvents.isEmpty()) {
+                            rvExploreEvents.setVisibility(View.GONE);
+                        } else {
+                            rvExploreEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                            rvExploreEvents.setVisibility(View.VISIBLE);
+                            int limit = Math.min(5, exploreEvents.size());
+                            rvExploreEvents.setAdapter(new HomeExploreEventAdapter(exploreEvents.subList(0, limit), myTickets));
                         }
                     });
                 });
+    }
+
+    private class HomeExploreEventAdapter extends HomeScheduleAdapter {
+        HomeExploreEventAdapter(List<Event> l, List<EventTicket> myT) {
+            super(l, myT);
+        }
+
+        @NonNull
+        @Override
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            VH holder = super.onCreateViewHolder(parent, viewType);
+            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+            if (lp != null) {
+                lp.width = (int) (300 * parent.getContext().getResources().getDisplayMetrics().density);
+                if (lp instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) lp).rightMargin = (int) (12 * parent.getContext().getResources().getDisplayMetrics().density);
+                    ((ViewGroup.MarginLayoutParams) lp).leftMargin = (int) (4 * parent.getContext().getResources().getDisplayMetrics().density);
+                }
+                holder.itemView.setLayoutParams(lp);
+            }
+            return holder;
+        }
     }
 
     private class HomeScheduleAdapter extends RecyclerView.Adapter<HomeScheduleAdapter.VH> {
@@ -601,8 +823,14 @@ public class HomeFragment extends Fragment {
 
             java.util.Calendar cal = java.util.Calendar.getInstance();
             cal.setTimeInMillis(e.getDateMillis());
-            holder.tvTime.setText(e.getStartTime() + " - " + cal.get(java.util.Calendar.DAY_OF_MONTH) + "/"
-                    + (cal.get(java.util.Calendar.MONTH) + 1));
+            String endTimeStr = e.getEndTime();
+            if (endTimeStr != null && !endTimeStr.isEmpty()) {
+                holder.tvTime.setText(e.getStartTime() + " - " + endTimeStr + " • " + cal.get(java.util.Calendar.DAY_OF_MONTH) + "/"
+                        + (cal.get(java.util.Calendar.MONTH) + 1));
+            } else {
+                holder.tvTime.setText(e.getStartTime() + " - " + cal.get(java.util.Calendar.DAY_OF_MONTH) + "/"
+                        + (cal.get(java.util.Calendar.MONTH) + 1));
+            }
 
             FirebaseFirestore.getInstance().collection("Users").document(e.getAuthorId())
                     .get().addOnSuccessListener(doc -> {
@@ -636,20 +864,26 @@ public class HomeFragment extends Fragment {
                     holder.btnAction.setOnClickListener(
                             v -> Toast.makeText(getContext(), "Bạn là nhà tổ chức", Toast.LENGTH_SHORT).show());
                 } else {
-                    holder.btnAction.setText("Xem vé");
-                    holder.btnAction.setOnClickListener(v -> {
-                        String myTicketId = null;
-                        for (EventTicket t : tickets) {
-                            if (t.getEventId().equals(e.getId()))
-                                myTicketId = t.getId();
+                    String myTicketId = null;
+                    for (EventTicket t : tickets) {
+                        if (t.getEventId().equals(e.getId())) {
+                            myTicketId = t.getId();
                         }
-                        Intent intent = new Intent(getActivity(),
-                                com.example.appdraw.community.EventTicketActivity.class);
-                        intent.putExtra("EVENT_ID", e.getId());
-                        if (myTicketId != null)
-                            intent.putExtra("TICKET_ID", myTicketId);
-                        startActivity(intent);
-                    });
+                    }
+                    if (myTicketId != null) {
+                        holder.btnAction.setText("Xem vé");
+                        String finalMyTicketId = myTicketId;
+                        holder.btnAction.setOnClickListener(v -> {
+                            Intent intent = new Intent(getActivity(),
+                                    com.example.appdraw.community.EventTicketActivity.class);
+                            intent.putExtra("EVENT_ID", e.getId());
+                            intent.putExtra("TICKET_ID", finalMyTicketId);
+                            startActivity(intent);
+                        });
+                    } else {
+                        holder.btnAction.setText("Đăng ký");
+                        holder.btnAction.setOnClickListener(v -> registerHomeEvent(e));
+                    }
                 }
             }
 
@@ -906,5 +1140,65 @@ public class HomeFragment extends Fragment {
                 count++;
             }
         });
+    }
+
+    private void registerHomeEvent(Event event) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+        
+        String ticketId = FirebaseFirestore.getInstance().collection("EventRegistrations").document().getId();
+        String ticketCode = "TKT" + String.format("%04d", (int)(Math.random() * 10000));
+        EventTicket ticket = new EventTicket(ticketId, event.getId(), uid, ticketCode, System.currentTimeMillis());
+        
+        FirebaseFirestore.getInstance().collection("EventRegistrations").document(ticketId)
+                .set(ticket)
+                .addOnSuccessListener(aVoid -> {
+                    if (getView() != null) setupHomeEvents(getView());
+                    showSuccessDialog(event, ticket);
+                    
+                    if (event.getAuthorId() != null && !event.getAuthorId().equals(uid)) {
+                        com.example.appdraw.utils.NotificationHelper.sendNotification(event.getAuthorId(), "EVENT", "Một người dùng vừa đăng ký sự kiện: " + event.getTitle(), event.getId());
+                    }
+                    com.example.appdraw.utils.NotificationHelper.sendNotification(uid, "EVENT", "Bạn đã đăng ký thành công sự kiện: " + event.getTitle(), event.getId());
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Lỗi đăng ký", Toast.LENGTH_SHORT).show());
+    }
+
+    private void showSuccessDialog(Event event, EventTicket ticket) {
+        if (getContext() == null) return;
+        android.app.Dialog dialog = new android.app.Dialog(getContext());
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_event_registered);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        
+        TextView tvTitle = dialog.findViewById(R.id.tv_dialog_event_title);
+        TextView tvTime = dialog.findViewById(R.id.tv_dialog_event_time);
+        TextView tvLocation = dialog.findViewById(R.id.tv_dialog_event_location);
+        TextView tvFormat = dialog.findViewById(R.id.tv_dialog_event_format);
+        TextView tvPrice = dialog.findViewById(R.id.tv_dialog_event_price);
+        View btnViewTicket = dialog.findViewById(R.id.btn_dialog_view_ticket);
+        View btnBackSchedule = dialog.findViewById(R.id.btn_dialog_back_schedule);
+
+        tvTitle.setText(event.getTitle());
+        
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTimeInMillis(event.getDateMillis());
+        tvTime.setText(event.getStartTime() + " - " + event.getEndTime() + " - " + cal.get(java.util.Calendar.DAY_OF_MONTH) + "/" + (cal.get(java.util.Calendar.MONTH)+1));
+        
+        tvLocation.setText(event.getLocation());
+        tvFormat.setText(event.isOnline() ? "Online" : "Offline");
+        tvPrice.setText(event.getPrice());
+
+        btnViewTicket.setOnClickListener(v -> {
+            dialog.dismiss();
+            Intent intent = new Intent(getActivity(), com.example.appdraw.community.EventTicketActivity.class);
+            intent.putExtra("EVENT_ID", event.getId());
+            intent.putExtra("TICKET_ID", ticket.getId());
+            startActivity(intent);
+        });
+
+        btnBackSchedule.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 }

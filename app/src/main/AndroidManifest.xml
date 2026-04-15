@@ -11,12 +11,13 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_artcraft_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_artcraft_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppDraw">
 
@@ -53,6 +54,29 @@
         <activity
             android:name=".explore.MySubmissionActivity"
             android:exported="false" />
+        <activity
+            android:name=".explore.AllCategoriesActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+            
+        <activity
+            android:name=".explore.CreateLessonActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name=".explore.AddLessonStepActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name=".explore.ExploreActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".explore.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".HomeworkActivity"
             android:exported="false" />
@@ -154,6 +178,9 @@
             android:exported="false" />
         <activity
             android:name=".explore.TrendingDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfileActivity"
             android:exported="false" />
     </application>
 

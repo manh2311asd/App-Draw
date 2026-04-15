@@ -51,6 +51,9 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         // Bind views
         TextView tvOtherName = findViewById(R.id.tv_profile_name);
         ImageView ivAvatar = findViewById(R.id.iv_profile_avatar);
+        if (ivAvatar != null) {
+            ivAvatar.setOnClickListener(v -> showAvatarFullscreen());
+        }
         TextView tvBio = findViewById(R.id.tv_profile_bio);
         com.google.android.material.button.MaterialButton btnFollow = findViewById(R.id.btn_follow);
 
@@ -73,11 +76,13 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                         if (doc != null && doc.exists()) {
                             isFollowing = true;
                             btnFollow.setText("Đang theo dõi");
-                            btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50")));
+                            btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#EFEFEF")));
+                            btnFollow.setTextColor(android.graphics.Color.parseColor("#1A1A1A"));
                         } else {
                             isFollowing = false;
                             btnFollow.setText("+ Theo dõi");
                             btnFollow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4272D0")));
+                            btnFollow.setTextColor(android.graphics.Color.WHITE);
                         }
                         btnFollow.setEnabled(true);
                     });
@@ -446,5 +451,23 @@ public class OtherUserProfileActivity extends AppCompatActivity {
             }
             llProfilePosts.addView(postView);
         }
+    }
+    private void showAvatarFullscreen() {
+        ImageView ivProfileAvatar = findViewById(R.id.iv_profile_avatar);
+        if (ivProfileAvatar == null || ivProfileAvatar.getDrawable() == null) return;
+        
+        android.app.Dialog dialog = new android.app.Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        ImageView imageView = new ImageView(this);
+        imageView.setLayoutParams(new android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView.setBackgroundColor(android.graphics.Color.BLACK);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setImageDrawable(ivProfileAvatar.getDrawable());
+        
+        imageView.setOnClickListener(v -> dialog.dismiss());
+        
+        dialog.setContentView(imageView);
+        dialog.show();
     }
 }

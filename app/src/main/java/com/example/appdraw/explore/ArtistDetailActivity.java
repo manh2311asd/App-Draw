@@ -35,6 +35,11 @@ public class ArtistDetailActivity extends AppCompatActivity {
     private androidx.recyclerview.widget.RecyclerView rvArtworks;
     private LinearLayout llEmptyArtworks;
 
+    private LinearLayout llArtistLessonsContainer;
+    private TextView tvEmptyLessons;
+
+    private MaterialButton btnCreateLesson;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,11 +76,13 @@ public class ArtistDetailActivity extends AppCompatActivity {
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
                     if (tab.getPosition() == 0) {
-                        llTabLessons.setVisibility(View.VISIBLE);
-                        llTabArtworks.setVisibility(View.GONE);
-                    } else {
+                        // Tác phẩm
                         llTabLessons.setVisibility(View.GONE);
                         llTabArtworks.setVisibility(View.VISIBLE);
+                    } else {
+                        // Khóa học
+                        llTabLessons.setVisibility(View.VISIBLE);
+                        llTabArtworks.setVisibility(View.GONE);
                     }
                 }
                 @Override public void onTabUnselected(TabLayout.Tab tab) {}
@@ -98,15 +105,21 @@ public class ArtistDetailActivity extends AppCompatActivity {
             fetchArtistPosts();
         }
 
+        llArtistLessonsContainer = findViewById(R.id.ll_artist_lessons_container);
+        tvEmptyLessons = findViewById(R.id.tv_empty_lessons);
+        fetchArtistLessons();
+
         // Setup Follow System
         btnFollow = findViewById(R.id.btn_follow);
         tvFollowersCount = findViewById(R.id.tv_followers_count);
+        btnCreateLesson = findViewById(R.id.btn_create_lesson);
 
         if (artistId != null && currentUid != null) {
             getFollowersCount(); // LUÔN LUÔN hiển thị số người theo dõi
 
             if (artistId.equals(currentUid)) {
                 btnFollow.setVisibility(View.GONE);
+                checkMentorRoleAndShowCreateButton();
             } else {
                 checkFollowStatus();
                 btnFollow.setOnClickListener(v -> toggleFollow());
@@ -114,6 +127,23 @@ public class ArtistDetailActivity extends AppCompatActivity {
         } else {
             btnFollow.setVisibility(View.GONE);
         }
+    }
+
+    private void checkMentorRoleAndShowCreateButton() {
+        db.collection("Users").document(currentUid).get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String role = documentSnapshot.getString("role");
+                    if (role != null && role.equalsIgnoreCase("mentor")) {
+                        if (btnCreateLesson != null) {
+                            btnCreateLesson.setVisibility(View.VISIBLE);
+                            btnCreateLesson.setOnClickListener(v -> {
+                                startActivity(new android.content.Intent(ArtistDetailActivity.this, CreateLessonActivity.class));
+                            });
+                        }
+                    }
+                }
+            });
     }
 
     private void checkFollowStatus() {
@@ -145,6 +175,10 @@ public class ArtistDetailActivity extends AppCompatActivity {
             // Unfollow
             followRef.delete().addOnSuccessListener(aVoid -> {
                 isFollowing = false;
+                
+                db.collection("Users").document(artistId).update("followersCount", FieldValue.increment(-1));
+                db.collection("Users").document(currentUid).update("followingCount", FieldValue.increment(-1));
+                
                 updateFollowButtonUI();
                 getFollowersCount();
                 btnFollow.setEnabled(true);
@@ -158,6 +192,12 @@ public class ArtistDetailActivity extends AppCompatActivity {
             
             followRef.set(followData).addOnSuccessListener(aVoid -> {
                 isFollowing = true;
+                
+                db.collection("Users").document(artistId).update("followersCount", FieldValue.increment(1));
+                db.collection("Users").document(currentUid).update("followingCount", FieldValue.increment(1));
+                
+                com.example.appdraw.utils.NotificationHelper.sendNotification(artistId, "FOLLOW", "rất thích các tác phẩm và đã bắt đầu theo dõi bạn.", currentUid);
+                
                 updateFollowButtonUI();
                 getFollowersCount();
                 btnFollow.setEnabled(true);
@@ -199,6 +239,101 @@ public class ArtistDetailActivity extends AppCompatActivity {
                     if (rvArtworks != null) rvArtworks.setVisibility(View.VISIBLE);
                     if (llEmptyArtworks != null) llEmptyArtworks.setVisibility(View.GONE);
                     if (postAdapter != null) postAdapter.notifyDataSetChanged();
+                }
+            });
+    }
+
+    private void fetchArtistLessons() {
+        if (artistId == null) return;
+        db.collection("Lessons").whereEqualTo("authorId", artistId).get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (llArtistLessonsContainer == null) return;
+                llArtistLessonsContainer.removeAllViews();
+                
+                if (queryDocumentSnapshots.isEmpty()) {
+                    if (tvEmptyLessons != null) tvEmptyLessons.setVisibility(View.VISIBLE);
+                    return;
+                }
+                
+                if (tvEmptyLessons != null) tvEmptyLessons.setVisibility(View.GONE);
+                
+                java.util.List<com.google.firebase.firestore.DocumentSnapshot> lessons = new java.util.ArrayList<>();
+                for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                    lessons.add(doc);
+                }
+                
+                // Sort by createdAt descending
+                lessons.sort((d1, d2) -> {
+                    Long c1 = d1.getLong("createdAt");
+                    Long c2 = d2.getLong("createdAt");
+                    if (c1 != null && c2 != null) return Long.compare(c2, c1);
+                    return 0;
+                });
+                
+                android.view.LayoutInflater inflater = android.view.LayoutInflater.from(this);
+                for (com.google.firebase.firestore.DocumentSnapshot doc : lessons) {
+                    View lessonView = inflater.inflate(R.layout.item_lesson_list, llArtistLessonsContainer, false);
+                    android.widget.TextView tvTitle = lessonView.findViewById(R.id.tv_lesson_title);
+                    android.widget.TextView tvAuthor = lessonView.findViewById(R.id.tv_author);
+                    android.widget.ImageView ivThumb = lessonView.findViewById(R.id.iv_lesson_thumb);
+                    android.widget.TextView tvStatus = lessonView.findViewById(R.id.tv_status);
+                    android.widget.TextView tvDuration = lessonView.findViewById(R.id.tv_duration);
+                    android.widget.RatingBar rb = lessonView.findViewById(R.id.rating_bar);
+                    
+                    String title = doc.getString("title");
+                    String author = doc.getString("authorName");
+                    if (author == null) author = doc.getString("author");
+                    String imageUrl = doc.getString("thumbnailUrl");
+                    if (imageUrl == null) imageUrl = doc.getString("imageUrl");
+                    
+                    if (tvTitle != null) tvTitle.setText(title);
+                    if (tvAuthor != null) tvAuthor.setText(author != null ? author : "");
+                    
+                    if (ivThumb != null && imageUrl != null && !imageUrl.isEmpty()) {
+                        if (imageUrl.startsWith("data:image")) {
+                            try {
+                                byte[] imageByteArray = android.util.Base64.decode(imageUrl.split(",")[1], android.util.Base64.DEFAULT);
+                                com.bumptech.glide.Glide.with(this).load(imageByteArray).centerCrop().into(ivThumb);
+                            } catch (Exception e) {}
+                        } else {
+                            com.bumptech.glide.Glide.with(this).load(imageUrl).centerCrop().into(ivThumb);
+                        }
+                    }
+                    
+                    if (rb != null) {
+                        Double rating = doc.getDouble("rating");
+                        if (rating != null) rb.setRating(rating.floatValue());
+                        else rb.setRating(5.0f);
+                    }
+                    
+                    if (tvDuration != null) {
+                        Long duration = doc.getLong("durationMin");
+                        if (duration == null) duration = doc.getLong("duration");
+                        if (duration != null && duration > 0) {
+                            tvDuration.setText(duration + " min");
+                        } else {
+                            tvDuration.setText("30 min");
+                        }
+                    }
+                    
+                    if (tvStatus != null) {
+                        tvStatus.setText("Xem chi tiết");
+                        tvStatus.setBackgroundResource(R.drawable.bg_badge_completed);
+                        tvStatus.setTextColor(android.graphics.Color.WHITE);
+                    }
+                    
+                    final String safeAuthor = author;
+                    lessonView.setOnClickListener(v -> {
+                        android.content.Intent intent = new android.content.Intent(ArtistDetailActivity.this, LessonDetailActivity.class);
+                        intent.putExtra("LESSON_TITLE", title);
+                        intent.putExtra("LESSON_ID", doc.getId());
+                        intent.putExtra("CATEGORY", doc.getString("category"));
+                        intent.putExtra("IMAGE_RES", doc.getString("imageRes"));
+                        intent.putExtra("AUTHOR", safeAuthor);
+                        startActivity(intent);
+                    });
+                    
+                    llArtistLessonsContainer.addView(lessonView);
                 }
             });
     }

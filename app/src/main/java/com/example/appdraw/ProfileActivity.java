@@ -22,54 +22,23 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout llProfilePosts;
     private int activeTab = 1;
 
-    private final androidx.activity.result.ActivityResultLauncher<Intent> avatarLauncher = registerForActivityResult(
-            new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    uploadNewAvatar(result.getData().getData());
-                }
-            }
-    );
-
-    private void pickNewAvatar() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        avatarLauncher.launch(intent);
-    }
-
-    private void uploadNewAvatar(android.net.Uri uri) {
-        try {
-            android.graphics.Bitmap bitmap;
-            if (android.os.Build.VERSION.SDK_INT >= 28) {
-                android.graphics.ImageDecoder.Source source = android.graphics.ImageDecoder.createSource(getContentResolver(), uri);
-                bitmap = android.graphics.ImageDecoder.decodeBitmap(source);
-            } else {
-                bitmap = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-            }
-            
-            // Resize to standard avatar size (200x200) to keep base64 extremely small
-            android.graphics.Bitmap scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, 200, 200, true);
-            java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
-            scaledBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, buffer);
-            byte[] fileBytes = buffer.toByteArray();
-            
-            String base64Image = "data:image/jpeg;base64," + android.util.Base64.encodeToString(fileBytes, android.util.Base64.DEFAULT);
-            
-            String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
-            if (uid != null) {
-                com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("Users").document(uid)
-                    .update("profile.avatarUrl", base64Image)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Cập nhật ảnh đại diện thành công", Toast.LENGTH_SHORT).show();
-                        android.widget.ImageView ivProfileAvatar = findViewById(R.id.iv_profile_avatar);
-                        byte[] decodedBytes = android.util.Base64.decode(base64Image.split(",")[1], android.util.Base64.DEFAULT);
-                        com.bumptech.glide.Glide.with(this).load(decodedBytes).circleCrop().into(ivProfileAvatar);
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-            }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi đọc ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+    private void showAvatarFullscreen() {
+        android.widget.ImageView ivProfileAvatar = findViewById(R.id.iv_profile_avatar);
+        if (ivProfileAvatar == null || ivProfileAvatar.getDrawable() == null) return;
+        
+        android.app.Dialog dialog = new android.app.Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        android.widget.ImageView imageView = new android.widget.ImageView(this);
+        imageView.setLayoutParams(new android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, 
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView.setBackgroundColor(Color.BLACK);
+        imageView.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+        imageView.setImageDrawable(ivProfileAvatar.getDrawable());
+        
+        imageView.setOnClickListener(v -> dialog.dismiss());
+        
+        dialog.setContentView(imageView);
+        dialog.show();
     }
 
     @Override
@@ -96,10 +65,10 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             loadCurrentUserProfile();
             
-            // Allow changing avatar
+            // Allow viewing avatar in fullscreen
             View ivAvatar = findViewById(R.id.iv_profile_avatar);
             if (ivAvatar != null) {
-                ivAvatar.setOnClickListener(v -> pickNewAvatar());
+                ivAvatar.setOnClickListener(v -> showAvatarFullscreen());
             }
         }
 
@@ -232,21 +201,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void showSettingsDialog() {
         com.google.android.material.bottomsheet.BottomSheetDialog dialog = new com.google.android.material.bottomsheet.BottomSheetDialog(this);
-        View view = android.view.LayoutInflater.from(this).inflate(R.layout.dialog_profile_settings, null);
+        android.view.View view = android.view.LayoutInflater.from(this).inflate(R.layout.dialog_profile_settings, null);
         dialog.setContentView(view);
-        
-        view.findViewById(R.id.ll_setting_account).setOnClickListener(v -> {
-            Toast.makeText(this, "Cài đặt tài khoản", Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
-        });
+
         
         view.findViewById(R.id.ll_setting_edit_profile).setOnClickListener(v -> {
-            Toast.makeText(this, "Chỉnh sửa hồ sơ", Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
-        });
-        
-        view.findViewById(R.id.ll_setting_language).setOnClickListener(v -> {
-            Toast.makeText(this, "Cài đặt ngôn ngữ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            startActivity(intent);
             dialog.dismiss();
         });
         
@@ -254,7 +215,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Liên kết cá nhân", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
         });
-        
+
         view.findViewById(R.id.ll_logout).setOnClickListener(v -> {
             com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(ProfileActivity.this, com.example.appdraw.auth.LoginOptionsActivity.class);

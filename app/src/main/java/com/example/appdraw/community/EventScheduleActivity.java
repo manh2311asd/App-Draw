@@ -74,6 +74,13 @@ public class EventScheduleActivity extends AppCompatActivity {
         checkMentorRole();
         fetchMyTickets();
         fetchAllEvents();
+
+        boolean openExplore = getIntent().getBooleanExtra("OPEN_EXPLORE", false);
+        if (openExplore) {
+            tvTabExplore.performClick();
+        } else {
+            tvTabSchedule.performClick();
+        }
     }
 
     private void initViews() {
@@ -158,10 +165,30 @@ public class EventScheduleActivity extends AppCompatActivity {
                 .addSnapshotListener((value, error) -> {
                     if (error != null || value == null) return;
                     allEventsList.clear();
+                    long now = System.currentTimeMillis();
                     for (DocumentSnapshot doc : value) {
                         Event e = doc.toObject(Event.class);
                         if (e != null) {
-                            allEventsList.add(e);
+                            boolean isExpired = false;
+                            try {
+                                if (e.getEndTime() != null && e.getEndTime().contains(":")) {
+                                    String[] parts = e.getEndTime().split(":");
+                                    int hour = Integer.parseInt(parts[0].trim());
+                                    int min = Integer.parseInt(parts[1].trim());
+                                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                                    cal.setTimeInMillis(e.getDateMillis());
+                                    cal.set(java.util.Calendar.HOUR_OF_DAY, hour);
+                                    cal.set(java.util.Calendar.MINUTE, min);
+                                    if (cal.getTimeInMillis() < now) isExpired = true;
+                                } else if (e.getDateMillis() + 24 * 60 * 60 * 1000L < now) {
+                                    isExpired = true;
+                                }
+                            } catch (Exception ex) {
+                                if (e.getDateMillis() + 24 * 60 * 60 * 1000L < now) isExpired = true;
+                            }
+                            if (!isExpired) {
+                                allEventsList.add(e);
+                            }
                         }
                     }
                     filterExploreEvents();
@@ -436,7 +463,12 @@ public class EventScheduleActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull VH holder, int position) {
             Event e = myScheduleList.get(position);
             holder.tvTitle.setText(e.getTitle());
-            holder.tvTime.setText(e.getStartTime());
+            String endTimeStr = e.getEndTime();
+            if (endTimeStr != null && !endTimeStr.isEmpty()) {
+                holder.tvTime.setText(e.getStartTime() + " - " + endTimeStr);
+            } else {
+                holder.tvTime.setText(e.getStartTime());
+            }
 
             FirebaseFirestore.getInstance().collection("Users").document(e.getAuthorId())
                 .get().addOnSuccessListener(doc -> {
@@ -469,17 +501,27 @@ public class EventScheduleActivity extends AppCompatActivity {
                     holder.btnAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#888888")));
                     holder.btnAction.setOnClickListener(v -> Toast.makeText(EventScheduleActivity.this, "Bạn là nhà tổ chức (Đang phát triển)", Toast.LENGTH_SHORT).show());
                 } else {
-                    holder.btnAction.setText("Xem vé");
-                    holder.btnAction.setOnClickListener(v -> {
-                        String myTicketId = null;
-                        for (EventTicket t : myTickets) {
-                            if (t.getEventId().equals(e.getId())) myTicketId = t.getId();
-                        }
-                        Intent intent = new Intent(EventScheduleActivity.this, EventTicketActivity.class);
-                        intent.putExtra("EVENT_ID", e.getId());
-                        if (myTicketId != null) intent.putExtra("TICKET_ID", myTicketId);
-                        startActivity(intent);
-                    });
+                    String myTicketId = null;
+                    for (EventTicket t : myTickets) {
+                        if (t.getEventId().equals(e.getId())) myTicketId = t.getId();
+                    }
+                    if (myTicketId != null) {
+                        holder.btnAction.setText("Xem vé");
+                        String finalMyTicketId = myTicketId;
+                        holder.btnAction.setOnClickListener(v -> {
+                            Intent intent = new Intent(EventScheduleActivity.this, EventTicketActivity.class);
+                            intent.putExtra("EVENT_ID", e.getId());
+                            intent.putExtra("TICKET_ID", finalMyTicketId);
+                            startActivity(intent);
+                        });
+                    } else {
+                        holder.btnAction.setText("Đăng ký");
+                        holder.btnAction.setOnClickListener(v -> {
+                            Intent intent = new Intent(EventScheduleActivity.this, EventTicketActivity.class);
+                            intent.putExtra("EVENT_ID", e.getId());
+                            startActivity(intent);
+                        });
+                    }
                 }
             }
 

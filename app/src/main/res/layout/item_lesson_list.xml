@@ -5,10 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     android:layout_marginHorizontal="4dp"
-    app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeColor="#F0F0F0"
+    app:strokeColor="@color/settings_divider"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -53,7 +52,7 @@
                     android:maxLines="2"
                     android:ellipsize="end"
                     android:textStyle="bold"
-                    android:textColor="#333333"/>
+                    android:textColor="?android:attr/textColorPrimary"/>
                 <TextView
                     android:id="@+id/tv_status"
                     android:layout_width="wrap_content"
@@ -63,8 +62,8 @@
                     android:textStyle="bold"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
-                    android:background="@drawable/rounded_bg_gray"
-                    android:textColor="#666666"
+                    android:background="@drawable/bg_badge_pending"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
 
@@ -78,14 +77,14 @@
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@android:drawable/ic_menu_edit"
-                    app:tint="#808080"/>
+                    app:tint="?android:attr/textColorSecondary"/>
                 <TextView
                     android:id="@+id/tv_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phong Artist"
                     android:textSize="12sp"
-                    android:textColor="#808080"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:layout_marginStart="4dp"/>
             </LinearLayout>
 
@@ -109,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:text="25 min"
                     android:textSize="12sp"
-                    android:textColor="#808080"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
         </LinearLayout>

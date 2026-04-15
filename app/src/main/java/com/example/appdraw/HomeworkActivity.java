@@ -42,6 +42,26 @@ public class HomeworkActivity extends AppCompatActivity {
             lessonTitle = "Unknown Lesson";
         }
 
+        String imageResStr = getIntent().getStringExtra("IMAGE_RES");
+        if (imageResStr != null && !imageResStr.isEmpty()) {
+            ImageView ivBg = findViewById(R.id.iv_homework_bg);
+            if (ivBg != null) {
+                int resId = getResources().getIdentifier(imageResStr, "drawable", getPackageName());
+                if (resId != 0) {
+                    ivBg.setImageResource(resId);
+                }
+            }
+        }
+
+        com.example.appdraw.utils.HomeworkHelper.HomeworkDetails details = com.example.appdraw.utils.HomeworkHelper.getHomeworkDetails(lessonTitle);
+        TextView tvContent = findViewById(R.id.tv_homework_content);
+        TextView tvCriteria1 = findViewById(R.id.tv_criteria_1);
+        TextView tvCriteria2 = findViewById(R.id.tv_criteria_2);
+
+        if (tvContent != null && details.desc != null) tvContent.setText(details.desc);
+        if (tvCriteria1 != null && details.criteria1 != null) tvCriteria1.setText(details.criteria1);
+        if (tvCriteria2 != null && details.criteria2 != null) tvCriteria2.setText(details.criteria2);
+
         db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
         if (com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null) {
             uid = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();

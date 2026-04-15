@@ -66,16 +66,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="14dp">
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="14dp"
+            android:gravity="center_vertical">
             <TextView
                 android:id="@+id/tv_comment_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Vừa xong"
-                android:textColor="#65676B"
-                android:textSize="12sp"
-                android:textStyle="bold"/>
+                android:textColor="#888888"
+                android:textSize="11sp"/>
             <TextView
                 android:id="@+id/tv_comment_like"
                 android:layout_width="wrap_content"
@@ -95,7 +95,10 @@
                 android:text="Phản hồi"
                 android:textColor="#65676B"
                 android:textSize="12sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
     </LinearLayout>
 

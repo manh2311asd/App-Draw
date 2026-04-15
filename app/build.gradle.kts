@@ -3,7 +3,19 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
+val envProperties = Properties()
+val envFile = project.rootProject.file(".env")
+if (envFile.exists()) {
+    envProperties.load(FileInputStream(envFile))
+}
+
 android {
+    buildFeatures {
+        buildConfig = true
+    }
     namespace = "com.example.appdraw"
     compileSdk = 35
 
@@ -15,6 +27,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField("String", "AI_API_KEY", "\"${envProperties.getProperty("AI_API_KEY", "")}\"")
     }
 
     buildTypes {

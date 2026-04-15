@@ -37,7 +37,6 @@ public class SearchActivity extends AppCompatActivity {
     private LinearLayout llEmpty;
     private RecyclerView rvResults;
     private UnifiedSearchAdapter adapter;
-    private List<Lesson> allLessons = new ArrayList<>();
     private List<SearchResultItem> unifiedResults = new ArrayList<>();
     private android.os.Handler searchHandler = new android.os.Handler(android.os.Looper.getMainLooper());
 
@@ -60,7 +59,6 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new UnifiedSearchAdapter();
         rvResults.setAdapter(adapter);
 
-        loadStaticLessons();
         setupSearchControls();
         setupClickableSuggestions();
         loadSearchHistory();
@@ -243,44 +241,7 @@ public class SearchActivity extends AppCompatActivity {
         loadSearchHistory();
     }
 
-    private void loadStaticLessons() {
-        allLessons.clear();
-        addStaticCategory("Phác thảo khuôn mặt Chibi", "Donal", "15 min", 5.0f);
-        addStaticCategory("Tỷ lệ cơ thể đầu to", "Mai Anh", "10 min", 4.0f);
-        addStaticCategory("Vẽ mắt to tròn đáng yêu", "Quốc Bảo", "25 min", 4.5f);
-        addStaticCategory("Lên màu pastel cơ bản", "Mai Anh", "60 min", 5.0f);
 
-        addStaticCategory("Phong cảnh đồi núi", "Thùy Chi", "45 min", 4.5f);
-        addStaticCategory("Rừng thông sương mù", "Tuấn Vũ", "50 min", 5.0f);
-        addStaticCategory("Bầu trời hoàng hôn", "Hải Nam", "30 min", 4.0f);
-        addStaticCategory("Kỹ thuật vẽ mây", "Tuấn Vũ", "25 min", 3.5f);
-        addStaticCategory("Lá cây mùa thu", "Thùy Chi", "20 min", 4.5f);
-
-        addStaticCategory("Vẽ hoa màu nước", "Hoàng Lam", "25 min", 5.0f);
-        addStaticCategory("Phong cảnh hồ thu", "Hoàng Lam", "40 min", 4.5f);
-        addStaticCategory("Cánh đồng hoa cúc", "Thu Thủy", "60 min", 4.0f);
-        addStaticCategory("Vẽ cá vàng", "Hoàng Lam", "35 min", 5.0f);
-
-        addStaticCategory("Phác thảo Manga", "Linh Trần", "40 min", 4.5f);
-        addStaticCategory("Tỷ lệ khuôn mặt", "Nhật Anh", "30 min", 4.0f);
-        addStaticCategory("Vẽ mắt Manga", "Linh Trần", "25 min", 5.0f);
-        addStaticCategory("Trang phục nữ sinh", "Nhật Anh", "45 min", 4.5f);
-
-        addStaticCategory("Làm quen Procreate", "Minh Khang", "25 min", 5.0f);
-        addStaticCategory("Layer và Blending", "Tuấn Vũ", "40 min", 4.5f);
-        addStaticCategory("Màu sắc Digital", "Minh Khang", "60 min", 4.0f);
-    }
-
-    private void addStaticCategory(String title, String author, String duration, float rating) {
-        Lesson l = new Lesson();
-        l.setTitle(title);
-        l.setAuthor(author);
-        // Using level field temporarily to store string duration to save parsing,
-        // usually duration is int
-        l.setLevel(duration);
-        l.setRating(rating);
-        allLessons.add(l);
-    }
 
     private void performSearch(String query) {
         if (query.isEmpty()) {
@@ -322,14 +283,40 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         if (searchLessons) {
-            for (Lesson lesson : allLessons) {
-                String title = lesson.getTitle() != null ? lesson.getTitle().toLowerCase() : "";
-                if (removeAccents(title).contains(normalizedQuery)) {
-                    unifiedResults.add(new SearchResultItem("LESSON", lesson.getTitle(), "Bởi " + lesson.getAuthor(),
-                            String.valueOf(lesson.getRating()) + "★", null, lesson.getTitle()));
-                }
-            }
-            checkEmptyAndNotify();
+            java.util.Set<String> seenLessonTitles = new java.util.HashSet<>();
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("Lessons")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : queryDocumentSnapshots) {
+                            String title = doc.getString("title");
+                            if (title == null) continue;
+                            String tnorm = removeAccents(title.toLowerCase());
+                            if (tnorm.contains(normalizedQuery)) {
+                                if (seenLessonTitles.contains(title)) continue;
+                                seenLessonTitles.add(title);
+                                
+                                String authorName = doc.getString("authorName");
+                                if (authorName == null) authorName = doc.getString("author");
+                                String imageUrl = doc.getString("imageRes");
+                                if (title.equals("Core tỷ lệ khuôn mặt")) {
+                                    imageUrl = "core_ty_le_khuon_mat";
+                                }
+                                if (imageUrl == null || imageUrl.isEmpty() || imageUrl.matches("-?\\d+")) {
+                                    imageUrl = doc.getString("thumbnailUrl");
+                                    if (imageUrl == null || imageUrl.isEmpty()) imageUrl = doc.getString("imageUrl");
+                                }
+                                String category = doc.getString("category");
+                                Double rating = doc.getDouble("rating");
+                                String ratingStr = rating != null ? String.format(java.util.Locale.US, "%.1f★", rating) : "4.5★";
+                                
+                                unifiedResults.add(new SearchResultItem("LESSON", title,
+                                        authorName != null ? (authorName.startsWith("Bởi") ? authorName : "Bởi " + authorName) : "Bởi AppDraw",
+                                        ratingStr, imageUrl, doc.getId(), category));
+                            }
+                        }
+                        checkEmptyAndNotify();
+                    });
         }
 
         if (searchProjects) {
@@ -347,7 +334,7 @@ public class SearchActivity extends AppCompatActivity {
                                 String imageUrl = doc.getString("imageUrl");
                                 unifiedResults.add(new SearchResultItem("PROJECT", title,
                                         authorName != null ? authorName : "Thành viên", "Dự án", imageUrl,
-                                        doc.getId()));
+                                        doc.getId(), null));
                             }
                         }
                         checkEmptyAndNotify();
@@ -370,7 +357,7 @@ public class SearchActivity extends AppCompatActivity {
 
                                 if (nnorm.contains(normalizedQuery)) {
                                     unifiedResults.add(new SearchResultItem("ARTIST", name,
-                                            bio != null ? bio : "Họa sĩ", "Nghệ sĩ", avatarUrl, doc.getId()));
+                                            bio != null ? bio : "Họa sĩ", "Nghệ sĩ", avatarUrl, doc.getId(), null));
                                 }
                             }
                         }
@@ -405,15 +392,17 @@ public class SearchActivity extends AppCompatActivity {
         String extraInfo;
         String imageUrl;
         String id;
+        String category;
 
         public SearchResultItem(String type, String title, String subtitle, String extraInfo, String imageUrl,
-                String id) {
+                String id, String category) {
             this.type = type;
             this.title = title;
             this.subtitle = subtitle;
             this.extraInfo = extraInfo;
             this.imageUrl = imageUrl;
             this.id = id;
+            this.category = category;
         }
     }
 
@@ -433,8 +422,25 @@ public class SearchActivity extends AppCompatActivity {
             holder.tvType.setText(item.extraInfo != null ? item.extraInfo : "");
 
             if ("LESSON".equals(item.type)) {
-                holder.ivImage.setImageResource(R.drawable.ve_thien_nhien); // Default
                 holder.tvType.setTextColor(android.graphics.Color.parseColor("#E67E22"));
+                if (item.imageUrl != null && !item.imageUrl.isEmpty() && !item.imageUrl.startsWith("http") && !item.imageUrl.startsWith("data:")) {
+                    try {
+                        int resId = holder.itemView.getContext().getResources().getIdentifier(item.imageUrl, "drawable", holder.itemView.getContext().getPackageName());
+                        if (resId != 0) holder.ivImage.setImageResource(resId);
+                        else holder.ivImage.setImageResource(R.drawable.ve_thien_nhien);
+                    } catch (Exception e) {}
+                } else if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
+                    if (item.imageUrl.startsWith("data:image")) {
+                        try {
+                            byte[] decodedBytes = android.util.Base64.decode(item.imageUrl.split(",")[1], android.util.Base64.DEFAULT);
+                            com.bumptech.glide.Glide.with(holder.itemView.getContext()).load(decodedBytes).centerCrop().into(holder.ivImage);
+                        } catch (Exception e) {}
+                    } else {
+                        com.bumptech.glide.Glide.with(holder.itemView.getContext()).load(item.imageUrl).centerCrop().into(holder.ivImage);
+                    }
+                } else {
+                    holder.ivImage.setImageResource(R.drawable.ve_thien_nhien);
+                }
             } else if ("PROJECT".equals(item.type)) {
                 holder.tvType.setTextColor(android.graphics.Color.parseColor("#4272D0"));
                 if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
@@ -455,6 +461,11 @@ public class SearchActivity extends AppCompatActivity {
                 if ("LESSON".equals(item.type)) {
                     Intent intent = new Intent(SearchActivity.this, LessonDetailActivity.class);
                     intent.putExtra("LESSON_TITLE", item.title);
+                    intent.putExtra("LESSON_ID", item.id);
+                    intent.putExtra("IMAGE_RES", item.imageUrl);
+                    if (item.category != null) {
+                        intent.putExtra("CATEGORY", item.category);
+                    }
                     startActivity(intent);
                 } else if ("PROJECT".equals(item.type)) {
                     Intent intent = new Intent(SearchActivity.this,
