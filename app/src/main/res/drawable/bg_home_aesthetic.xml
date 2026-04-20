@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nền pastel gradient chuyển màu chéo siêu mượt -->
+    <gradient
+        android:startColor="#EAF1F8"
+        android:centerColor="#F4F6F9"
+        android:endColor="#E7ECF3"
+        android:type="linear"
+        android:angle="225" />
+</shape>
