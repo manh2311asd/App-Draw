@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
-import com.example.appdraw.CreateProjectActivity;
+import com.example.appdraw.project.CreateProjectActivity;
 import com.example.appdraw.R;
 import com.example.appdraw.model.Project;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
