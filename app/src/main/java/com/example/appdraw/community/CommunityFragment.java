@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import com.example.appdraw.NotificationsActivity;
+import com.example.appdraw.notification.NotificationsActivity;
 import com.example.appdraw.R;
 
 /**
